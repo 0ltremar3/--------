@@ -15,6 +15,33 @@
 
 /* 行为相关颜色 */
 $uni-color-primary:#1C7231;
+
+/* ── 品牌设计 Token ── */
+$brand-primary:       #1C7231;
+$brand-black:         #202321;
+$brand-text:          #2B2F2C;
+$brand-muted:         #8E918D;
+$brand-light-muted:   #B8BBB6;
+$brand-border:        #E5E6E2;
+$brand-bg:            #F7F8F5;
+$brand-surface:       #FFFFFF;
+$brand-image-bg:      #ECEDE8;
+$brand-danger:        #A33A2E;
+$brand-inactive:      #a8a49e;
+
+/* 字号 Token */
+$font-page-title:       40rpx;
+$font-page-title-weight: 600;
+$font-section-title:    34rpx;
+$font-section-title-weight: 600;
+$font-product-title:    28rpx;
+$font-product-title-weight: 500;
+$font-body:             26rpx;
+$font-body-weight:      400;
+$font-meta:             24rpx;
+$font-meta-weight:      400;
+$font-price:            32rpx;
+$font-price-weight:     500;
 $uni-color-success: #4cd964;
 $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;

@@ -126,12 +126,12 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  var m0 = !_vm.hasLogin ? _vm.$t("mine.notLogged") : null
+  var g0 = _vm.recordList.length
   _vm.$mp.data = Object.assign(
     {},
     {
       $root: {
-        m0: m0,
+        g0: g0,
       },
     }
   )
@@ -332,71 +332,6 @@ var _store = __webpack_require__(/*! @/uni_modules/uni-id-pages/common/store.js 
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 var db = uniCloud.database();
 var _default = {
@@ -404,43 +339,16 @@ var _default = {
     return {
       user_id: uniCloud.getCurrentUserInfo().uid,
       recordList: [],
-      items: [],
+      items: [0, 0, 0, 0],
       uservipList: [],
       membershipLevel: null,
       vipurl: '/jlg-use/member/mymember'
     };
   },
   onShow: function onShow() {
-    var _this = this;
     this.recordData();
     this.uservipData();
-    var a = [];
-    var b = [];
-    var c = [];
-    var d = [];
-    db.collection('uni-pay-orders').where({
-      'user_id': this.user_id,
-      'type': "goods"
-    }).field('type,status,custom').get().then(function (res) {
-      for (var i = 0; i < res.result.data.length; i++) {
-        if (res.result.data[i].status == 0 && !res.result.data[i].custom) {
-          a.push(res.result.data[i]);
-        }
-        if ([1, 4].includes(res.result.data[i].status)) {
-          b.push(res.result.data[i]);
-        }
-        if (res.result.data[i].status == 5) {
-          c.push(res.result.data[i]);
-        }
-        if (res.result.data[i].status == 6) {
-          d.push(res.result.data[i]);
-        }
-      }
-      _this.items[0] = a.length;
-      _this.items[1] = b.length;
-      _this.items[2] = c.length;
-      _this.items[3] = d.length;
-    });
+    this.loadOrderBadges();
   },
   computed: {
     userInfo: function userInfo() {
@@ -451,67 +359,46 @@ var _default = {
     }
   },
   methods: {
-    // 用户会员数据
+    loadOrderBadges: function loadOrderBadges() {
+      var _this = this;
+      var counts = [0, 0, 0, 0];
+      db.collection('uni-pay-orders').where({
+        user_id: this.user_id,
+        type: 'goods'
+      }).field('type,status,custom').get().then(function (res) {
+        res.result.data.forEach(function (o) {
+          if (o.status === 0 && !o.custom) counts[0]++;
+          if ([1, 4].includes(o.status)) counts[1]++;
+          if (o.status === 5) counts[2]++;
+          if (o.status === 6) counts[3]++;
+        });
+        _this.items = counts;
+      });
+    },
     uservipData: function uservipData() {
       var _this2 = this;
-      db.collection("jlg-member").where({
+      db.collection('jlg-member').where({
         user_id: this.user_id
       }).get().then(function (res) {
         _this2.uservipList = res.result.data;
-        if (_this2.uservipList.length > 0) {
-          if (_this2.uservipList[0].failure_time > Date.now()) {
-            _this2.membershipLevel = _this2.uservipList[0].grade;
-            _this2.vipurl = '/jlg-use/member/mymemberkt';
-          }
+        if (_this2.uservipList.length > 0 && _this2.uservipList[0].failure_time > Date.now()) {
+          _this2.membershipLevel = _this2.uservipList[0].grade;
+          _this2.vipurl = '/jlg-use/member/mymemberkt';
         }
       });
     },
     recordData: function recordData() {
       var _this3 = this;
-      db.collection("jlg-goods-record,opendb-mall-goods").where({
-        "user_id": this.user_id,
-        "goods_id.is_on_sale": true
-      }).field("goods_id.goods_thumb as image,modify_date,goods_id._id as goodsId").orderBy("modify_date desc").limit(50).get().then(function (res) {
+      db.collection('jlg-goods-record,opendb-mall-goods').where({
+        user_id: this.user_id,
+        'goods_id.is_on_sale': true
+      }).field('goods_id.goods_thumb as image,modify_date,goods_id._id as goodsId').orderBy('modify_date desc').limit(20).get().then(function (res) {
         _this3.recordList = res.result.data;
       });
     },
     jumpToUrl: function jumpToUrl(e) {
-      console.log(e);
       uni.navigateTo({
         url: e.currentTarget.dataset.url
-      });
-    },
-    navigator: function navigator(id) {
-      var self = this;
-      uniCloud.callFunction({
-        name: "jlg-record",
-        data: {
-          user_id: self.user_id,
-          id: id
-        }
-      }).then(function (res) {}).catch(function (err) {
-        uni.navigateTo({
-          url: "/pages/product/product?id=".concat(id)
-        });
-        uni.showToast({
-          title: "浏览记录未成功更新",
-          icon: "none",
-          duration: 600
-        });
-      });
-      uni.navigateTo({
-        url: "/pages/product/product?id=".concat(id)
-      });
-    },
-    gzhClick: function gzhClick() {
-      uni.showModal({
-        title: "跳转提示",
-        content: "即将跳转至微信公众号，点击头像关注后输入您的问题！",
-        success: function success(res) {
-          if (res.confirm) {
-            window.location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzkwNzUyMjMxOQ==#wechat_redirect";
-          }
-        }
       });
     },
     navTo: function navTo(url) {
@@ -522,6 +409,29 @@ var _default = {
     toUserInfo: function toUserInfo() {
       uni.navigateTo({
         url: '/uni_modules/uni-id-pages/pages/userinfo/userinfo'
+      });
+    },
+    navigator: function navigator(id) {
+      uniCloud.callFunction({
+        name: 'jlg-record',
+        data: {
+          user_id: this.user_id,
+          id: id
+        }
+      }).catch(function () {});
+      uni.navigateTo({
+        url: "/pages/product/product?id=".concat(id)
+      });
+    },
+    gzhClick: function gzhClick() {
+      uni.showModal({
+        title: '跳转提示',
+        content: '即将跳转至微信公众号，点击头像关注后输入您的问题！',
+        success: function success(res) {
+          if (res.confirm) {
+            window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzkwNzUyMjMxOQ==#wechat_redirect';
+          }
+        }
       });
     },
     contactClick: function contactClick(e) {
