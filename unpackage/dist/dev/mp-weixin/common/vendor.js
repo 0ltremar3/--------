@@ -12733,7 +12733,7 @@ var S = "development" === "development",
   k = "true" === undefined || !0 === undefined,
   A = I([]),
   T = "h5" === b ? "web" : "app-plus" === b || "app-harmony" === b ? "app" : b,
-  C = I({"address":["127.0.0.1","192.168.0.139"],"servePort":7002,"debugPort":9001,"initialLaunchType":"remote","skipFiles":["<node_internals>/**","/Applications/HBuilderX.app/Contents/HBuilderX/plugins/unicloud/**/*.js"]}),
+  C = I({"address":["127.0.0.1","10.78.180.152"],"servePort":7002,"debugPort":9001,"initialLaunchType":"remote","skipFiles":["<node_internals>/**","/Applications/HBuilderX.app/Contents/HBuilderX/plugins/unicloud/**/*.js"]}),
   P = I([{"provider":"aliyun","spaceName":"healthmall","spaceId":"mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c","clientSecret":"8S5JwUzhLO7ZxF+j5No1Sg==","endpoint":"https://api.next.bspapp.com","failoverEndpoint":""}]) || [],
   O = true;
 var E = "";
