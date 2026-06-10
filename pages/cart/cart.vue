@@ -1,134 +1,126 @@
 <template>
-	<view class="container">
-		<view class="edit-van" @click="manageClick">
-			<view class="flex-dir-row">
-				<text class="iconfont icon-uniE01f col-1C7231" style="font-size: 70rpx;"></text>
-				<view>
-					<text>山前食养</text>
-				</view>
-			</view>
-			<text style="flex: 1;text-align: right;" :class="manage?'col-1C7231':''">{{manage?'完成':'管理'}}</text>
-		</view>
-		<!-- 空白页 -->
-		<uv-empty marginTop="150" v-if="empty" mode="data" icon="/static/temp/shwk.png" text="购物车为空">
-			<view @click="naTov" class="qgg">去逛逛</view>
-		</uv-empty>
+	<view class="cart-page">
 
-		<!-- 列表 -->
-		<view v-else class="list">
+		<!-- 顶部导航 -->
+		<view class="cart-nav">
+			<text class="cart-nav__title">山前食养</text>
+			<text class="cart-nav__action" :class="manage ? 'cart-nav__action--active' : ''" @click="manageClick">
+				{{ manage ? '完成' : '管理' }}
+			</text>
+		</view>
+
+		<!-- 空状态 -->
+		<view v-if="empty" class="cart-empty">
+			<uv-empty marginTop="150" mode="data" icon="/static/temp/shwk.png" text="购物袋为空">
+				<view @click="naTov" class="cart-empty__btn">去逛逛</view>
+			</uv-empty>
+		</view>
+
+		<!-- 商品列表 -->
+		<view v-else class="cart-list">
 			<view v-for="(item, index) in cartList" :key="index">
-				<view v-if="!item.efficacy" class="flex-dir-column list-item">
-					<view class="flex-dir-row flex-y-center">
-						<view class="flex-dir-row flex-y-center">
-							<image style="opacity: 0.4 !important" class="litpic"
-								@click="navigator(item.id[0],item.goods_seckill)" :src="item.image[0]"
-								mode="aspectFill">
-							</image>
-							<view class="efficay_text">已失效
+
+				<!-- 失效商品 -->
+				<view v-if="!item.efficacy" class="cart-item cart-item--expired">
+					<view class="cart-item__inner">
+						<view class="cart-item__img-wrap">
+							<image class="cart-item__img" @click="navigator(item.id[0], item.goods_seckill)"
+								:src="item.image[0]" mode="aspectFill" style="opacity: 0.4;"></image>
+							<view class="cart-item__expired-badge">已失效</view>
+						</view>
+						<view class="cart-item__body">
+							<text class="cart-item__name cart-item__name--expired"
+								@click="navigator(item.id[0], item.goods_seckill)">{{ item.title[0] }}</text>
+							<view class="cart-item__attr" @click="navigator(item.id[0], item.goods_seckill)">
+								<text class="cart-item__suk" v-for="(items, si) in item.goods_suk.specs" :key="si">{{ items }}</text>
+							</view>
+							<view class="cart-item__bottom">
+								<jlg-minPrice @click="navigator(item.id[0], item.goods_seckill)"
+									:min-price="item.goods_suk.price" maxSize="30rpx"></jlg-minPrice>
+								<uni-number-box background="#F7F8F5" class="step" :step="1" :min="1"
+									:max="item.stock[0]" v-model="item.goods_number" @change="calcTotal"
+									disabled="false"></uni-number-box>
 							</view>
 						</view>
-						<view class="flex-dir-column w-430  ml-20">
-							<text class="title" style="color: #c0c4cc;"
-								@click="navigator(item.id[0],item.goods_seckill)">{{item.title[0]}}</text>
-							<view class="attr" style="color: #c0c4cc;"
-								@click="navigator(item.id[0],item.goods_seckill)">
-								<text class="suk_text" v-for="items in item.goods_suk.specs">{{items}}</text>
+					</view>
+				</view>
+
+				<!-- 正常商品 -->
+				<view v-else class="cart-item">
+					<view class="cart-item__inner">
+						<view class="cart-item__check-wrap">
+							<view class="cart-checkbox iconfont icon-uniE00d"
+								:class="{ checked: item.checked }"
+								@click="check('item', index)"></view>
+						</view>
+						<image @click="navigator(item.id[0], item.goods_seckill)"
+							class="cart-item__img" :src="item.image[0]" mode="aspectFill"></image>
+						<!-- #ifdef MP-WEIXIN -->
+						<view class="cart-item__body">
+						<!-- #endif -->
+						<!-- #ifndef MP-WEIXIN -->
+						<view class="cart-item__body cart-item__body--h5">
+						<!-- #endif -->
+							<text class="cart-item__name"
+								@click="navigator(item.id[0], item.goods_seckill)">{{ item.title[0] }}</text>
+							<view class="cart-item__attr" @click="navigator(item.id[0], item.goods_seckill)">
+								<text class="cart-item__suk" v-for="(items, si) in item.goods_suk.specs" :key="si">{{ items }}</text>
 							</view>
-							<scroll-view @click="navigator(item.id[0],item.goods_seckill)" style="white-space: nowrap;"
-								:show-scrollbar="false" scroll-x>
-								<view class="services_van">
-									<view class="services_vans" style="border: 1rpx solid #ff9494;"
-										v-for="give in item.services[0]">
-										<view class="goods_services" style="color: #ff9494;">{{give}}</view>
+							<scroll-view @click="navigator(item.id[0], item.goods_seckill)"
+								style="white-space: nowrap;" :show-scrollbar="false" scroll-x
+								class="cart-item__services-scroll">
+								<view class="cart-item__services">
+									<view class="cart-item__service-tag" v-for="(give, gi) in item.services[0]" :key="gi">
+										<text>{{ give }}</text>
 									</view>
 								</view>
 							</scroll-view>
-							<view @click="navigator(item.id[0],item.goods_seckill)" v-if="item.goods_seckill"
-								class="attr_van">
-								<text class="suk_prompt">秒杀结束后商品将被删除</text>
+							<view v-if="item.goods_seckill" class="cart-item__seckill-tip"
+								@click="navigator(item.id[0], item.goods_seckill)">
+								<text>秒杀结束后商品将被删除</text>
 							</view>
-							<view class="flex-dir-row mt-10 flex-y-center flex-x-between">
-								<jlg-minPrice @click="navigator(item.id[0],item.goods_seckill)"
-									:min-price="item.goods_suk.price" maxSize="32rpx"></jlg-minPrice>
-								<view>
-									<uni-number-box background="#f5f5f5" class="step" :step="1" :min="1"
-										:max="item.stock[0]" v-model="item.goods_number" @change="calcTotal"
-										disabled="false"></uni-number-box>
-								</view>
+							<view class="cart-item__bottom">
+								<jlg-minPrice @click="navigator(item.id[0], item.goods_seckill)"
+									:min-price="item.goods_suk.price" maxSize="30rpx"></jlg-minPrice>
+								<uni-number-box background="#F7F8F5" class="step" :step="1" :min="1"
+									:max="item.stock[0]" v-model="item.goods_number"
+									@change="calcTotal"></uni-number-box>
 							</view>
 						</view>
 					</view>
 				</view>
-				<view v-else class="flex-dir-column list-item">
-					<view class="  flex-dir-row flex-y-center">
-						<view class=" flex-dir-row flex-y-center">
-							<view class="iconfont icon-uniE00d checkbox" :class="{checked: item.checked}"
-								@click="check('item', index)"></view>
-							<image @click="navigator(item.id[0],item.goods_seckill)" class="litpic" :src="item.image[0]"
-								mode="aspectFill">
-							</image>
 
-						</view>
-						<!-- #ifdef MP-WEIXIN -->
-						<view class=" flex-dir-column  ml-20  w-55">
-						<!-- #endif -->
-							<!-- #ifndef MP-WEIXIN  -->
-							<view class=" flex-dir-column  ml-20 w-60">
-							<!-- #endif -->
-								<text class="title"
-									@click="navigator(item.id[0],item.goods_seckill)">{{item.title[0]}}</text>
-								<view class="attr" @click="navigator(item.id[0],item.goods_seckill)">
-									<text class="suk_text" v-for="items in item.goods_suk.specs">{{items}}</text>
-								</view>
-								<scroll-view @click="navigator(item.id[0],item.goods_seckill)"
-									style="white-space: nowrap;margin-bottom: 25rpx;" :show-scrollbar="false"
-									class="w-100" scroll-x>
-									<view class="services_van">
-										<view class="services_vans" v-for="give in item.services[0]">
-											<view class="goods_services">{{give}}</view>
-										</view>
-									</view>
-								</scroll-view>
-								<view class="flex-dir-row mt-10 flex-y-center flex-x-between">
-									<jlg-minPrice @click="navigator(item.id[0],item.goods_seckill)"
-										:min-price="item.goods_suk.price" maxSize="32rpx"></jlg-minPrice>
-									<uni-number-box background="#e2e2e2" class="step" :step="1" :min="1"
-										:max="item.stock[0]" v-model="item.goods_number"
-										@change="calcTotal"></uni-number-box>
-
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
 			</view>
-			<!-- 底部菜单栏 -->
-			<view class="footer">
-				<view class="flex-dir-row flex-y-center flex-x-between" style="flex: 1;">
-					<view class="flex-dir-row flex-y-center">
-						<view class="checkbox flex-dir-row flex-y-center">
-							<view class="iconfont icon-uniE00d checkbox" style="height: 72rpx;"
-								:class="{checked: allChecked}" @click="check('all')"></view>
-							<text class="ml-10 f-27 col-0 select-all">全选</text>
+
+			<!-- 底部结算栏 -->
+			<view class="cart-footer">
+				<view class="cart-footer__inner">
+					<view class="cart-footer__left">
+						<view class="cart-footer__all-check">
+							<view class="cart-checkbox iconfont icon-uniE00d"
+								:class="{ checked: allChecked }" @click="check('all')"></view>
+							<text class="cart-footer__all-label">全选</text>
 						</view>
-						<view v-if="!manage" class=" ml-40 flex-dir-column ">
-							<view class="flex-dir-row">
-								<text class="f-28" style="line-height: 46rpx;">合计：</text>
-								<jlg-minPrice :min-price="total" maxSize="34rpx" minSize="26rpx"></jlg-minPrice>
+						<view v-if="!manage" class="cart-footer__total">
+							<view class="cart-footer__total-row">
+								<text class="cart-footer__total-label">合计：</text>
+								<jlg-minPrice :min-price="total" maxSize="32rpx" minSize="24rpx"></jlg-minPrice>
 							</view>
-							<text class="coupon">
-								已优惠
-								<text style="color: #1C7231;">{{crossed_total/100}}</text>
-								元
-							</text>
+							<text class="cart-footer__discount">已优惠 {{ crossed_total / 100 }} 元</text>
 						</view>
 					</view>
-					<button v-if="!manage" class="no-border confirm-btn" @click="createOrder">结算商品</button>
-					<button v-else style="background: #ffffff;color: #1C7231;border: 1rpx solid #1C7231;box-shadow:none"
-						class="no-border confirm-btn" @click="deleteCartItem()">移除商品</button>
+					<button v-if="!manage"
+					class="no-border cart-footer__btn"
+					:class="{ 'cart-footer__btn--disabled': total <= 0 }"
+					:disabled="total <= 0"
+					@click="createOrder">结算商品</button>
+					<button v-else class="no-border cart-footer__btn cart-footer__btn--ghost"
+						@click="deleteCartItem()">移除商品</button>
 				</view>
 			</view>
 		</view>
+
+	</view>
 </template>
 
 <script>
@@ -356,226 +348,300 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 	page {
-		background-color: #f5f5f5;
+		background: #F7F8F5;
 	}
 
-	.container {
-		padding-bottom: 134upx;
+	.cart-page {
+		min-height: 100vh;
+		padding-bottom: 184rpx;
+		background: #F7F8F5;
+
+		/* #ifdef H5 */
+		padding-bottom: 136rpx;
+		/* #endif */
 	}
 
-	.list {
-		margin-top: 120rpx;
-	}
-
-	.edit-van {
+	/* ── 顶部导航 ── */
+	.cart-nav {
 		position: fixed;
-		display: flex;
 		top: 0;
-		height: 80rpx;
-		width: 100%;
-		line-height: 80rpx;
-		background: #fff;
-		padding: 0 33rpx;
-		font-size: 27rpx;
-		z-index: 9999;
-	}
-
-	.qgg {
-		text-align: center;
-		margin-top: 20rpx;
-		font-size: 27rpx;
-		color: #f32020;
-	}
-
-	.efficay_text {
-		position: absolute;
-		left: 65rpx;
-		top: 143rpx;
-		z-index: 8;
-		font-size: 34rpx;
-		color: #fff;
-		background-color: rgba(62, 62, 62, 0.5);
-		padding: 4rpx 26rpx;
-		border-radius: 41rpx;
-	}
-
-	/* 购物车列表项 */
-	.list-item {
+		left: 0;
+		right: 0;
+		z-index: 100;
+		height: 96rpx;
 		display: flex;
-		position: relative;
-		padding: 20upx 15upx;
-		background-color: #fff;
-		border-radius: 20rpx;
-		margin: 30rpx 20rpx;
-	}
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 32rpx;
+		background: #FFFFFF;
+		border-bottom: 1rpx solid #E5E6E2;
 
-	.checkbox {
-		z-index: 8;
-		font-size: 60rpx;
-		line-height: 1;
-		padding: 4upx;
-		color: #c7c7c7;
-		background: #fff;
-		border-radius: 50px;
-	}
-
-	.litpic {
-		width: 200rpx;
-		height: 200rpx;
-		border-radius: 15rpx;
-		margin-left: 20rpx;
-	}
-
-	.title {
-		font-size: 29rpx;
-		color: #000;
-		height: 40upx;
-		line-height: 40upx;
-		word-break: break-all;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
-
-	}
-
-	.price {
-		font-size: 29rpx;
-		height: 50upx;
-		line-height: 50upx;
-
-		&:before {
-			content: '￥';
-			font-size: 24rpx;
-			margin: 0 2upx 0 -4upx;
+		&__title {
+			font-size: 34rpx;
+			font-weight: 600;
+			color: #202321;
+			letter-spacing: 2rpx;
 		}
-	}
 
-	.attr {
-		font-size: 24rpx;
-		color: #909399;
-		height: 42rpx;
-		line-height: 37rpx;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		&__action {
+			font-size: 28rpx;
+			color: #8E918D;
 
-		.suk_text {
-			margin-right: 20rpx;
-		}
-	}
-
-	.Delete {
-		padding: 4rpx 10rpx;
-		font-size: 29rpx;
-		height: 50rpx;
-		color: #909399;
-		background: #fff;
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.services_van {
-		display: flex;
-		flex-direction: row;
-		text-align: center;
-
-		.services_vans {
-			border: 1rpx solid #ff3b3b;
-			height: 35rpx;
-			margin-bottom: 10rpx;
-			margin-right: 10rpx;
-			border-radius: 8rpx;
-			line-height: 34rpx;
-
-			.goods_services {
-				color: #ff3b3b;
-				font-size: 19rpx;
-				padding: 0 8rpx;
+			&--active {
+				color: #1C7231;
 			}
 		}
 	}
 
-	.attr_van {
-		border: 1rpx solid #1C7231;
-		height: 40rpx;
-		width: 64%;
-		border-radius: 8rpx;
-		line-height: 27rpx;
-		margin-bottom: 13rpx;
-		text-align: center;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-		.suk_prompt {
-			color: #1C7231;
-			font-size: 21rpx;
+	/* ── 空状态 ── */
+	.cart-empty {
+		&__btn {
+			margin-top: 32rpx;
+			padding: 20rpx 64rpx;
+			font-size: 28rpx;
+			color: #FFFFFF;
+			background: #1C7231;
+			text-align: center;
 		}
 	}
 
-	/* 底部栏 */
-	.footer .checkbox.checked,
-	.list-item .checkbox.checked {
-		color: #1C7231;
+	/* ── 列表区域 ── */
+	.cart-list {
+		margin-top: 96rpx;
 	}
 
-	.footer {
+	/* ── 商品行 ── */
+	.cart-item {
+		background: #FFFFFF;
+		border-bottom: 1rpx solid #E5E6E2;
+
+		&--expired {
+			background: #FFFFFF;
+		}
+
+		&__inner {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			padding: 32rpx;
+			gap: 20rpx;
+		}
+
+		&__check-wrap {
+			display: flex;
+			align-items: center;
+			padding-top: 64rpx;
+		}
+
+		&__img-wrap {
+			position: relative;
+			flex-shrink: 0;
+		}
+
+		&__img {
+			width: 180rpx;
+			height: 180rpx;
+			flex-shrink: 0;
+			background: #ECEDE8;
+		}
+
+		&__expired-badge {
+			position: absolute;
+			bottom: 10rpx;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 22rpx;
+			color: #FFFFFF;
+			background: rgba(32, 35, 33, 0.55);
+			padding: 4rpx 20rpx;
+			white-space: nowrap;
+		}
+
+		&__body {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+
+			&--h5 {
+				flex: 1;
+			}
+		}
+
+		&__name {
+			font-size: 28rpx;
+			font-weight: 500;
+			color: #202321;
+			line-height: 1.45;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+
+			&--expired {
+				color: #B8BBB6;
+			}
+		}
+
+		&__attr {
+			margin-top: 8rpx;
+			font-size: 24rpx;
+			color: #8E918D;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		&__suk {
+			margin-right: 16rpx;
+		}
+
+		&__services-scroll {
+			margin-top: 12rpx;
+		}
+
+		&__services {
+			display: flex;
+			flex-direction: row;
+		}
+
+		&__service-tag {
+			border: 1rpx solid #E5E6E2;
+			height: 36rpx;
+			margin-right: 10rpx;
+			margin-bottom: 8rpx;
+			padding: 0 12rpx;
+			line-height: 34rpx;
+			font-size: 20rpx;
+			color: #8E918D;
+			white-space: nowrap;
+		}
+
+		&__seckill-tip {
+			margin-top: 8rpx;
+			padding: 4rpx 12rpx;
+			border: 1rpx solid #1C7231;
+			align-self: flex-start;
+
+			text {
+				font-size: 20rpx;
+				color: #1C7231;
+			}
+		}
+
+		&__bottom {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 20rpx;
+		}
+	}
+
+	/* ── 复选框 ── */
+	.cart-checkbox {
+		font-size: 48rpx;
+		line-height: 1;
+		color: #C8CBC4;
+		margin-right: 16rpx;
+
+		&.checked {
+			color: #1C7231;
+		}
+	}
+
+	/* ── 底部结算栏 ── */
+	.cart-footer {
 		position: fixed;
-		z-index: 95;
-		display: flex;
-		align-items: center;
-		width: 100rpx;
-		height: 100rpx;
-		padding: 0 30rpx;
-		background: #fff;
-		bottom: 0px;
+		bottom: 0;
 		/* #ifdef H5 */
 		bottom: 50px;
 		/* #endif */
-		width: 100%;
-		border-top: 1rpx solid #f5f5f5;
-	}
+		left: 0;
+		right: 0;
+		z-index: 99;
+		background: #FFFFFF;
+		border-top: 1rpx solid #E5E6E2;
+		box-shadow: 0 -6rpx 20rpx rgba(32, 35, 33, 0.025);
 
-	.checkbox {
-		height: 48upx;
-		position: relative;
-
-		image {
-			width: 44rpx;
-			height: 100%;
-			position: relative;
-			z-index: 5;
+		&__inner {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			height: 136rpx;
+			padding: 0 36rpx;
 		}
-	}
 
-
-	.price {
-		font-size: 29rpx;
-		color: #1C7231;
-	}
-
-	.coupon {
-		font-size: 24rpx;
-		color: #bdbdbd;
-
-		text {
-			color: #bdbdbd;
+		&__left {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			flex: 1;
 		}
-	}
 
-	.confirm-btn {
-		padding: 0 38upx;
-		margin: 0;
-		border-radius: 100px;
-		height: 65upx;
-		line-height: 65upx;
-		font-size: 27rpx;
-		color: #fff;
-		background: #1C7231;
-		box-shadow: 1px 2px 5px rgba(217, 137, 138, 0.7)
+		&__all-check {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		&__all-label {
+			font-size: 30rpx;
+			color: #202321;
+		}
+
+		&__total {
+			margin-left: 40rpx;
+			display: flex;
+			flex-direction: column;
+		}
+
+		&__total-row {
+			display: flex;
+			flex-direction: row;
+			align-items: baseline;
+		}
+
+		&__total-label {
+			font-size: 26rpx;
+			color: #8E918D;
+		}
+
+		&__discount {
+			margin-top: 6rpx;
+			font-size: 22rpx;
+			color: #B8BBB6;
+		}
+
+		&__btn {
+			min-width: 192rpx;
+			height: 88rpx;
+			line-height: 88rpx;
+			padding: 0 44rpx;
+			margin: 0;
+			font-size: 30rpx;
+			font-weight: 600;
+			color: #FFFFFF;
+			background: #1C7231;
+			border-radius: 0;
+			box-shadow: none;
+			transition: background 0.2s, color 0.2s;
+
+			&--ghost {
+				background: #FFFFFF;
+				color: #1C7231;
+				border: 1rpx solid #1C7231;
+			}
+
+			&--disabled {
+				background: #C8CBC4;
+				color: #FFFFFF;
+			}
+		}
+
 	}
 </style>

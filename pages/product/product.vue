@@ -1231,7 +1231,8 @@
 		width: 100%;
 		padding-top: 20rpx;
 		background: #fff;
-		box-shadow: 0 0 20rpx 0 rgba(0, 0, 0, 0.5);
+		border-top: 1rpx solid #E5E6E2;
+		box-shadow: 0 -6rpx 20rpx rgba(32, 35, 33, 0.025);
 		padding-bottom: calc(30rpx + constant(safe-area-inset-bottom));
 		padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
 	}
