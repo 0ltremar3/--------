@@ -104,12 +104,6 @@ try {
     jlgBcakColor: function () {
       return __webpack_require__.e(/*! import() | components/jlg-bcakColor/jlg-bcakColor */ "components/jlg-bcakColor/jlg-bcakColor").then(__webpack_require__.bind(null, /*! @/components/jlg-bcakColor/jlg-bcakColor.vue */ 447))
     },
-    uvSearch: function () {
-      return Promise.all(/*! import() | uni_modules/uv-search/components/uv-search/uv-search */[__webpack_require__.e("common/vendor"), __webpack_require__.e("uni_modules/uv-search/components/uv-search/uv-search")]).then(__webpack_require__.bind(null, /*! @/uni_modules/uv-search/components/uv-search/uv-search.vue */ 454))
-    },
-    uniNoticeBar: function () {
-      return __webpack_require__.e(/*! import() | uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar */ "uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar").then(__webpack_require__.bind(null, /*! @/uni_modules/uni-notice-bar/components/uni-notice-bar/uni-notice-bar.vue */ 468))
-    },
     uniCountdown: function () {
       return Promise.all(/*! import() | uni_modules/uni-countdown/components/uni-countdown/uni-countdown */[__webpack_require__.e("common/vendor"), __webpack_require__.e("uni_modules/uni-countdown/components/uni-countdown/uni-countdown")]).then(__webpack_require__.bind(null, /*! @/uni_modules/uni-countdown/components/uni-countdown/uni-countdown.vue */ 475))
     },
@@ -152,69 +146,69 @@ var render = function () {
     _vm.filteredData[0] != null
       ? _vm.__map(_vm.msgoodsList, function (item, index) {
           var $orig = _vm.__get_orig(item)
-          var g1 = _vm.filteredData[0].goods_arr.includes(item._id)
-          var g2 = g1
+          var m0 = _vm.isSeckillGoods(item)
+          var g1 = m0
             ? item.fs_suks.reduce(function (min, suk) {
                 return parseInt(suk.price) < parseInt(min.price) ? suk : min
               })
             : null
           return {
             $orig: $orig,
+            m0: m0,
             g1: g1,
-            g2: g2,
           }
         })
       : null
   var l1 = _vm.__map(_vm.rxgoodsList, function (item, index) {
     var $orig = _vm.__get_orig(item)
-    var g3 = item.suks.reduce(function (min, suk) {
+    var g2 = item.suks.reduce(function (min, suk) {
       return parseInt(suk.price) < parseInt(min.price) ? suk : min
     })
     return {
       $orig: $orig,
-      g3: g3,
+      g2: g2,
     }
   })
   var l3 = _vm.__map(_vm.evengoodsList, function (item, index) {
     var $orig = _vm.__get_orig(item)
-    var l2 = _vm.__map(_vm.couponList, function (ius, index) {
+    var l2 = _vm.__map(_vm.couponList, function (ius, idx) {
       var $orig = _vm.__get_orig(ius)
-      var g4 =
+      var g3 =
         (ius.user_type === "所有人" || ius.user_arr.includes(_vm.user_id)) &&
         (ius.allow_type !== "指定商品" || ius.goods_arr.includes(item._id))
       return {
         $orig: $orig,
-        g4: g4,
+        g3: g3,
       }
     })
-    var g5 = item.suks.reduce(function (min, suk) {
+    var g4 = item.suks.reduce(function (min, suk) {
       return parseInt(suk.price) < parseInt(min.price) ? suk : min
     })
     return {
       $orig: $orig,
       l2: l2,
-      g5: g5,
+      g4: g4,
     }
   })
   var l5 = _vm.__map(_vm.oddgoodsList, function (item, index) {
     var $orig = _vm.__get_orig(item)
-    var l4 = _vm.__map(_vm.couponList, function (ius, index) {
+    var l4 = _vm.__map(_vm.couponList, function (ius, idx) {
       var $orig = _vm.__get_orig(ius)
-      var g6 =
+      var g5 =
         (ius.user_type === "所有人" || ius.user_arr.includes(_vm.user_id)) &&
         (ius.allow_type !== "指定商品" || ius.goods_arr.includes(item._id))
       return {
         $orig: $orig,
-        g6: g6,
+        g5: g5,
       }
     })
-    var g7 = item.suks.reduce(function (min, suk) {
+    var g6 = item.suks.reduce(function (min, suk) {
       return parseInt(suk.price) < parseInt(min.price) ? suk : min
     })
     return {
       $orig: $orig,
       l4: l4,
-      g7: g7,
+      g6: g6,
     }
   })
   _vm.$mp.data = Object.assign(
@@ -451,6 +445,14 @@ var _default = {
         }, _callee2);
       }))();
     },
+    // 语言切换（占位，后续接入 i18n）
+    switchLang: function switchLang() {
+      uni.showToast({
+        title: '语言切换',
+        icon: 'none',
+        duration: 800
+      });
+    },
     //搜索
     searchClick: function searchClick() {
       uni.navigateTo({
@@ -492,9 +494,13 @@ var _default = {
     delayed: function delayed() {
       var _this5 = this;
       this.seckilldata();
-      this.$refs.coun.update();
+      if (this.$refs.coun) {
+        this.$refs.coun.update();
+      }
       setTimeout(function () {
-        _this5.$refs.coun.update();
+        if (_this5.$refs.coun) {
+          _this5.$refs.coun.update();
+        }
       }, 1500); // 延迟1秒后再次执行
     },
     cetagories: function cetagories() {
@@ -514,14 +520,21 @@ var _default = {
         functionName: 'seckilldata',
         data: {}
       }).then(function (res) {
-        _this7.filteredData = res.result.filteredData;
-        _this7.hours = res.result.hours;
-        _this7.minutes = res.result.minutes;
-        _this7.seconds = res.result.seconds;
-        _this7.control = res.result.control;
+        var result = res.result || {};
+        _this7.filteredData = Array.isArray(result.filteredData) ? result.filteredData.filter(function (item) {
+          return item;
+        }) : [];
+        _this7.hours = result.hours || 0;
+        _this7.minutes = result.minutes || 0;
+        _this7.seconds = result.seconds || 0;
+        _this7.control = !!result.control;
       }).catch(function (error) {
         console.error(error);
       });
+    },
+    isSeckillGoods: function isSeckillGoods(item) {
+      var seckill = this.filteredData[0];
+      return !!(item && seckill && Array.isArray(seckill.goods_arr) && seckill.goods_arr.includes(item._id));
     },
     goodsdata: function goodsdata() {
       var that = this;

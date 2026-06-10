@@ -364,6 +364,15 @@ var _default = {
       uni.setNavigationBarTitle({
         title: "商城热销"
       });
+    } else {
+      // 无关键词进入（如点击搜索图标），展示全部在售商品
+      this.state = '搜索列表';
+      this.where = {
+        "is_on_sale": true
+      };
+      uni.setNavigationBarTitle({
+        title: "全部商品"
+      });
     }
     this.loadData({
       index: 0

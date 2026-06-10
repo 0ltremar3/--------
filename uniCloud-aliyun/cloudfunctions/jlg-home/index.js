@@ -38,14 +38,14 @@ async function getCetagories() {
 async function getSeckillData() {
 	try {
 		const res = await db.collection("jlg-goods-seckill").get();
-		const a = res.data;
+		const a = Array.isArray(res.data) ? res.data : [];
 
 		const currentTime = Date.now();
 		let filteredData = [];
 
 		// 使用数组的过滤（filter）方法筛选秒杀中的数据
 		filteredData = a.filter(item => {
-			return item.start_time <= currentTime && item.end_time > currentTime;
+			return item && item.start_time <= currentTime && item.end_time > currentTime;
 		});
 
 		// 如果没有秒杀中的，查找开始时间距离当前时间最近的数据
@@ -54,7 +54,7 @@ async function getSeckillData() {
 			let closestDiff = Infinity;
 
 			a.forEach((item, index) => {
-				if (item.start_time >= currentTime && item.end_time > currentTime) {
+				if (item && item.start_time >= currentTime && item.end_time > currentTime) {
 					let diff = item.start_time - currentTime;
 					if (diff < closestDiff) {
 						closestIndex = index;
@@ -64,7 +64,9 @@ async function getSeckillData() {
 			});
 
 			// 获取最近的数据项
-			filteredData.push(a[closestIndex]);
+			if (closestIndex !== -1) {
+				filteredData.push(a[closestIndex]);
+			}
 		}
 
 		// 处理剩余时间
@@ -73,7 +75,7 @@ async function getSeckillData() {
 		let seconds = 0;
 		let control = false;
 
-		if (filteredData[0] !== null) {
+		if (filteredData[0]) {
 			if (currentTime > filteredData[0].start_time) {
 				let endTime = filteredData[0].end_time - currentTime;
 				let sseconds = Math.floor(endTime / 1000);

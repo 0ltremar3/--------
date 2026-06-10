@@ -3,184 +3,190 @@
 		<jlg-bcakColor v-if="a_canvas" style="position: absolute;top:-9999999999px;z-index: -99;"
 			:style="{display:canvasDisplay,width:canwid,height:canhei}" ref="bcakColor" @update="UpdateColor"
 			:urlList="imgurl" :saturation="4" :brightness="8"></jlg-bcakColor>
+
 		<!-- #ifdef MP-WEIXIN -->
-		<view class="flex-left searchbar" :style="{height:(navHeight + 8) + 'px', backgroundColor:navbarbackground}">
-			<view class="searchbar-title" :style="{top:navTop + 'px'}">
-				<view class="flex-left search-content">
-					<uv-search placeholder="请输入商品名称" v-model="searchData" shape="round" :showAction="false"
-						@search="searchClick"></uv-search>
+		<!-- 品牌导航（小程序） -->
+		<view class="brand-nav" :style="{height:(navHeight + 8) + 'px', backgroundColor: navbarbackground}">
+			<view class="brand-nav__bar" :style="{top: navTop + 'px'}">
+				<!-- 左侧图标容器 -->
+				<view class="brand-nav__left">
+					<view class="brand-nav__icon-btn" @click="switchLang">
+						<image src="/static/icons/lang.svg" class="brand-nav__icon-img" mode="aspectFit" />
+					</view>
+					<view class="brand-nav__divider"></view>
+					<view class="brand-nav__icon-btn" @click="searchClick">
+						<image src="/static/icons/search.svg" class="brand-nav__icon-img" mode="aspectFit" />
+					</view>
 				</view>
+				<text class="brand-nav__title">山前食养</text>
+				<!-- 右侧占位，保持标题居中 -->
+				<view class="brand-nav__right"></view>
 			</view>
 		</view>
 		<!-- #endif -->
+
 		<!-- #ifndef MP-WEIXIN -->
-		<uv-search placeholder="请输入商品名称" v-model="searchData" shape="round" bgColor="#fff" :showAction="false"
-			@search="searchClick"></uv-search>
+		<view class="brand-searchbar">
+			<text class="brand-searchbar__logo">山前食养</text>
+			<uv-search placeholder="搜索商品" v-model="searchData" shape="square" bgColor="#F7F8F5"
+				:showAction="false" @search="searchClick" style="flex:1; min-width: 0;"></uv-search>
+		</view>
 		<!-- #endif -->
-		<!-- 头部轮播 -->
-		<view class="swiper">
+
+		<!-- Hero 首屏轮播 -->
+		<view class="hero-wrap">
 			<!-- #ifdef MP-WEIXIN -->
-			<view class="title-background" :style="{backgroundColor:titleBackground}">
-			</view>
+			<view class="hero-bg" :style="{backgroundColor:titleBackground}"></view>
 			<!-- #endif -->
 			<view :style="{marginTop:(navHeight + 10) + 'px'}">
-				<swiper :indicator-dots="true" autoplay indicator-active-color="red" indicator-color="#fff"
-					:duration="1000" class="swiper-list" circular @change="loadImage">
+				<swiper :indicator-dots="true" autoplay indicator-active-color="#1C7231"
+					indicator-color="rgba(255,255,255,0.4)" :duration="1000" class="hero__swiper" circular
+					@change="loadImage">
 					<swiper-item v-if="item.category_id == 1" v-for="(item, index) in carouselList" :key="index"
-						class="carousel-item" @click="navToDetailPage(item.open_url,0)">
-						<image :src="item.bannerfile.url" class="swiperImg" />
+						@click="navToDetailPage(item.open_url,0)">
+						<image :src="item.bannerfile.url" class="hero__img" mode="aspectFill" />
 					</swiper-item>
 				</swiper>
 			</view>
 		</view>
-		<!-- 消息滚动 -->
-		<view v-if="announce.length > 0" style="margin-bottom: 20rpx;">
-			<uni-notice-bar :speed="60" showIcon="true" background-color="#fff" color="#000" scrollable
-				:text="announce" />
-		</view>
-		<!-- 分类 -->
-		<view class="navbar b-f flex-dir-row flex-y-center f-wrap  flex-x-between">
-			<view @click="navToDetailPage(item.description,0)" class="nav-item" v-for="(item,index) in cetagoriesList">
-				<image mode="scaleToFill" class="nav-img" :src="item.icon"></image>
-				<text>{{item.name}}</text>
+
+		<!-- 公告 -->
+		<view v-if="announce.length > 0" class="announce-bar">
+			<text class="announce-bar__label">· 公告 ·</text>
+			<view class="announce-bar__track">
+				<text class="announce-bar__text">{{announce}}</text>
 			</view>
 		</view>
-		<!-- 广告优惠轮播 -->
-		<view style="width: 100%;">
-			<swiper previous-margin="70px" next-margin="70px" :duration="1000" class="current-list" circular
+
+		<!-- 分类横向 tab（图标 + 文字，居中） -->
+		<view class="cat-tabs ds-divider">
+			<view class="cat-tabs__wrap">
+				<view @click="navToDetailPage(item.description,0)" class="cat-tabs__item"
+					v-for="(item,index) in cetagoriesList" :key="index">
+					<image mode="aspectFill" class="cat-tabs__icon" :src="item.icon"></image>
+					<text class="cat-tabs__label">{{item.name}}</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 广告横滑轮播（统一大小，无缩放） -->
+		<view class="ad-swiper">
+			<swiper previous-margin="60rpx" next-margin="60rpx" :duration="500" class="ad-swiper__list" circular
 				@change="handleSwiperChange">
-				<swiper-item v-for="(item, index) in carousetowList" :key="index"
-					:class="index === current ? 'current-img' : 'adv-img'" @click="navToDetailPage(item.open_url,0)">
-					<image mode="scaleToFill" :src="item.bannerfile.url" />
+				<swiper-item v-for="(item, index) in carousetowList" :key="index" class="ad-swiper__item"
+					@click="navToDetailPage(item.open_url,0)">
+					<image mode="aspectFill" :src="item.bannerfile.url" class="ad-swiper__img" />
 				</swiper-item>
 			</swiper>
 		</view>
 
-		<!-- 秒杀-->
-
-		<view v-if="filteredData[0] != null" class="seckill">
-			<view class="seckill-top flex-dir-row flex-y-center flex-x-between">
-				<view class="flex-dir-row">
-					<image class="seckill-imgs" src="/static/temp/xsmss.png" mode="widthFix"></image>
-					<image class="seckill-img" src="/static/temp/secskill-img.png" mode="widthFix"></image>
-				</view>
+		<!-- 限时精选（秒杀）-->
+		<view v-if="filteredData[0] != null" class="section">
+			<view class="section__hd">
+				<text class="text-section-title">限时精选</text>
 				<view class="flex-dir-row flex-y-center">
-					<text v-if="control" class="seckill-tip">距离结束</text>
-					<text v-else class="seckill-tip">距离下一场</text>
-					<uni-countdown @timeup="delayed" ref="coun" class="ml-20" :hour="hours" :minute="minutes"
-						:second="seconds" color="#FFFFFF" background-color="#1C7231" />
+					<text v-if="control" class="text-meta">距结束</text>
+					<text v-else class="text-meta">距下场</text>
+					<uni-countdown @timeup="delayed" ref="coun" class="ml-10" :hour="hours" :minute="minutes"
+						:second="seconds" color="#1C7231" background-color="transparent" />
 				</view>
-
 			</view>
-			<scroll-view class="seckill-list " scroll-x="true">
-				<view v-if="filteredData[0].goods_arr.includes(item._id)" v-for="(item, index) in msgoodsList"
-					:key="index" class="seckill-item mt-20 " @click="navToDetailPage(item._id,1,hours,minutes,seconds)">
-					<view class=" flex-dir-column flex-x-start">
-						<image :src="item.goods_thumb" class="seckill-list-img" mode="aspectFill"></image>
-						<view class="seckill-title">{{item.name}}</view>
-						<view class="seckill-price">
-							<jlg-minPrice
-								:min-price="item.fs_suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
-								maxSize="27rpx" min-size="24rpx"></jlg-minPrice>
-						</view>
+			<scroll-view class="goods-row" scroll-x="true">
+				<view v-if="isSeckillGoods(item)" v-for="(item, index) in msgoodsList"
+					:key="index" class="goods-row__item" @click="navToDetailPage(item._id,1,hours,minutes,seconds)">
+					<image :src="item.goods_thumb" class="goods-row__img" mode="aspectFill"></image>
+					<view class="goods-row__name ellipsis">{{item.name}}</view>
+					<view class="goods-row__price">
+						<jlg-minPrice
+							:min-price="item.fs_suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
+							maxSize="28rpx" min-size="24rpx"></jlg-minPrice>
 					</view>
-
 				</view>
 			</scroll-view>
 		</view>
-		<!-- 热销-->
 
-		<view class="hot mt-30">
-			<view @click="allClick" class="hot-top flex-dir-row flex-y-center flex-x-between">
-				<text class="f-32 col-0 f-w ">商城热销</text>
-				<view class="flex-dir-row flex-y-center col-9 f-26">
-					<text class="f-24 col-9">查看更多</text>
-					<text class="iconfont ml-10 icon-uniE003"></text>
-				</view>
-
+		<!-- 本周精选（热销）-->
+		<view class="section">
+			<view class="section__hd">
+				<text class="text-section-title">本周精选</text>
+			<view class="flex-dir-row flex-y-center" @click="allClick">
+				<text class="text-meta">查看更多</text>
+				<text class="iconfont ml-10 icon-uniE003 text-meta"></text>
 			</view>
-			<scroll-view class="seckill-list " scroll-x="true">
-				<view v-for="(item, index) in rxgoodsList" :key="index" class="seckill-item mt-20 "
+			</view>
+			<scroll-view class="goods-row" scroll-x="true">
+				<view v-for="(item, index) in rxgoodsList" :key="index" class="goods-row__item"
 					@click="navToDetailPage(item._id)">
-					<view class=" flex-dir-column flex-x-start">
-						<image :src="item.goods_thumb" class="seckill-list-img" mode="aspectFill"></image>
-						<view class="seckill-title">{{item.name}}</view>
-						<view class="seckill-price">
-							<jlg-minPrice
-								:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
-								maxSize="27rpx" min-size="24rpx"></jlg-minPrice>
-						</view>
+					<image :src="item.goods_thumb" class="goods-row__img" mode="aspectFill"></image>
+					<view class="goods-row__name ellipsis">{{item.name}}</view>
+					<view class="goods-row__price">
+						<jlg-minPrice
+							:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
+							maxSize="28rpx" min-size="24rpx"></jlg-minPrice>
 					</view>
-
 				</view>
 			</scroll-view>
 		</view>
 
-		<!-- 强烈推荐 -->
-		<view class="allLike">
-			<uv-waterfall ref="waterfall" left-gap="0" right-gap="0" column-gap="8" @changeList="changeList">
-				<!-- 第一列数据 -->
-				<template v-slot:list1>
-					<!-- 为了磨平部分平台的BUG，必须套一层view -->
-					<view>
-						<view v-for="(item, index) in evengoodsList" :key="index" @click="navToDetailPage(item._id)"
-							class="waterfall-item">
-							<view class="waterfall-item__image">
-								<image :src="item.goods_thumb" mode="scaleToFill" class="allLike-img">
-								</image>
-							</view>
-							<view class="waterfall-item__ft">
-								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
-								</view>
-								<view class="flex-dir-row flex-y-center col-1C7231" :class="control?'':'mt-20'"
-									style="flex-wrap: wrap;">
-									<view class="coupon-btn col-1C7231" v-for="(ius, index) in couponList" :key="index"
-										v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
-										{{ius.name}}
+		<!-- 食养精选（推荐双列）-->
+		<view class="section section--grid">
+			<view class="section__hd section__hd--center">
+				<text class="text-section-title">食养精选</text>
+			</view>
+			<view class="allLike">
+				<uv-waterfall ref="waterfall" left-gap="0" right-gap="0" column-gap="8" @changeList="changeList">
+					<!-- 第一列数据 -->
+					<template v-slot:list1>
+						<!-- 为了磨平部分平台的BUG，必须套一层view -->
+						<view>
+							<view v-for="(item, index) in evengoodsList" :key="index"
+								@click="navToDetailPage(item._id)" class="grid-item">
+								<image :src="item.goods_thumb" mode="aspectFill" class="grid-item__img"></image>
+								<view class="grid-item__ft">
+									<view class="grid-item__name ellipsis">{{item.name}}</view>
+									<view class="flex-dir-row flex-y-center f-wrap" :class="control?'':'margin-top-xs'">
+										<view class="coupon-tag" v-for="(ius, idx) in couponList" :key="idx"
+											v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
+											{{ius.name}}
+										</view>
 									</view>
-								</view>
-								<view class="waterfall-item__ft__desc mt-10 uv-line-2">
-									<jlg-minPrice
-										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
-										maxSize="32rpx"></jlg-minPrice>
+									<view class="grid-item__price margin-top-xs uv-line-2">
+										<jlg-minPrice
+											:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
+											maxSize="32rpx"></jlg-minPrice>
+									</view>
 								</view>
 							</view>
 						</view>
-					</view>
-				</template>
-				<!-- 第二列数据 -->
-				<template v-slot:list2>
-					<!-- 为了磨平部分平台的BUG，必须套一层view -->
-					<view>
-						<view v-for="(item, index) in oddgoodsList" @click="navToDetailPage(item._id)" :key="index"
-							class="waterfall-item">
-							<view class="waterfall-item__image">
-								<image :src="item.goods_thumb" mode="scaleToFill" class="allLike-img">
-								</image>
-							</view>
-							<view class="waterfall-item__ft">
-								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
-								</view>
-								<view class="flex-dir-row flex-y-center col-1C7231" :class="control?'':'mt-20'"
-									style="flex-wrap: wrap;">
-									<view class="coupon-btn col-1C7231" v-for="(ius, index) in couponList" :key="index"
-										v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
-										{{ius.name}}
+					</template>
+					<!-- 第二列数据 -->
+					<template v-slot:list2>
+						<!-- 为了磨平部分平台的BUG，必须套一层view -->
+						<view>
+							<view v-for="(item, index) in oddgoodsList" @click="navToDetailPage(item._id)"
+								:key="index" class="grid-item">
+								<image :src="item.goods_thumb" mode="aspectFill" class="grid-item__img"></image>
+								<view class="grid-item__ft">
+									<view class="grid-item__name ellipsis">{{item.name}}</view>
+									<view class="flex-dir-row flex-y-center f-wrap" :class="control?'':'margin-top-xs'">
+										<view class="coupon-tag" v-for="(ius, idx) in couponList" :key="idx"
+											v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
+											{{ius.name}}
+										</view>
 									</view>
-								</view>
-								<view class="waterfall-item__ft__desc mt-10 uv-line-2">
-									<jlg-minPrice
-										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
-										maxSize="32rpx"></jlg-minPrice>
+									<view class="grid-item__price margin-top-xs uv-line-2">
+										<jlg-minPrice
+											:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
+											maxSize="32rpx"></jlg-minPrice>
+									</view>
 								</view>
 							</view>
 						</view>
-					</view>
-				</template>
-			</uv-waterfall>
+					</template>
+				</uv-waterfall>
+			</view>
 		</view>
+
 		<uni-pay ref="uniPay"></uni-pay>
 		<uni-load-more :status="loadingType"></uni-load-more>
 	</view>
@@ -335,6 +341,10 @@
 					uni.setStorageSync("uni-pay-weixin-h5-code", data.code);
 				}
 			},
+			// 语言切换（占位，后续接入 i18n）
+			switchLang() {
+				uni.showToast({ title: '语言切换', icon: 'none', duration: 800 });
+			},
 			//搜索
 			searchClick() {
 				uni.navigateTo({
@@ -374,10 +384,14 @@
 			},
 			delayed() {
 				this.seckilldata()
-				this.$refs.coun.update();
+				if (this.$refs.coun) {
+					this.$refs.coun.update();
+				}
 
 				setTimeout(() => {
-					this.$refs.coun.update();
+					if (this.$refs.coun) {
+						this.$refs.coun.update();
+					}
 				}, 1500); // 延迟1秒后再次执行
 			},
 			cetagories() {
@@ -398,15 +412,20 @@
 						data: {}
 					})
 					.then(res => {
-						this.filteredData = res.result.filteredData;
-						this.hours = res.result.hours;
-						this.minutes = res.result.minutes;
-						this.seconds = res.result.seconds;
-						this.control = res.result.control;
+						const result = res.result || {};
+						this.filteredData = Array.isArray(result.filteredData) ? result.filteredData.filter(item => item) : [];
+						this.hours = result.hours || 0;
+						this.minutes = result.minutes || 0;
+						this.seconds = result.seconds || 0;
+						this.control = !!result.control;
 					})
 					.catch(error => {
 						console.error(error);
 					});
+			},
+			isSeckillGoods(item) {
+				const seckill = this.filteredData[0];
+				return !!(item && seckill && Array.isArray(seckill.goods_arr) && seckill.goods_arr.includes(item._id));
 			},
 			goodsdata() {
 				let that = this;
@@ -611,9 +630,10 @@
 </script>
 
 <style lang="scss">
+	@import '@/static/common/common.scss';
+
 	page {
-		background-color: #f5f5f5;
-		padding: 20rpx;
+		background-color: #F7F8F5;
 		box-sizing: border-box;
 	}
 
@@ -626,300 +646,311 @@
 		color: transparent;
 	}
 
-	/* 自定义顶部导航 */
-	.searchbar {
+	/* ── 品牌导航（小程序） ── */
+	.brand-nav {
 		width: 100%;
-		overflow: hidden;
 		position: fixed;
 		top: 0;
 		left: 0;
 		z-index: 10;
-		flex-shrink: 0;
 		transition: background-color 0.3s ease;
+
+		&__bar {
+			position: fixed;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 32rpx;
+			box-sizing: border-box;
+		}
+
+		&__title {
+			font-size: 34rpx;
+			font-weight: 600;
+			color: #202321;
+			letter-spacing: 4rpx;
+		}
+
+		&__left {
+			display: flex;
+			align-items: center;
+			height: 100%;
+		}
+
+		&__right {
+			width: 80rpx;
+		}
+
+		&__icon-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 56rpx;
+			height: 56rpx;
+		}
+
+		&__divider {
+			width: 1rpx;
+			height: 28rpx;
+			background: #C8CCC9;
+			margin: 0 8rpx;
+		}
+
+		&__icon-img {
+			width: 40rpx;
+			height: 40rpx;
+		}
 	}
 
-	.searchbar .searchbar-title {
-		width: 100%;
-		position: fixed;
-		left: 20rpx;
-		z-index: 10;
-	}
-
-	.searchbar .searchbar-return {
-		width: 70rpx;
-		height: 60rpx;
-		line-height: 60rpx;
-		text-align: center;
-		position: fixed;
-		left: 0;
-	}
-
-	.searchbar .icon-arrow-left {
-		font-size: 36rpx;
-		color: #333;
-	}
-
-	.searchbar .search-content {
+	/* ── 品牌搜索栏（H5） ── */
+	.brand-searchbar {
 		display: flex;
-		flex-direction: row;
-		width: 70%;
-		height: 60rpx;
-		background-color: #eaeaea;
-		border-radius: 100rpx;
+		align-items: center;
+		padding: 16rpx 32rpx;
+		background: #FFFFFF;
+		border-bottom: 1rpx solid #E5E6E2;
+
+		&__logo {
+			font-size: 32rpx;
+			font-weight: 600;
+			color: #202321;
+			letter-spacing: 4rpx;
+			margin-right: 24rpx;
+			white-space: nowrap;
+		}
 	}
 
-	.searchbar .icon-search {
-		font-size: 40rpx;
-		color: #A0A0A0;
-		padding: 0 5rpx;
-	}
-
-	.searchbar .search-input {
-		font-size: 25rpx;
-		color: #666;
-		height: 60rpx;
-	}
-
-
-
-	.swiper-list {
-		height: 300rpx;
-	}
-
-	.current-list {
-		height: 520rpx;
-	}
-
-	.swiper {
-		margin-top: 30rpx;
-		height: 320rpx;
-	}
-
-	.swiperImg {
+	/* ── Hero 首屏轮播 ── */
+	.hero-wrap {
 		width: 100%;
-		border-radius: 30rpx;
-		height: 300rpx;
+		position: relative;
+		overflow: hidden;
 	}
 
-	.title-background {
+	.hero-bg {
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 260rpx;
-		/* #ifdef MP-WEIXIN */
-		height: 400rpx;
-		/* #endif */
-		transition: .4s;
-		border-radius: 0 0 65rpx 65rpx;
-		transition: background-color 1s ease;
+		height: 100%;
+		transition: background-color 0.8s ease;
 	}
 
-	/* 分类 */
-	.navbar {
+	.hero__swiper {
+		height: 420rpx;
+	}
+
+	.hero__img {
 		width: 100%;
-		padding: 30rpx;
-		box-sizing: border-box;
-		border-radius: 20rpx;
+		height: 420rpx;
 	}
 
-	.nav-item {
+	/* ── 公告栏 ── */
+	@keyframes marquee {
+		0%   { transform: translateX(100%); }
+		100% { transform: translateX(-100%); }
+	}
+
+	.announce-bar {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		font-size: 26rpx;
-		color: #303133;
-	}
+		height: 56rpx;
+		padding: 0 32rpx;
+		background: #FFFBF4;
+		border-top: 1rpx solid #F0E6D0;
+		border-bottom: 1rpx solid #F0E6D0;
+		margin-top: 20rpx;
+		position: relative;
+		z-index: 2;
+		overflow: hidden;
 
-	.nav-img {
-		width: 88upx;
-		height: 88upx;
-		margin-bottom: 14upx;
-		border-radius: 20rpx;
-	}
+		&__label {
+			font-size: 20rpx;
+			font-weight: 400;
+			color: #B89060;
+			letter-spacing: 2rpx;
+			flex-shrink: 0;
+			margin-right: 20rpx;
+		}
 
-	/* 广告轮播 */
-	.adv {
-		margin: 10rpx 30rpx;
-		width: 690rpx;
-		padding: 30rpx;
-		box-sizing: border-box;
-		border-radius: 20rpx;
-		height: 200px;
-		/* 设置轮播图的高度 */
-	}
+		&__track {
+			flex: 1;
+			overflow: hidden;
+		}
 
-	/* 设置当前指示点对应的图片放大样式 */
-	.current-img {
-		width: 100%;
-		height: 100%;
-		padding: 20rpx 25rpx;
-		transition: padding 1s;
-
-		image {
-			width: 100%;
-			height: 100%;
-			border-radius: 15rpx;
+		&__text {
+			display: inline-block;
+			white-space: nowrap;
+			font-size: 22rpx;
+			font-weight: 400;
+			color: #8A6A3A;
+			line-height: 56rpx;
+			animation: marquee 14s linear infinite;
 		}
 	}
 
-
-	.adv-img {
+	/* ── 分类横向 tab（图标+文字，居中） ── */
+	.cat-tabs {
 		width: 100%;
-		height: 100%;
-		padding: 45rpx 0;
-		transition: padding 1s;
+		background: #FFFFFF;
+		margin-top: 2rpx;
 
-		image {
-			width: 100%;
-			height: 100%;
-			border-radius: 15rpx;
+		&__wrap {
+			display: flex;
+			flex-wrap: nowrap;
+			justify-content: space-around;
+			padding: 24rpx 16rpx 20rpx;
 		}
-	}
 
-	// 限时秒杀
-	.seckill {
-		width: 100%;
-		padding: 30rpx;
-		box-sizing: border-box;
-		border-radius: 20rpx;
-		height: 200px;
-		background: linear-gradient(to top, #ffffff, #ffd8d8);
-	}
+		&__item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			flex: 1;
+		}
 
-	.seckill-list {
-		white-space: nowrap;
-		width: 100%;
-	}
-
-	.seckill-item {
-		display: inline-block;
-		width: 140rpx;
-		font-size: 29rpx;
-		margin-right: 30rpx;
-	}
-
-	.seckill-img {
-		width: 140rpx;
-	}
-
-	.seckill-imgs {
-		width: 38rpx;
-		margin-right: 7rpx;
-		margin-top: -1rpx;
-	}
-
-	.seckill-list-img {
-		width: 150rpx;
-		height: 150rpx;
-		border-radius: 15rpx;
-	}
-
-	.seckill-title {
-		width: 140rpx;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		-o-text-overflow: ellipsis;
-		font-size: 28rpx;
-		margin-top: 10rpx;
-	}
-
-	.seckill-tip {
-		font-size: 26rpx;
-		color: #737373;
-	}
-
-	.seckill-price {
-		color: #1C7231;
-		margin-top: 5rpx;
-		font-size: 26rpx;
-	}
-
-	// 限时秒杀
-	.hot {
-		width: 100%;
-		padding: 30rpx;
-		box-sizing: border-box;
-		border-radius: 20rpx;
-		height: 200px;
-		background: #fff;
-		margin-bottom: 10rpx;
-	}
-
-	.allLike-header {
-		margin: auto;
-		color: #d21515;
-		width: 94.5%;
-		height: 40rpx;
-		padding: 40rpx;
-		background: #fff;
-		border-radius: 20rpx;
-		font-weight: 600;
-		margin-bottom: 10rpx;
-	}
-
-	.allLike-header image {
-		width: 290rpx;
-		height: 85rpx;
-	}
-
-	$show-lines: 1;
-	@import '@/uni_modules/uv-ui-tools/libs/css/variable.scss';
-
-	.waterfall-item {
-		width: 103%;
-		overflow: hidden;
-		margin-top: 10px;
-		border-radius: 6px;
-		background-color: #fff;
-	}
-
-	.waterfall-item__ft {
-		padding: 10rpx 10rpx 20rpx 10rpx;
-		background: #fff;
-
-		&__title {
+		&__icon {
+			width: 88rpx;
+			height: 88rpx;
+			border-radius: 8rpx;
+			background: #ECEDE8;
 			margin-bottom: 10rpx;
-			line-height: 48rpx;
-			font-weight: 700;
+		}
 
-			.value {
-				font-size: 32rpx;
-				color: #303133;
+		&__label {
+			font-size: 24rpx;
+			color: #2B2F2C;
+			white-space: nowrap;
+		}
+	}
+
+	/* ── 广告横滑轮播（统一大小，无缩放） ── */
+	.ad-swiper {
+		width: 100%;
+		margin: 24rpx 0;
+
+		&__list {
+			height: 300rpx;
+		}
+
+		&__item {
+			padding: 0 12rpx;
+			box-sizing: border-box;
+		}
+
+		&__img {
+			width: 100%;
+			height: 300rpx;
+			border-radius: 8rpx;
+		}
+	}
+
+	/* ── 通用分区 ── */
+	.section {
+		background: #FFFFFF;
+		margin-top: 16rpx;
+		padding: 32rpx;
+
+		&__hd {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 28rpx;
+
+			&--center {
+				justify-content: center;
+				margin-bottom: 32rpx;
 			}
 		}
 
-		&__desc .value {
-			font-size: 28rpx;
-			color: #606266;
-		}
-
-		&__btn {
-			padding: 10px 0;
+		&--grid {
+			padding: 32rpx 16rpx;
 		}
 	}
 
-	.allLike-img {
-		width: 100%;
-		height: 340rpx;
-		border-radius: 20rpx 20rpx 0 0;
-	}
-
-	.hot-price {
-		font-size: 30rpx;
-		color: #1C7231;
-	}
-
-	.coupon-btn {
-		background-color: #ffefef;
-		margin-right: 5rpx;
-		font-size: 25rpx;
-		padding: 6rpx 16rpx;
-		border-radius: 10rpx;
+	/* ── 商品横滑列表 ── */
+	.goods-row {
 		white-space: nowrap;
-		margin-top: 10rpx;
+		width: 100%;
+
+		&__item {
+			display: inline-block;
+			width: 190rpx;
+			margin-right: 24rpx;
+			vertical-align: top;
+		}
+
+		&__img {
+			width: 190rpx;
+			height: 190rpx;
+			border-radius: 4rpx;
+			background: #ECEDE8;
+		}
+
+		&__name {
+			width: 190rpx;
+			margin-top: 14rpx;
+			font-size: 26rpx;
+			font-weight: 500;
+			color: #2B2F2C;
+			line-height: 1.45;
+		}
+
+		&__price {
+			margin-top: 8rpx;
+			color: #1C7231;
+		}
 	}
 
-	.allLike {}
+	/* ── 推荐双列商品卡 ── */
+	$show-lines: 1;
+	@import '@/uni_modules/uv-ui-tools/libs/css/variable.scss';
+
+	.grid-item {
+		width: 103%;
+		overflow: hidden;
+		margin-top: 16rpx;
+		background: #FFFFFF;
+		border: 1rpx solid #E5E6E2;
+		border-radius: 8rpx;
+
+		&__img {
+			width: 100%;
+			height: 300rpx;
+			background: #ECEDE8;
+		}
+
+		&__ft {
+			padding: 16rpx;
+			background: #FFFFFF;
+		}
+
+		&__name {
+			font-size: 28rpx;
+			font-weight: 500;
+			color: #2B2F2C;
+			line-height: 1.45;
+		}
+
+		&__price {
+			color: #1C7231;
+		}
+	}
+
+	/* ── 优惠券标签（绿色细边框） ── */
+	.coupon-tag {
+		border: 1rpx solid #1C7231;
+		color: #1C7231;
+		font-size: 22rpx;
+		padding: 4rpx 12rpx;
+		border-radius: 4rpx;
+		white-space: nowrap;
+		margin-right: 8rpx;
+		margin-top: 8rpx;
+	}
+
+	.allLike {
+		width: 100%;
+	}
 </style>
