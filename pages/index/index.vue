@@ -910,7 +910,7 @@
 
 		&__price {
 			margin-top: 8rpx;
-			color: #1C7231;
+			color: #202321;
 		}
 	}
 
@@ -945,7 +945,7 @@
 		}
 
 		&__price {
-			color: #1C7231;
+			color: #202321;
 		}
 	}
 

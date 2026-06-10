@@ -1179,7 +1179,7 @@ to {
    ══════════════════════════════════════════ */
 /* 价格色覆盖 → 主题绿 */
 .price, .price-jf, .discount, .s-price {
-  color: #1C7231;
+  color: #202321;
 }
 .use-btn {
   background-color: #1C7231;
@@ -1226,7 +1226,7 @@ to {
   font-size: 32rpx;
   font-weight: 500;
   line-height: 1;
-  color: #1C7231;
+  color: #202321;
   font-family: "Abel", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
 }
 .text-primary {

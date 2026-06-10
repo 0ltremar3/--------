@@ -19,7 +19,7 @@
 			},
 			col: {
 				type: String,
-				default: '#1C7231'
+				default: '#202321'
 			},
 			maxSize: {
 				type: String,

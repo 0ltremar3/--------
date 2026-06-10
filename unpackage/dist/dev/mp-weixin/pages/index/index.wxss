@@ -1179,7 +1179,7 @@ to {
    ══════════════════════════════════════════ */
 /* 价格色覆盖 → 主题绿 */
 .price, .price-jf, .discount, .s-price {
-  color: #1C7231;
+  color: #202321;
 }
 .use-btn {
   background-color: #1C7231;
@@ -1226,7 +1226,7 @@ to {
   font-size: 32rpx;
   font-weight: 500;
   line-height: 1;
-  color: #1C7231;
+  color: #202321;
   font-family: "Abel", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
 }
 .text-primary {
@@ -1527,7 +1527,7 @@ page {
 }
 .goods-row__price {
   margin-top: 8rpx;
-  color: #1C7231;
+  color: #202321;
 }
 /* ── 推荐双列商品卡 ── */
 .uv-line-1 {
@@ -1592,7 +1592,7 @@ page {
   line-height: 1.45;
 }
 .grid-item__price {
-  color: #1C7231;
+  color: #202321;
 }
 /* ── 优惠券标签（绿色细边框） ── */
 .coupon-tag {
