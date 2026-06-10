@@ -1,0 +1,71 @@
+{
+    "bsonType": "object",
+    "required": [
+        "name",
+        "mobile",
+        "area_code",
+        "address"
+    ],
+    "description": "收货地址",
+    "permission": {
+        "read": "doc.user_id == auth.uid || 'experience' in auth.permission",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": "doc.user_id == auth.uid && !('experience' in auth.permission)",
+        "delete": "doc.user_id == auth.uid && !('experience' in auth.permission)"
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "用户id，参考uni-id-users表",
+            "foreignKey": "uni-id-users._id",
+            "forceDefaultValue": {
+                "$env": "uid"
+            }
+        },
+        "name": {
+            "bsonType": "string",
+            "description": "收货人",
+            "title": "收货人",
+            "trim": "both"
+        },
+        "mobile": {
+            "bsonType": "string",
+            "description": "手机号码，加密存储",
+            "title": "手机号",
+            "trim": "both"
+        },
+        "area_code": {
+            "bsonType": "string",
+            "description": "区级编码",
+            "title": "省市区",
+            "foreignKey": "opendb-city-china.code",
+            "enumType": "tree",
+            "enum": {
+                "collection": "opendb-city-china",
+                "orderby": "value asc",
+                "field": "code as value, name as text, eq(type, 2) as isleaf"
+            }
+        },
+        "address": {
+            "bsonType": "string",
+            "description": "省市区后面的详细住址，包含街道小区房间号",
+            "title": "详细住址",
+            "trim": "both"
+        },
+        "formatted_address": {
+            "bsonType": "string",
+            "description": "完整地址信息，包括省市区及街道小区房间号",
+            "trim": "both"
+        },
+        "is_default": {
+            "bsonType": "bool",
+            "description": "是否为默认地址",
+            "title": "默认地址",
+            "defaultValue": false
+        }
+    },
+    "version": "0.0.1"
+}

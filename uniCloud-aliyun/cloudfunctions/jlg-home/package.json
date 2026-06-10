@@ -1,0 +1,7 @@
+{
+  "name": "jlg-home",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

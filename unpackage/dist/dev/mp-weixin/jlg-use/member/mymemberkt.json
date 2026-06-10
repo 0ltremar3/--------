@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "会员中心",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice",
+    "uni-pay": "/uni_modules/uni-pay/components/uni-pay/uni-pay"
+  }
+}

@@ -1,0 +1,454 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* pages/user/index.wxss */
+/* 用户信息 */
+page {
+	background: #2E251C;
+}
+.w-100 {
+	width: 100%;
+}
+.mlr-4 {
+	margin: 0 4%;
+}
+.mlr-55 {
+	margin: 0 55rpx;
+}
+.mt-10 {
+	margin-top: 10rpx !important;
+}
+.col-ff0101 {
+	color: #ff0101;
+}
+.col-7e7e7e {
+	color: #7e7e7e;
+}
+.col-252525 {
+	color: #FBDAA8
+}
+.col-0 {
+	color: #000 !important
+}
+.mt-30 {
+	margin-top: 30rpx !important;
+}
+.mt-40 {
+	margin-top: 40rpx !important;
+}
+.mt-50 {
+	margin-top: 50rpx !important;
+}
+.f-42 {
+	font-size: 42rpx;
+}
+.ml-10 {
+	margin-left: 10rpx;
+}
+.ml-20 {
+	margin-left: 20rpx;
+}
+.line {
+	width: 100%;
+	height: 20rpx;
+	background-color: #F6F6F8;
+}
+.buy_btn {
+	background: linear-gradient(to right, #FECD81, #FED89B);
+	color: #2f2214;
+	padding: 10rpx 30rpx;
+	border-radius: 50rpx;
+}
+.header-center {
+	margin: 30rpx 4%;
+	background: linear-gradient(to right, #424242, #2C2C2E);
+	border-radius: 20rpx;
+	padding: 20rpx 30rpx;
+	box-sizing: border-box;
+	color: #856239;
+	margin-top: -180rpx;
+}
+.avatar {
+	width: 110rpx;
+	height: 110rpx;
+	border-radius: 50%;
+	border: 1rpx solid #ecc69b;
+}
+.vip {
+	width: 40rpx;
+	height: 40rpx;
+	margin-left: 1%;
+}
+.vipIcon {
+	width: 95rpx;
+	height: 95rpx;
+	border-radius: 50%;
+	background-color: #656156;
+	text-align: center;
+	line-height: 100rpx;
+}
+.vipIconImg {
+	width: 90rpx;
+	height: 90rpx;
+	border-radius: 50%;
+}
+.box {
+	background: #fff;
+	border-radius: 20rpx 20rpx 0 0;
+	position: relative;
+	top: 210rpx;
+	width: 100%;
+	min-height: 100vh;
+	padding-top: 10rpx;
+}
+.coupon {
+	background: linear-gradient(to bottom, #FEF1CF, #FFE3B5);
+	border-radius: 10rpx;
+	color: #8F4E3D;
+	width: 22.8%;
+	margin-right: 20rpx;
+}
+.coupon:nth-child(4n) {
+	margin-right: 0;
+}
+.product {
+
+	border-radius: 10rpx;
+	color: #8F4E3D;
+	width: 31.3%;
+	margin-right: 20rpx;
+}
+.product-img {
+	width: 100%;
+	height: 195rpx !important;
+	border-radius: 15rpx;
+	margin-bottom: 10rpx;
+}
+.product:nth-child(3n) {
+	margin-right: 0;
+}
+.product_btn {
+	color: #fff;
+	background: linear-gradient(to right, #ff3a3a, #1C7231);
+	border-radius: 8rpx;
+	box-sizing: border-box;
+	text-align: center;
+	padding: 5rpx 15rpx;
+}
+.typeBtn {
+	font-size: 20rpx;
+	background-color: #FDDDB1;
+	padding: 4rpx 12rpx;
+	border-radius: 0 0 10rpx 10rpx;
+	color: #9B5B38;
+}
+.coupon-line {
+	width: 100%;
+	border-top: 1rpx dashed #9b8675;
+	margin-top: 20rpx;
+}
+.price-bg {
+	background-color: #FDEBD0;
+	padding: 2rpx 6rpx;
+	box-sizing: border-box;
+	border-radius: 10rpx 0 0 10rpx;
+}
+.vBg {
+	background-color: #33393F;
+	color: #FEE6CB;
+	font-size: 22rpx;
+	padding: 6rpx 10rpx 4rpx 3px;
+	box-sizing: border-box;
+	font-style: initial;
+	border-radius: 0 10rpx 10rpx 0;
+}
+

@@ -1,0 +1,54 @@
+{
+    "bsonType": "object",
+    "description": "购物车",
+    "required": [
+        "goods_id",
+        "goods_suk",
+        "goods_number"
+    ],
+    "permission": {
+        "read": "doc.user_id == auth.uid || 'experience' in auth.permission",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": "doc.user_id == auth.uid && !('experience' in auth.permission)",
+        "delete": "doc.user_id == auth.uid && !('experience' in auth.permission)"
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "goods_id": {
+            "bsonType": "string",
+            "description": "加购的商品id",
+            "foreignKey": "opendb-mall-goods._id"
+        },
+        "goods_suk": {
+            "bsonType": "object",
+            "description": "商品规格suk"
+        },
+        "goods_seckill": {
+            "bsonType": "bool",
+            "description": "此规格是否为秒杀规格"
+        },
+        "goods_number": {
+            "bsonType": "int",
+            "description": "加购数量"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "加购用户，创建人",
+            "trim": "both",
+            "foreignKey": "uni-id-users._id",
+            "forceDefaultValue": {
+                "$env": "uid"
+            }
+        },
+        "modify_date": {
+            "bsonType": "timestamp",
+            "description": "修改时间"
+        },
+        "create_date": {
+            "bsonType": "timestamp",
+            "description": "创建时间"
+        }
+    }
+}

@@ -1,0 +1,454 @@
+[
+    {
+        "_id": {
+            "$oid": "6482d7a6e766bb54453796cc"
+        },
+        "type": "满减",
+        "name": "满78减20",
+        "price": 2000,
+        "user_type": "所有人",
+        "order_amount": 7800,
+        "max_number": 1,
+        "number": 200,
+        "received_number": 40,
+        "start_time": 1686296459000,
+        "end_time": 1736581268000,
+        "allow_type": "所有商品",
+        "is_share": true,
+        "state": "已发放",
+        "goods_arr": [
+            {
+                "$oid": "647d900ae1a35c1a7f48a5c0"
+            },
+            {
+                "$oid": "64801d03819ce82bda01a4c5"
+            }
+        ],
+        "create_time": 1686296486943
+    },
+    {
+        "_id": {
+            "$oid": "6483134ef5cf3a3d28d90004"
+        },
+        "type": "折扣",
+        "name": "满100享8折",
+        "price": 80,
+        "user_type": "指定用户",
+        "order_amount": 10000,
+        "max_number": 1,
+        "number": 10,
+        "received_number": 0,
+        "start_time": 1686311754000,
+        "end_time": 1745582158000,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "user_arr": [
+            {
+                "$oid": "647958b2e766bb5445f3ab1f"
+            }
+        ],
+        "create_time": 1686311758025
+    },
+    {
+        "_id": {
+            "$oid": "6485f8dc09e298a23938cde7"
+        },
+        "type": "折扣",
+        "name": "满10享97折",
+        "price": 97,
+        "user_type": "所有人",
+        "order_amount": 1000,
+        "max_number": 2,
+        "number": 200,
+        "received_number": 36,
+        "start_time": 1686155991000,
+        "end_time": 1752165601000,
+        "allow_type": "指定商品",
+        "is_share": false,
+        "state": "已发放",
+        "create_time": 1686501596827,
+        "goods_arr": [
+            {
+                "$oid": "647d900ae1a35c1a7f48a5c0"
+            },
+            {
+                "$oid": "64801d03819ce82bda01a4c5"
+            },
+            {
+                "$oid": "648020cff5cf3a3d28d04745"
+            },
+            {
+                "$oid": "6480245ee766bb5445470c65"
+            }
+        ]
+    },
+    {
+        "_id": {
+            "$oid": "654fa2daa09a9b1c28b6c10d"
+        },
+        "type": "满减",
+        "name": "100减50",
+        "price": 5000,
+        "user_type": "svip",
+        "order_amount": 10000,
+        "number": 10,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699717850864
+    },
+    {
+        "_id": {
+            "$oid": "654fa3f1189f86f5bea44446"
+        },
+        "type": "折扣",
+        "name": "满100享7折",
+        "price": 70,
+        "user_type": "vip",
+        "order_amount": 10000,
+        "number": 5,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699718129105
+    },
+    {
+        "_id": {
+            "$oid": "654fa811466d4107c492131d"
+        },
+        "type": "满减",
+        "name": "满20减10",
+        "price": 1000,
+        "user_type": "vip",
+        "order_amount": 2000,
+        "number": 5,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719185092
+    },
+    {
+        "_id": {
+            "$oid": "654fa82cf082104ad53173d7"
+        },
+        "type": "满减",
+        "name": "满10减3",
+        "price": 300,
+        "user_type": "vip",
+        "order_amount": 1000,
+        "number": 4,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719212731
+    },
+    {
+        "_id": {
+            "$oid": "654fa850a7c4329ea515e5e6"
+        },
+        "type": "满减",
+        "name": "满2000减200",
+        "price": 20000,
+        "user_type": "vip",
+        "order_amount": 200000,
+        "number": 10,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719248025
+    },
+    {
+        "_id": {
+            "$oid": "654fa87c21821b22191b8f27"
+        },
+        "type": "满减",
+        "name": "满200减130",
+        "price": 13000,
+        "user_type": "svip",
+        "order_amount": 20000,
+        "number": 2,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719292373
+    },
+    {
+        "_id": {
+            "$oid": "654fa8966e5d2db17fb5da9d"
+        },
+        "type": "满减",
+        "name": "满400减100",
+        "price": 10000,
+        "user_type": "svip",
+        "order_amount": 40000,
+        "number": 5,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719318879
+    },
+    {
+        "_id": {
+            "$oid": "654fa8e6652341d97cde323a"
+        },
+        "type": "折扣",
+        "name": "满10享8折",
+        "price": 80,
+        "user_type": "svip",
+        "order_amount": 1000,
+        "number": 20,
+        "received_number": 0,
+        "allow_type": "所有商品",
+        "create_time": 1699719398878
+    },
+    {
+        "_id": {
+            "$oid": "655228ff862066c602722f5e"
+        },
+        "type": "折扣",
+        "name": "满100享7折",
+        "price": 70,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 10000,
+        "start_time": 1699883263714,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1731419263714
+    },
+    {
+        "_id": {
+            "$oid": "65522900652341d97c3adf20"
+        },
+        "type": "满减",
+        "name": "满20减10",
+        "price": 1000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 2000,
+        "start_time": 1699883263714,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1731419263714
+    },
+    {
+        "_id": {
+            "$oid": "65522900337a9fe987eae153"
+        },
+        "type": "满减",
+        "name": "满10减3",
+        "price": 300,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 1000,
+        "start_time": 1699883263714,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1731419263714
+    },
+    {
+        "_id": {
+            "$oid": "65522900a09a9b1c2813e1ee"
+        },
+        "type": "满减",
+        "name": "满2000减200",
+        "price": 20000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 200000,
+        "start_time": 1699883263714,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1731419263714
+    },
+    {
+        "_id": {
+            "$oid": "65955f7dbd0220fad3be9ecc"
+        },
+        "type": "折扣",
+        "name": "满100享7折",
+        "price": 70,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 10000,
+        "start_time": 1704288125578,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1735824125578
+    },
+    {
+        "_id": {
+            "$oid": "65955f7e65234188b34f8b33"
+        },
+        "type": "满减",
+        "name": "满20减10",
+        "price": 1000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 2000,
+        "start_time": 1704288125578,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1735824125578
+    },
+    {
+        "_id": {
+            "$oid": "65955f7ea7c432e4a348441d"
+        },
+        "type": "满减",
+        "name": "满10减3",
+        "price": 300,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 1000,
+        "start_time": 1704288125578,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1735824125578
+    },
+    {
+        "_id": {
+            "$oid": "65955f7e7ad52d59326fdc2f"
+        },
+        "type": "满减",
+        "name": "满2000减200",
+        "price": 20000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 200000,
+        "start_time": 1704288125578,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1735824125578
+    },
+    {
+        "_id": {
+            "$oid": "65a51b7c337a9f439444de3f"
+        },
+        "type": "折扣",
+        "name": "满100享7折",
+        "price": 70,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 10000,
+        "start_time": 1705319292720,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1736855292720
+    },
+    {
+        "_id": {
+            "$oid": "65a51b7d337a9f439444de41"
+        },
+        "type": "满减",
+        "name": "满20减10",
+        "price": 1000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 2000,
+        "start_time": 1705319292720,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1736855292720
+    },
+    {
+        "_id": {
+            "$oid": "65a51b7d862066f18a66e472"
+        },
+        "type": "满减",
+        "name": "满10减3",
+        "price": 300,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 1000,
+        "start_time": 1705319292720,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1736855292720
+    },
+    {
+        "_id": {
+            "$oid": "65a51b7df08210d4b85ee06a"
+        },
+        "type": "满减",
+        "name": "满2000减200",
+        "price": 20000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 200000,
+        "start_time": 1705319292720,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1736855292720
+    },
+    {
+        "_id": {
+            "$oid": "65fbc6c6fe975f7440451122"
+        },
+        "type": "折扣",
+        "name": "满100享7折",
+        "price": 70,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 10000,
+        "start_time": 1710999237899,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1742535237899
+    },
+    {
+        "_id": {
+            "$oid": "65fbc6c655b3372a1ff8c57b"
+        },
+        "type": "满减",
+        "name": "满20减10",
+        "price": 1000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 2000,
+        "start_time": 1710999237899,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1742535237899
+    },
+    {
+        "_id": {
+            "$oid": "65fbc6c6213929f866b484ee"
+        },
+        "type": "满减",
+        "name": "满10减3",
+        "price": 300,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 1000,
+        "start_time": 1710999237899,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1742535237899
+    },
+    {
+        "_id": {
+            "$oid": "65fbc6c6a09a9b12d772eb10"
+        },
+        "type": "满减",
+        "name": "满2000减200",
+        "price": 20000,
+        "user_type": "会员权益",
+        "user_arr": [],
+        "order_amount": 200000,
+        "start_time": 1710999237899,
+        "allow_type": "所有商品",
+        "is_share": false,
+        "state": "已发放",
+        "end_time": 1742535237899
+    }
+]

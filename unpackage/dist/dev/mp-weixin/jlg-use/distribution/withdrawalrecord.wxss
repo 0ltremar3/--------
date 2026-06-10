@@ -1,0 +1,90 @@
+
+page {
+	height: 100%;
+	background-color: #f5f5f5;
+}
+.bg-header {
+	margin: 20rpx;
+	background-color: #3ab5a4;
+	color: #fff;
+	padding: 35rpx;
+	border-radius: 19rpx;
+}
+.flex-dir-row {
+	display: flex;
+	flex-direction: row;
+}
+.flex-dir-column {
+	display: flex;
+	flex-direction: column;
+}
+.flex-y-center {
+	align-items: center;
+}
+.flex-x-between {
+	justify-content: space-between;
+}
+.list {
+	margin: 20rpx auto;
+	width: 94%;
+	margin-top: 20rpx;
+	background-color: #fff;
+	border-radius: 20rpx;
+	box-sizing: border-box;
+}
+.list-item {
+	border-bottom: 1rpx solid #eee;
+	padding-bottom: 30rpx;
+	box-sizing: border-box;
+	padding: 30rpx 20rpx;
+}
+.name {
+	font-size: 32rpx;
+	color: #000;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 450rpx;
+	flex-direction: row;
+	display: flex;
+	align-items: center;
+	margin-bottom: 10rpx;
+}
+.listpic {
+	width: 70rpx;
+	height: 70rpx;
+	border-radius: 50%;
+	margin-right: 20rpx;
+}
+.state-item {
+	line-height: -12rpx;
+	font-size: 20rpx;
+	border-radius: 8rpx;
+	border: 1rpx solid #3ab5a4;
+	padding: 2rpx 8rpx;
+	margin-left: 30rpx;
+	color: #3ab5a4;
+}
+.state-items {
+	line-height: -12rpx;
+	font-size: 20rpx;
+	border-radius: 8rpx;
+	border: 1rpx solid #ffaa00;
+	padding: 2rpx 8rpx;
+	margin-left: 30rpx;
+	color: #ffaa00;
+}
+.state-itemss {
+	line-height: -12rpx;
+	font-size: 20rpx;
+	border-radius: 8rpx;
+	border: 1rpx solid #ff3d3d;
+	padding: 2rpx 8rpx;
+	margin-left: 30rpx;
+	color: #ff3d3d;
+}
+.time {
+	font-size: 22rpx;
+	color: #b6b6b6;
+}
+

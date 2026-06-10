@@ -1,0 +1,41 @@
+
+page {
+	background-color: #f5f5f5;
+}
+.list-item {
+	margin: 0 3%;
+	width: 94%;
+	background-color: #fff;
+	border-radius: 20px;
+	margin-top: 30rpx;
+	padding: 40rpx 30rpx;
+	box-sizing: border-box;
+}
+.litpic {
+	width: 90rpx;
+	border-radius: 50%;
+	height: 90rpx;
+}
+.btn {
+	background-color: #ffe4ed57;
+	color: #ff0252;
+	font-size: 24rpx;
+	padding: 10rpx 24rpx 13rpx 28rpx;
+	border-radius: 25rpx;
+}
+.b-f {
+	background-color: #fff;
+}
+.col-ff721c {
+	color: #2b8779;
+}
+.col-959595 {
+	color: #959595;
+}
+.nav-bottom {
+	background-color: #eeeeee7d;
+	padding: 20rpx;
+	border-radius: 19rpx;
+	margin-top: 20rpx;
+}
+

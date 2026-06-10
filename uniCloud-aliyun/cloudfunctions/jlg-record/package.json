@@ -1,0 +1,7 @@
+{
+  "name": "jlg-record",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

@@ -1,0 +1,57 @@
+[
+    {
+        "_id": {
+            "$oid": "64795b63e1a35c1a7fe2afa6"
+        },
+        "name": "环球美食",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/880e09ed-ad40-4ea7-9d6f-67780ee332d7.png",
+        "sort": 0,
+        "description": "/pages/product/list?id=647df111819ce82bda41f0a2",
+        "is_index_show": true,
+        "create_date": 1685674851123
+    },
+    {
+        "_id": {
+            "$oid": "64795db0f43e60ba7f56f292"
+        },
+        "name": "个护美妆",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/5cea754b-71e1-487e-9571-14b8d698fd70.png",
+        "sort": 1,
+        "description": "/pages/product/product?id=647edbdce1a35c1a7fc2ad4f",
+        "is_index_show": true,
+        "create_date": 1685675439964
+    },
+    {
+        "_id": {
+            "$oid": "64795dcff5cf3a3d288211ab"
+        },
+        "name": "营养保健",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/641cf5e0-6d41-48ca-a3dd-c7dbaa1bd511.png",
+        "sort": 2,
+        "description": "/pages/product/list?id=647e0dde09e298a239ba7ea3",
+        "is_index_show": true,
+        "create_date": 1685675471291
+    },
+    {
+        "_id": {
+            "$oid": "64795de4819ce82bdab348f1"
+        },
+        "name": "家居厨卫",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/91111b49-cc6b-4459-9525-b82b1cd3c748.png",
+        "sort": 3,
+        "description": "/pages/product/list?id=647e0cd0f43e60ba7ff25b55",
+        "is_index_show": true,
+        "create_date": 1685675492311
+    },
+    {
+        "_id": {
+            "$oid": "64795df8e766bb5445f68652"
+        },
+        "name": "速食生鲜",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/74c26188-d354-4bd9-b96f-ce73f04ca5af.png",
+        "sort": 4,
+        "description": "/pages/product/list?id=647e0b57e1a35c1a7f7bb966",
+        "is_index_show": true,
+        "create_date": 1685675512795
+    }
+]

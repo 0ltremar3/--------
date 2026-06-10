@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "提现记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
+    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice",
+    "min-price": "/components/jlg-minPrice/jlg-minPrice"
+  }
+}

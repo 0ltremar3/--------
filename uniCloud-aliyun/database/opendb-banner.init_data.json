@@ -1,0 +1,288 @@
+[
+    {
+        "_id": {
+            "$oid": "647ea1baf43e60ba7f1a939c"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 3834,
+                "height": 1591,
+                "location": "blob:http://test.slwjd.com/cd22acb8-6a2c-40a7-9354-41b98cff78c1"
+            },
+            "name": "banner4.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b253342c-0e14-49a2-952b-764cfb1abab0.jpg",
+            "size": 133973,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b253342c-0e14-49a2-952b-764cfb1abab0.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b253342c-0e14-49a2-952b-764cfb1abab0.jpg",
+            "uuid": 1690710239849,
+            "status": "success",
+            "cloudPath": "1690710239848_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=647d900ae1a35c1a7f48a5c0",
+        "sort": 0,
+        "category_id": "1"
+    },
+    {
+        "_id": {
+            "$oid": "647ea1e428064a22b1b6256f"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 3822,
+                "height": 1589,
+                "location": "blob:http://test.slwjd.com/af8816f3-a843-475b-9292-2b26208889b4"
+            },
+            "name": "banner2.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4173f29a-4ea0-4ca9-9f2b-f82d2a5742db.jpg",
+            "size": 140496,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4173f29a-4ea0-4ca9-9f2b-f82d2a5742db.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4173f29a-4ea0-4ca9-9f2b-f82d2a5742db.jpg",
+            "uuid": 1690710251233,
+            "status": "success",
+            "cloudPath": "1690710251233_0.jpg"
+        },
+        "open_url": "/pages/product/list?id=647df111819ce82bda41f0a2",
+        "sort": 1,
+        "category_id": "1"
+    },
+    {
+        "_id": {
+            "$oid": "647ea1f3f5cf3a3d2842409c"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 3838,
+                "height": 1591,
+                "location": "blob:http://test.slwjd.com/3873471e-ae77-49ec-9fdd-e9052a4d3083"
+            },
+            "name": "banner3.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/7ff10446-d315-467f-87f3-db49bf035aab.jpg",
+            "size": 97923,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/7ff10446-d315-467f-87f3-db49bf035aab.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/7ff10446-d315-467f-87f3-db49bf035aab.jpg",
+            "uuid": 1690710260707,
+            "status": "success",
+            "cloudPath": "1690710260707_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=647d900ae1a35c1a7f48a5c0",
+        "sort": 2,
+        "category_id": "1"
+    },
+    {
+        "_id": {
+            "$oid": "647ea1fff5cf3a3d2842475b"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 3832,
+                "height": 1593,
+                "location": "blob:http://test.slwjd.com/bba54398-ef13-432c-9aae-324df4528408"
+            },
+            "name": "banner5.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9d97895f-979a-401a-b2b9-2fdbf19bca7c.jpg",
+            "size": 119281,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9d97895f-979a-401a-b2b9-2fdbf19bca7c.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9d97895f-979a-401a-b2b9-2fdbf19bca7c.jpg",
+            "uuid": 1690710269231,
+            "status": "success",
+            "cloudPath": "1690710269231_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=648020cff5cf3a3d28d04745",
+        "sort": 3,
+        "category_id": "1"
+    },
+    {
+        "_id": {
+            "$oid": "647ea208f43e60ba7f1ac236"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 3807,
+                "height": 1570,
+                "location": "blob:http://test.slwjd.com/901b369a-824c-4070-b859-cc808d171a88"
+            },
+            "name": "banner1.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/43e682ff-e497-4519-a399-fc7ff11eb17d.jpg",
+            "size": 92976,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/43e682ff-e497-4519-a399-fc7ff11eb17d.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/43e682ff-e497-4519-a399-fc7ff11eb17d.jpg",
+            "uuid": 1690710277733,
+            "status": "success",
+            "cloudPath": "1690710277733_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=647edbdce1a35c1a7fc2ad4f",
+        "sort": 4,
+        "category_id": "1"
+    },
+    {
+        "_id": {
+            "$oid": "647ea88ae766bb5445bb074f"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 1278,
+                "height": 1770,
+                "location": "blob:http://test.slwjd.com/adfb3d64-cb52-49a6-98ff-be07061c22ad"
+            },
+            "name": "是.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/99ea7ced-48f6-4897-b805-a54c860d3f89.jpg",
+            "size": 443871,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/99ea7ced-48f6-4897-b805-a54c860d3f89.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/99ea7ced-48f6-4897-b805-a54c860d3f89.jpg",
+            "uuid": 1690369014778,
+            "status": "success",
+            "cloudPath": "1690369014778_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=648020cff5cf3a3d28d04745",
+        "sort": 4,
+        "category_id": "2"
+    },
+    {
+        "_id": {
+            "$oid": "647ea99928064a22b1bae36a"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 1266,
+                "height": 1826,
+                "location": "blob:http://test.slwjd.com/926932d9-1340-46b0-8cbe-1c84afb35b15"
+            },
+            "name": "微信截图_20230726184612j.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/29c3fcb2-0e9b-4e2c-9657-76bcbc0aaddd.jpg",
+            "size": 133635,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/29c3fcb2-0e9b-4e2c-9657-76bcbc0aaddd.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/29c3fcb2-0e9b-4e2c-9657-76bcbc0aaddd.jpg",
+            "uuid": 1690369074420,
+            "status": "success",
+            "cloudPath": "1690369074420_0.jpg"
+        },
+        "open_url": "/pages/coupon/coupon",
+        "sort": 1,
+        "category_id": "2"
+    },
+    {
+        "_id": {
+            "$oid": "64bb91bee0ec19bea1bd8a18"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 1284,
+                "height": 1732,
+                "location": "blob:http://test.slwjd.com/a09abbe9-a8a1-465b-bc80-66a9521d2c3b"
+            },
+            "name": "微信截图_20230726184715j.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/94df4ac4-6355-4245-8541-ca5c27247584.jpg",
+            "size": 318640,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/94df4ac4-6355-4245-8541-ca5c27247584.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/94df4ac4-6355-4245-8541-ca5c27247584.jpg",
+            "uuid": 1690369088731,
+            "status": "success",
+            "cloudPath": "1690369088730_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=64801d03819ce82bda01a4c5",
+        "sort": 3,
+        "category_id": "2"
+    },
+    {
+        "_id": {
+            "$oid": "64bba6d9e0ec19bea1c17112"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 1292,
+                "height": 1876,
+                "location": "blob:http://test.slwjd.com/ac5c8445-52ba-4d06-b3bc-dd6eaa37a91b"
+            },
+            "name": "微信截图_20230726184906j.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9616e1e7-9d8c-4e86-b45d-b328b122f8de.jpg",
+            "size": 247908,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9616e1e7-9d8c-4e86-b45d-b328b122f8de.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9616e1e7-9d8c-4e86-b45d-b328b122f8de.jpg",
+            "uuid": 1690369098828,
+            "status": "success",
+            "cloudPath": "1690369098828_0.jpg"
+        },
+        "open_url": "/jlg-use/member/member",
+        "sort": 0,
+        "category_id": "2"
+    },
+    {
+        "_id": {
+            "$oid": "64c0fc40e0ec19bea1840168"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "jpg",
+            "fileType": "image",
+            "image": {
+                "width": 1296,
+                "height": 1974,
+                "location": "blob:http://test.slwjd.com/7c274946-794d-47b2-80b6-4f4677331d9b"
+            },
+            "name": "微信截图_20230726185139j.jpg",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/07c24792-2ad8-45b7-9e3a-6cbcce43e042.jpg",
+            "size": 228863,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/07c24792-2ad8-45b7-9e3a-6cbcce43e042.jpg",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/07c24792-2ad8-45b7-9e3a-6cbcce43e042.jpg",
+            "uuid": 1690369108150,
+            "status": "success",
+            "cloudPath": "1690369108150_0.jpg"
+        },
+        "open_url": "/pages/product/product?id=648036110c801c6b97d2c724",
+        "sort": 5,
+        "category_id": "2"
+    },
+    {
+        "_id": {
+            "$oid": "654f8c73189f86f5bea11c21"
+        },
+        "status": true,
+        "bannerfile": {
+            "extname": "png",
+            "fileType": "image",
+            "image": {
+                "width": 1200,
+                "height": 448,
+                "location": "blob:http://localhost:8080/0284e12f-4fcd-4ae3-971d-f893c469db62"
+            },
+            "name": "4234542.png",
+            "path": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/6bae73e5-f8f3-4a56-b72a-d3629c06c09d.png",
+            "size": 316388,
+            "fileID": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/6bae73e5-f8f3-4a56-b72a-d3629c06c09d.png",
+            "url": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/6bae73e5-f8f3-4a56-b72a-d3629c06c09d.png",
+            "uuid": 1699712579025,
+            "status": "success",
+            "cloudPath": "1699712579025_0.png"
+        },
+        "open_url": "/pages/coupon/coupon",
+        "sort": null,
+        "category_id": "会员中心"
+    }
+]

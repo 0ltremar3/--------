@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "我的优惠券",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uv-sticky": "/uni_modules/uv-sticky/components/uv-sticky/uv-sticky",
+    "uv-tabs": "/uni_modules/uv-tabs/components/uv-tabs/uv-tabs",
+    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty"
+  }
+}

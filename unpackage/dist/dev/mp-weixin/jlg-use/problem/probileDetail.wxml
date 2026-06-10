@@ -1,0 +1,1 @@
+<view class="article"><view class="article-content"><mp-html class="vue-ref" vue-id="3e0d93b4-1" content="{{loadList.content}}" data-ref="mpAll" bind:__l="__l"></mp-html></view></view>

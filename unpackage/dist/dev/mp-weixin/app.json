@@ -1,0 +1,116 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/product/list",
+    "pages/product/product",
+    "pages/category/category",
+    "pages/cart/cart",
+    "pages/order/createOrder",
+    "pages/order/order",
+    "pages/ucenter/ucenter",
+    "pages/ucenter/settings/settings",
+    "pages/common/webview/webview",
+    "pages/coupon/coupon",
+    "pages/coupon/prefeList",
+    "pages/collect/collect",
+    "pages/address/list",
+    "pages/address/add",
+    "pages/address/edit",
+    "uni_modules/uni-pay/pages/success/success",
+    "uni_modules/uni-pay/pages/ad-interactive-webview/ad-interactive-webview",
+    "pages/order/orderRefund",
+    "pages/order/orderDetail",
+    "pages/order/orderLogistic",
+    "pages/order/orderEvaluate",
+    "pages/order/refundDetail",
+    "pages/coupon/mycoupon"
+  ],
+  "subPackages": [
+    {
+      "root": "uni_modules/uni-id-pages/pages",
+      "pages": [
+        "userinfo/userinfo",
+        "login/login-withoutpwd",
+        "login/login-withpwd",
+        "userinfo/deactivate/deactivate",
+        "userinfo/bind-mobile/bind-mobile",
+        "login/login-smscode",
+        "register/register",
+        "retrieve/retrieve",
+        "common/webview/webview",
+        "userinfo/change_pwd/change_pwd",
+        "register/register-by-email",
+        "retrieve/retrieve-by-email",
+        "userinfo/set-pwd/set-pwd"
+      ]
+    },
+    {
+      "root": "jlg-use",
+      "pages": [
+        "distribution/list",
+        "distribution/memberInforma",
+        "distribution/distributionOrders",
+        "distribution/withdrawalrecord",
+        "distribution/distrList",
+        "problem/problem",
+        "problem/probileDetail",
+        "member/member",
+        "member/mymember",
+        "member/mymemberkt",
+        "member/membergoods",
+        "member/createOrder"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "山前食养",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F8F8F8",
+    "enablePullDownRefresh": false,
+    "rpxCalcMaxDeviceWidth": 375,
+    "rpxCalcBaseDeviceWidth": 375
+  },
+  "tabBar": {
+    "color": "#8a8a8a",
+    "selectedColor": "#f86c8a",
+    "borderStyle": "white",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/list.png",
+        "selectedIconPath": "static/tabbar/list_active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "iconPath": "static/tabbar/grid.png",
+        "selectedIconPath": "static/tabbar/grid_active.png",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "iconPath": "static/tabbar/cart_active.png",
+        "selectedIconPath": "static/tabbar/cart.png",
+        "text": "购物车"
+      },
+      {
+        "pagePath": "pages/ucenter/ucenter",
+        "iconPath": "static/tabbar/me.png",
+        "selectedIconPath": "static/tabbar/me_active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序定位"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation",
+    "chooseAddress"
+  ],
+  "usingComponents": {}
+}

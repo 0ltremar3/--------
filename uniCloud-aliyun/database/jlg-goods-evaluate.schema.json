@@ -1,0 +1,61 @@
+{
+    "bsonType": "object",
+    "description": "商品评价",
+    "required": [],
+    "permission": {
+        "read": true,
+        "create": "auth.uid != null",
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "存储文档 ID（文章 ID），系统自动生成"
+        },
+        "goods_id": {
+            "bsonType": "string",
+            "description": "评价的商品id",
+            "foreignKey": "opendb-mall-goods._id"
+        },
+        "goods_suk": {
+            "bsonType": "object",
+            "description": "评价的商品规格suk"
+        },
+        "goods_star": {
+            "bsonType": "int",
+            "description": "评价的星级，0-4"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "评价者的uid，参考 uni-id-users 表",
+            "foreignKey": "uni-id-users._id"
+        },
+        "content": {
+            "bsonType": "object",
+            "description": "评价内容",
+            "title": "评价内容",
+            "items": {
+                "text": {
+                    "bsonType": "string",
+                    "title": "文字内容",
+                    "description": "文字内容"
+                },
+                "images": {
+                    "bsonType": "array",
+                    "arrayType": "file",
+                    "maxLength": 6,
+                    "fileMediaType": "image",
+                    "description": "图片内容"
+                }
+            }
+        },
+        "create_date": {
+            "bsonType": "timestamp",
+            "description": "评价发表时间",
+            "defaultValue": {
+                "$env": "now"
+            }
+        }
+    },
+    "version": "0.0.1"
+}

@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "uv-icon": "/uni_modules/uv-icon/components/uv-icon/uv-icon",
+    "uv-transition": "/uni_modules/uv-transition/components/uv-transition/uv-transition",
+    "uv-line": "/uni_modules/uv-line/components/uv-line/uv-line"
+  }
+}

@@ -1,0 +1,1 @@
+<view class="uv-vtabs-item vue-ref" id="{{'content_'+index}}" data-ref="uv-vtabs-item"><slot></slot></view>

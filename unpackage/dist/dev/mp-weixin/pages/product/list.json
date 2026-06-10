@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "商品列表",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uv-search": "/uni_modules/uv-search/components/uv-search/uv-search",
+    "uv-sticky": "/uni_modules/uv-sticky/components/uv-sticky/uv-sticky",
+    "uv-tabs": "/uni_modules/uv-tabs/components/uv-tabs/uv-tabs",
+    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
+    "uv-waterfall": "/uni_modules/uv-waterfall/components/uv-waterfall/uv-waterfall",
+    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice",
+    "uni-load-more": "/components/uni-load-more/uni-load-more",
+    "uni-popup": "/uni_modules/uni-popup/components/uni-popup/uni-popup"
+  }
+}

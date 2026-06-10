@@ -1,0 +1,230 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": true,
+        "create": false,
+        "update": true,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "存储文档 ID（商品 ID），系统自动生成"
+        },
+        "category_id": {
+            "bsonType": "string",
+            "description": "分类 id，参考`opendb-mall-categories`表",
+            "foreignKey": "opendb-mall-categories._id",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "name": {
+            "bsonType": "string",
+            "description": "商品名称",
+            "title": "名称",
+            "trim": "both",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "suks": {
+            "bsonType": "array",
+            "description": "商品规格,含价格",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "orig_suks": {
+            "bsonType": "array",
+            "description": "原始商品规格,不含价格",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "fs_suks": {
+            "bsonType": "array",
+            "description": "秒杀规格，商品为秒杀商品时才需填写",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "orig_fs_suks": {
+            "bsonType": "array",
+            "description": "原始秒杀规格,不含价格",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "crossed_price": {
+            "bsonType": "int",
+            "description": "划线价格，只做展示用",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "goods_services": {
+            "bsonType": "array",
+            "description": "商品服务",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "freight": {
+            "bsonType": "bool",
+            "description": "运费，是否包邮，如不包邮，填写运费金额",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "freight_amount": {
+            "bsonType": "int",
+            "description": "运费金额",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "goods_desc": {
+            "bsonType": "string",
+            "description": "商品详细描述",
+            "title": "详细描述",
+            "trim": "both",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "goods_thumb": {
+            "bsonType": "string",
+            "description": "商品缩略图，用于在列表或搜索结果中预览显示",
+            "title": "缩略图地址",
+            "pattern": "^(http://|https://|/|./|@/)\\S",
+            "trim": "both",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "goods_banner_imgs": {
+            "bsonType": "array",
+            "arrayType": "file",
+            "maxLength": 5,
+            "fileMediaType": "image",
+            "description": "商品详情页的banner图地址",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "videos": {
+            "bsonType": "array",
+            "arrayType": "file",
+            "maxLength": 1,
+            "fileMediaType": "video",
+            "title": "商品详情页的banner视频",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "total_sell_count": {
+            "bsonType": "int",
+            "description": "总销量",
+            "permission": {
+                "read": true,
+                "write": true
+            }
+        },
+        "remain_count": {
+            "bsonType": "int",
+            "description": "库存数量",
+            "title": "库存数量",
+            "permission": {
+                "read": true,
+                "write": true
+            }
+        },
+        "comment_count": {
+            "bsonType": "int",
+            "description": "累计评论数",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "is_on_sale": {
+            "bsonType": "bool",
+            "description": "是否上架销售",
+            "title": "是否上架",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "is_best": {
+            "bsonType": "bool",
+            "description": "是否首页推荐",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "is_new": {
+            "bsonType": "bool",
+            "description": "是否参与秒杀",
+            "title": "是否参与秒杀",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "is_hot": {
+            "bsonType": "bool",
+            "description": "是否热销商品",
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "vip_goods": {
+            "bsonType": "string",
+            "description": "是否为会员权益赠送商品",
+            "title": "权益商品"
+        },
+        "add_date": {
+            "bsonType": "timestamp",
+            "description": "创建时间",
+            "forceDefaultValue": {
+                "$env": "now"
+            },
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        },
+        "user_id": {
+            "title": "用户ID",
+            "bsonType": "string",
+            "description": "创建用户,用户id，参考uni-id-users表",
+            "foreignKey": "uni-id-users._id",
+            "forceDefaultValue": {
+                "$env": "uid"
+            },
+            "permission": {
+                "read": true,
+                "write": false
+            }
+        }
+    },
+    "version": "0.0.1"
+}

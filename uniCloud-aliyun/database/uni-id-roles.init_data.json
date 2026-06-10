@@ -1,0 +1,24 @@
+[
+    {
+        "_id": {
+            "$oid": "6478d758e1a35c1a7fc137ca"
+        },
+        "role_id": "admin",
+        "role_name": "超级管理员",
+        "permission": [],
+        "comment": "超级管理员拥有所有权限",
+        "create_date": 0
+    },
+    {
+        "_id": {
+            "$oid": "64c0ea5786206658e9cee548"
+        },
+        "role_id": "experience",
+        "role_name": "体验员",
+        "permission": [
+            "experience"
+        ],
+        "comment": "只能读取信息",
+        "create_date": 1690364503895
+    }
+]

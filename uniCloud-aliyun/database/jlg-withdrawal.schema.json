@@ -1,0 +1,46 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": "auth.uid != null",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "price": {
+            "bsonType": "int",
+            "description": "提现金额"
+        },
+        "state": {
+            "bsonType": "string",
+            "description": "提现状态，审核中|已打款|审核失败"
+        },
+        "source": {
+            "bsonType": "string",
+            "description": "提现来源，分销"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "提现用户",
+            "foreignKey": "uni-id-users._id",
+            "forceDefaultValue": {
+                "$env": "uid"
+            }
+        },
+        "notes": {
+            "bsonType": "string",
+            "description": "审核备注"
+        },
+        "create_time": {
+            "bsonType": "timestamp",
+            "description": "提现时间",
+            "forceDefaultValue": {
+                "$env": "now"
+            }
+        }
+    }
+}

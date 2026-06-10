@@ -1,0 +1,75 @@
+{
+	"passwordSecret": "sudfihkjsajhdgweuyhioenwiewwesd",
+	"tokenSecret": "ewjudiunwdvtefhidsjicbdwo",
+	"tokenExpiresIn": 7200,
+	"tokenExpiresThreshold": 600,
+	"passwordErrorLimit": 6,
+	"bindTokenToDevice": false,
+	"passwordErrorRetryTime": 3600,
+	"autoSetInviteCode": false,
+	"forceInviteCode": false,
+	"preferedAppPlatform": "app",
+	"app": {
+		"tokenExpiresIn": 2592000,
+		"oauth": {
+			"weixin": {
+				"appid": "填写来源微信开放平台https://open.weixin.qq.com/创建的应用的appid",
+				"appsecret": "填写来源微信开放平台https://open.weixin.qq.com/创建的应用的appsecret"
+			},
+			"apple": {
+				"bundleId": "苹果开发者后台获取的bundleId"
+			}
+		}
+	},
+	"mp-weixin": {
+		"oauth": {
+			"weixin": {
+				"appid": "wx2701f9c9bcd64c0e",
+				"appsecret": "199d2968bd22901c4675af639192bca9"
+			}
+		}
+	},
+	"web": {
+		"oauth": {
+			"weixin-h5": {
+				"appid": "",
+				"appsecret": ""
+			},
+			"h5-weixin": {
+				"appid": "",
+				"appsecret": ""
+			}
+		}
+	},
+	"service": {
+		"sms": {
+			"name": "山前食养注册",
+			"codeExpiresIn": 900,
+			"smsKey": "",
+			"smsSecret": "",
+			"scene": {
+				"login-by-sms": {
+					"templateId": "",
+					"codeExpiresIn": 900
+				},
+				"reset-pwd-by-sms": {
+					"templateId": "",
+					"codeExpiresIn": 900
+				},
+				"bind-mobile-by-sms": {
+					"templateId": "",
+					"codeExpiresIn": 900
+				},
+				"set-pwd-by-sms": {
+					"templateId": "",
+					"codeExpiresIn": 900
+				}
+			}
+		},
+		"univerify": {
+			"appid": "当前应用的appid，使用云函数URL化，此项必须配置",
+			"apiKey": "apiKey 和 apiSecret 在开发者中心获取，开发者中心：https://dev.dcloud.net.cn/uniLogin/index?type=0，文档：https://ask.dcloud.net.cn/article/37965",
+			"apiSecret": ""
+		}
+	}
+}

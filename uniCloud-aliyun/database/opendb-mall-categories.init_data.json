@@ -1,0 +1,348 @@
+[
+    {
+        "_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "create_date": 1685975137986,
+        "parent_id": "",
+        "name": "手机数码",
+        "icon": "",
+        "sort": 0,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647df111819ce82bda41f0a2"
+        },
+        "create_date": 1685975312994,
+        "parent_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "name": "全面屏手机",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/515c646b-026d-43f6-a306-2720d0ab9eb9.png",
+        "sort": 0,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e05ec09e298a239b602a0"
+        },
+        "create_date": 1685980652522,
+        "parent_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "name": "游戏手机",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9039a13c-c3a9-4879-a8d8-dfa1cccd6278.png",
+        "sort": 1,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e060709e298a239b60979"
+        },
+        "create_date": 1685980679559,
+        "parent_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "name": "老人机",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/9b6dc1cc-a86e-4f50-94cc-83459652d6d3.png",
+        "sort": 2,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e061c819ce82bda492e5e"
+        },
+        "create_date": 1685980700104,
+        "parent_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "name": "拍照手机",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/0fe19ffa-4b93-40a1-8cae-debeb847001f.png",
+        "sort": 3,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e062b819ce82bda49320d"
+        },
+        "create_date": 1685980715114,
+        "parent_id": {
+            "$oid": "647df062819ce82bda41b0e0"
+        },
+        "name": "女性手机",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b8656361-b408-447f-b864-7cfe6ac24274.png",
+        "sort": 4,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e077228064a22b18b1548"
+        },
+        "create_date": 1685981042196,
+        "parent_id": {
+            "$oid": "647df111819ce82bda41f0a2"
+        },
+        "name": "礼品鲜花",
+        "icon": "",
+        "sort": 1,
+        "description": "",
+        "is_index_show": false
+    },
+    {
+        "_id": {
+            "$oid": "647e08770c801c6b970c6e87"
+        },
+        "create_date": 1685981303110,
+        "parent_id": {
+            "$oid": "647e077228064a22b18b1548"
+        },
+        "name": "鲜花",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4f894156-7455-4c48-b334-b509dee6327e.png",
+        "sort": 0,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0aa2e1a35c1a7f7b06e9"
+        },
+        "create_date": 1685981858331,
+        "parent_id": {
+            "$oid": "647e077228064a22b18b1548"
+        },
+        "name": "卡通花束",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/47a99ea3-dd7f-4571-8039-b897123f6071.png",
+        "sort": 1,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0abd0c801c6b970d8644"
+        },
+        "create_date": 1685981885736,
+        "parent_id": {
+            "$oid": "647e077228064a22b18b1548"
+        },
+        "name": "假花礼品",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/51761aac-a6d5-4239-bca4-f56ca52e476d.png",
+        "sort": 2,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0b57e1a35c1a7f7bb966"
+        },
+        "create_date": 1685982039420,
+        "parent_id": {
+            "$oid": "647e077228064a22b18b1548"
+        },
+        "name": "卡通花束",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/93dd440a-bef3-4218-b534-2f5200f27d48.png",
+        "sort": 3,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "create_date": 1685982106178,
+        "parent_id": "",
+        "name": "时尚新衣",
+        "icon": "",
+        "sort": 2,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0cbdf5cf3a3d2819d3fd"
+        },
+        "create_date": 1685982397062,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "男士T恤",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/a292a2a7-3eb6-4114-a76c-57ede73a9845.png",
+        "sort": 0,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0cd0f43e60ba7ff25b55"
+        },
+        "create_date": 1685982416807,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "男生外套",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b625c269-971e-4aa3-811b-b922a59065bf.png",
+        "sort": 1,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0ce5f5cf3a3d2819e210"
+        },
+        "create_date": 1685982437238,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "运动鞋",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4242bd66-4a4d-4d3e-ba39-40b3d6985227.png",
+        "sort": 2,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0d17819ce82bda4cb482"
+        },
+        "create_date": 1685982487663,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "夏季女装",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/f88b7bd0-eebb-4d02-bdcd-038c571a16b2.png",
+        "sort": 3,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "create_date": 1685982686423,
+        "parent_id": {
+            "$oid": "647df111819ce82bda41f0a2"
+        },
+        "name": "母婴用品",
+        "icon": "",
+        "sort": 3,
+        "description": "",
+        "is_index_show": false
+    },
+    {
+        "_id": {
+            "$oid": "647e0f51f43e60ba7ff341f7"
+        },
+        "create_date": 1685983057969,
+        "parent_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "name": "婴儿护理",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/5e27a876-6eef-4e1e-9412-ded7aebac684.png",
+        "sort": 0,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0f6ff43e60ba7ff346da"
+        },
+        "create_date": 1685983087030,
+        "parent_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "name": "童装",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/25617243-e0a9-4698-a2c3-3b7f98d5730e.png",
+        "sort": 1,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0f83f43e60ba7ff34ada"
+        },
+        "create_date": 1685983107805,
+        "parent_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "name": "婴儿奶粉",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/c4cb18e2-e96e-4bfb-918a-e34b3ea8e9a1.png",
+        "sort": 2,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0fb4e1a35c1a7f7e0106"
+        },
+        "create_date": 1685983156393,
+        "parent_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "name": "辅食零食",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/2a5184e7-5ef6-4bf0-aced-4d538e2464b4.png",
+        "sort": 3,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e0fcef5cf3a3d281af652"
+        },
+        "create_date": 1685983182480,
+        "parent_id": {
+            "$oid": "647e0dde09e298a239ba7ea3"
+        },
+        "name": "幼儿玩具",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/6031602a-3ff7-4e73-8685-cf15d9cdf37f.png",
+        "sort": 4,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e10bae1a35c1a7f7e30da"
+        },
+        "create_date": 1685983418075,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "男生裤子",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/b873c6a3-c3d3-4db0-9671-e4b97ea13a51.png",
+        "sort": 4,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e1189f5cf3a3d281b499a"
+        },
+        "create_date": 1685983625259,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "时尚墨镜",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/694413c7-a055-4874-86db-04dca1bbe7d0.png",
+        "sort": 5,
+        "description": "",
+        "is_index_show": true
+    },
+    {
+        "_id": {
+            "$oid": "647e11e3819ce82bda4e0364"
+        },
+        "create_date": 1685983715573,
+        "parent_id": {
+            "$oid": "647e0b9ae766bb54458db469"
+        },
+        "name": "女士高跟",
+        "icon": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/4856a768-bb08-4674-8992-c8112aa3ddf3.png",
+        "sort": 6,
+        "description": "",
+        "is_index_show": true
+    }
+]

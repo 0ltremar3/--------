@@ -1,0 +1,49 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": "auth.uid != null && !('experience' in auth.permission)",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": "auth.uid != null && !('experience' in auth.permission)",
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "分销商ID",
+            "foreignKey": "uni-id-users._id",
+            "forceDefaultValue": {
+                "$env": "uid"
+            }
+        },
+        "user_arr": {
+            "bsonType": "array",
+            "description": "下级ID数组",
+            "foreignKey": "uni-id-users._id"
+        },
+        "level": {
+            "bsonType": "int",
+            "description": "分销等级，0-2级，共3级"
+        },
+        "accu_comm": {
+            "bsonType": "int",
+            "description": "累计佣金"
+        },
+        "with_comm": {
+            "bsonType": "int",
+            "description": "已提佣金"
+        },
+        "uodr_comm": {
+            "bsonType": "int",
+            "description": "未提佣金"
+        },
+        "records": {
+            "bsonType": "array",
+            "description": "佣金记录",
+            "foreignKey": "uni-id-users._id"
+        }
+    }
+}

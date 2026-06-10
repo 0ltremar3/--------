@@ -1,0 +1,40 @@
+{
+    "bsonType": "object",
+    "required": [
+        "goods_arr",
+        "start_time",
+        "end_time"
+    ],
+    "description": "商品秒杀",
+    "permission": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "goods_arr": {
+            "bsonType": "array",
+            "description": "秒杀商品组，关联商品表",
+            "foreignKey": "opendb-mall-goods._id"
+        },
+        "start_time": {
+            "bsonType": "timestamp",
+            "description": "秒杀开始时间"
+        },
+        "end_time": {
+            "bsonType": "timestamp",
+            "description": "秒杀开始时间"
+        },
+        "create_time": {
+            "bsonType": "timestamp",
+            "description": "创建时间",
+            "forceDefaultValue": {
+                "$env": "now"
+            }
+        }
+    }
+}

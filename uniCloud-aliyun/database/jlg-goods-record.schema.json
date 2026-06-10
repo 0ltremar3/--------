@@ -1,0 +1,30 @@
+{
+    "bsonType": "object",
+    "description": "浏览记录",
+    "required": [],
+    "permission": {
+        "read": "doc.user_id == auth.uid || 'experience' in auth.permission",
+        "create": "auth.uid != null",
+        "update": "doc.user_id == auth.uid",
+        "delete": "doc.user_id == auth.uid"
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "浏览的用户ID",
+            "foreignKey": "uni-id-users._id"
+        },
+        "goods_id": {
+            "bsonType": "string",
+            "description": "浏览的商品id",
+            "foreignKey": "opendb-mall-goods._id"
+        },
+        "modify_date": {
+            "bsonType": "timestamp",
+            "description": "最近一次浏览时间"
+        }
+    }
+}

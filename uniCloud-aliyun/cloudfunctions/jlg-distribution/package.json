@@ -1,0 +1,7 @@
+{
+  "name": "jlg-distribution",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

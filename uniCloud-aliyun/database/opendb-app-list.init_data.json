@@ -1,0 +1,28 @@
+[
+    {
+        "_id": {
+            "$oid": "6480a075e1a35c1a7f6fd4e0"
+        },
+        "appid": "__UNI__4637BCD",
+        "name": "聚乐购商城小程序端",
+        "introduction": "",
+        "description": "",
+        "icon_url": "",
+        "screenshot": [],
+        "store_list": [],
+        "create_date": 1686151285559
+    },
+    {
+        "_id": {
+            "$oid": "6480a094819ce82bda40a894"
+        },
+        "appid": "__UNI__D965011",
+        "name": "聚乐购商城管理端",
+        "introduction": "",
+        "description": "",
+        "icon_url": "",
+        "screenshot": [],
+        "store_list": [],
+        "create_date": 1686151316898
+    }
+]

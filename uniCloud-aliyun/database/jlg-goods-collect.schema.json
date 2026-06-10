@@ -1,0 +1,40 @@
+{
+    "bsonType": "object",
+    "required": [
+        "user_id",
+        "article_id"
+    ],
+    "description": "商品收藏",
+    "permission": {
+        "read": "doc.user_id == auth.uid || 'experience' in auth.permission",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": "doc.user_id == auth.uid && !('experience' in auth.permission)",
+        "delete": "doc.user_id == auth.uid && !('experience' in auth.permission)"
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "article_id": {
+            "bsonType": "string",
+            "description": "商品id，参考opendb-mall-goods表",
+            "foreignKey": "opendb-mall-goods._id"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "收藏者id，参考uni-id-users表",
+            "forceDefaultValue": {
+                "$env": "uid"
+            },
+            "foreignKey": "uni-id-users._id"
+        },
+        "create_date": {
+            "bsonType": "timestamp",
+            "description": "关注时间",
+            "forceDefaultValue": {
+                "$env": "now"
+            }
+        }
+    },
+    "version": "0.0.1"
+}

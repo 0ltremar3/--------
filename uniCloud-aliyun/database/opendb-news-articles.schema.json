@@ -1,0 +1,60 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "存储文档 ID（用户 ID），系统自动生成"
+        },
+        "category_id": {
+            "bsonType": "string",
+            "title": "分类",
+            "description": "分类 id，参考`uni-news-categories`表",
+            "foreignKey": "opendb-news-categories._id",
+            "enum": {
+                "collection": "opendb-news-categories",
+                "field": "name as text, _id as value"
+            }
+        },
+        "excerpt": {
+            "bsonType": "string",
+            "title": "问题归类",
+            "description": "问题归类",
+            "label": "问题归类",
+            "trim": "both"
+        },
+        "title": {
+            "bsonType": "string",
+            "title": "标题",
+            "description": "标题",
+            "label": "标题",
+            "trim": "both"
+        },
+        "content": {
+            "bsonType": "string",
+            "title": "内容",
+            "description": "内容",
+            "label": "内容"
+        },
+        "avatar": {
+            "bsonType": "string",
+            "title": "封面大图",
+            "description": "缩略图地址",
+            "label": "封面大图",
+            "trim": "both"
+        },
+        "publish_date": {
+            "bsonType": "timestamp",
+            "title": "发表时间",
+            "description": "发表时间",
+            "defaultValue": {
+                "$env": "now"
+            }
+        }
+    }
+}

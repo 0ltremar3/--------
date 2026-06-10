@@ -1,0 +1,18 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "商品详情",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uqrcode": "/uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode",
+    "uni-icons": "/uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice",
+    "uni-countdown": "/uni_modules/uni-countdown/components/uni-countdown/uni-countdown",
+    "uni-rate": "/uni_modules/uni-rate/components/uni-rate/uni-rate",
+    "mp-html": "/uni_modules/mp-html/components/mp-html/mp-html",
+    "uni-popup": "/uni_modules/uni-popup/components/uni-popup/uni-popup",
+    "uni-popup-share": "/uni_modules/uni-popup/components/uni-popup-share/uni-popup-share",
+    "uv-popup": "/uni_modules/uv-popup/components/uv-popup/uv-popup",
+    "uni-number-box": "/uni_modules/uni-number-box/components/uni-number-box/uni-number-box",
+    "qrcode-poster": "/components/zhangyu-qrcode-poster/zhangyu-qrcode-poster"
+  }
+}

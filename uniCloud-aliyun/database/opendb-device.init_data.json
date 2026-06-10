@@ -1,0 +1,26 @@
+[
+    {
+        "_id": {
+            "$oid": "656f2ea409664c4f4a0baddc"
+        },
+        "appid": "__UNI__4637BCD",
+        "device_id": "A7BFD6CCFCF29528267D6D969894AD95",
+        "vendor": "oneplus",
+        "model": "GM1910",
+        "uni_platform": "app",
+        "os_name": "android",
+        "os_version": "12",
+        "os_language": "zh-CN",
+        "os_theme": "light",
+        "pixel_ratio": 3.5,
+        "window_width": 411,
+        "window_height": 841,
+        "screen_width": 411,
+        "screen_height": 891,
+        "rom_name": "HydrogenOS",
+        "rom_version": "",
+        "last_update_date": 1701785252394,
+        "push_clientid": "90e8e8a095841610b95b6cd1040cc4f7",
+        "create_date": 1701785252394
+    }
+]

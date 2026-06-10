@@ -1,0 +1,60 @@
+[
+    {
+        "_id": "64b74dd89755e344ab03a009",
+        "provider": "wxpay",
+        "provider_pay_type": "mp",
+        "uni_platform": "mp-weixin",
+        "status": 4,
+        "type": "goods",
+        "order_no": "277751689734627775",
+        "out_trade_no": "277751689734627775-1",
+        "user_id": "6485b697e766bb5445fdd1c1",
+        "nickname": "阿巴阿巴",
+        "device_id": "16895867447647075038",
+        "client_ip": "127.0.0.1",
+        "goods_arr": [
+            {
+                "goods_id": "647edbdce1a35c1a7fc2ad4f",
+                "goods_name": "康佳空气循环扇电风扇家用落地扇音静遥控宿舍大风力台式涡轮电扇",
+                "goods_img": "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/cloudstorage/ea4257fc-5c05-4ba6-a75a-c37612bf392d.png",
+                "goods_suk": [
+                    "黑色",
+                    "200cm",
+                    "升降遥控款"
+                ],
+                "goods_price": 14901,
+                "goods_num": 1,
+                "goods_seckill": false
+            }
+        ],
+        "address": "姓名：张三电话：18277372881地址：广东省广州市海珠区新港中路397号",
+        "preferential": [
+            "满78减20"
+        ],
+        "notes": "",
+        "openid": "o4ChP5AkoU0Azx9sDMzyutgMPtws",
+        "description": "山前食养商城消费",
+        "total_fee": 12901,
+        "refund_fee": 12901,
+        "refund_count": 0,
+        "provider_appid": "wxc038512bff9a90b6",
+        "appid": "__UNI__4637BCD",
+        "create_date": 1689734629487,
+        "stat_data": {
+            "platform": "mp-weixin",
+            "app_version": "1.0.0",
+            "app_version_code": "100",
+            "os": "ios",
+            "channel": "1001",
+            "scene": 1001
+        },
+        "refund_list": [
+            "测试退款"
+        ],
+        "origstate": 1,
+        "shippingInfo": {
+            "loginame": "极兔速递",
+            "loginum": "JT5206022325324"
+        }
+    }
+]

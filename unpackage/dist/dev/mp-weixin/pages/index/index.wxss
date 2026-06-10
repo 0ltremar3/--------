@@ -1,0 +1,330 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  color: transparent;
+}
+page {
+  background-color: #f5f5f5;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  -webkit-appearance: none;
+  background: transparent;
+  color: transparent;
+}
+/* 自定义顶部导航 */
+.searchbar {
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+.searchbar .searchbar-title {
+  width: 100%;
+  position: fixed;
+  left: 20rpx;
+  z-index: 10;
+}
+.searchbar .searchbar-return {
+  width: 70rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  position: fixed;
+  left: 0;
+}
+.searchbar .icon-arrow-left {
+  font-size: 36rpx;
+  color: #333;
+}
+.searchbar .search-content {
+  display: flex;
+  flex-direction: row;
+  width: 70%;
+  height: 60rpx;
+  background-color: #eaeaea;
+  border-radius: 100rpx;
+}
+.searchbar .icon-search {
+  font-size: 40rpx;
+  color: #A0A0A0;
+  padding: 0 5rpx;
+}
+.searchbar .search-input {
+  font-size: 25rpx;
+  color: #666;
+  height: 60rpx;
+}
+.swiper-list {
+  height: 300rpx;
+}
+.current-list {
+  height: 520rpx;
+}
+.swiper {
+  margin-top: 30rpx;
+  height: 320rpx;
+}
+.swiperImg {
+  width: 100%;
+  border-radius: 30rpx;
+  height: 300rpx;
+}
+.title-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 260rpx;
+  height: 400rpx;
+  transition: 0.4s;
+  border-radius: 0 0 65rpx 65rpx;
+  transition: background-color 1s ease;
+}
+/* 分类 */
+.navbar {
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 26rpx;
+  color: #303133;
+}
+.nav-img {
+  width: 88rpx;
+  height: 88rpx;
+  margin-bottom: 14rpx;
+  border-radius: 20rpx;
+}
+/* 广告轮播 */
+.adv {
+  margin: 10rpx 30rpx;
+  width: 690rpx;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+  height: 200px;
+  /* 设置轮播图的高度 */
+}
+/* 设置当前指示点对应的图片放大样式 */
+.current-img {
+  width: 100%;
+  height: 100%;
+  padding: 20rpx 25rpx;
+  transition: padding 1s;
+}
+.current-img image {
+  width: 100%;
+  height: 100%;
+  border-radius: 15rpx;
+}
+.adv-img {
+  width: 100%;
+  height: 100%;
+  padding: 45rpx 0;
+  transition: padding 1s;
+}
+.adv-img image {
+  width: 100%;
+  height: 100%;
+  border-radius: 15rpx;
+}
+.seckill {
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+  height: 200px;
+  background: linear-gradient(to top, #ffffff, #ffd8d8);
+}
+.seckill-list {
+  white-space: nowrap;
+  width: 100%;
+}
+.seckill-item {
+  display: inline-block;
+  width: 140rpx;
+  font-size: 29rpx;
+  margin-right: 30rpx;
+}
+.seckill-img {
+  width: 140rpx;
+}
+.seckill-imgs {
+  width: 38rpx;
+  margin-right: 7rpx;
+  margin-top: -1rpx;
+}
+.seckill-list-img {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 15rpx;
+}
+.seckill-title {
+  width: 140rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  font-size: 28rpx;
+  margin-top: 10rpx;
+}
+.seckill-tip {
+  font-size: 26rpx;
+  color: #737373;
+}
+.seckill-price {
+  color: #1C7231;
+  margin-top: 5rpx;
+  font-size: 26rpx;
+}
+.hot {
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+  height: 200px;
+  background: #fff;
+  margin-bottom: 10rpx;
+}
+.allLike-header {
+  margin: auto;
+  color: #d21515;
+  width: 94.5%;
+  height: 40rpx;
+  padding: 40rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+.allLike-header image {
+  width: 290rpx;
+  height: 85rpx;
+}
+.uv-line-1 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical !important;
+}
+.uv-line-2 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical !important;
+}
+.uv-line-3 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical !important;
+}
+.uv-line-4 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical !important;
+}
+.uv-line-5 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical !important;
+}
+.waterfall-item {
+  width: 103%;
+  overflow: hidden;
+  margin-top: 10px;
+  border-radius: 6px;
+  background-color: #fff;
+}
+.waterfall-item__ft {
+  padding: 10rpx 10rpx 20rpx 10rpx;
+  background: #fff;
+}
+.waterfall-item__ft__title {
+  margin-bottom: 10rpx;
+  line-height: 48rpx;
+  font-weight: 700;
+}
+.waterfall-item__ft__title .value {
+  font-size: 32rpx;
+  color: #303133;
+}
+.waterfall-item__ft__desc .value {
+  font-size: 28rpx;
+  color: #606266;
+}
+.waterfall-item__ft__btn {
+  padding: 10px 0;
+}
+.allLike-img {
+  width: 100%;
+  height: 340rpx;
+  border-radius: 20rpx 20rpx 0 0;
+}
+.hot-price {
+  font-size: 30rpx;
+  color: #1C7231;
+}
+.coupon-btn {
+  background-color: #ffefef;
+  margin-right: 5rpx;
+  font-size: 25rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 10rpx;
+  white-space: nowrap;
+  margin-top: 10rpx;
+}

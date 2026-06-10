@@ -1,0 +1,1 @@
+<block wx:if="{{data}}"><view class="ad-interactive data-v-464c8a33"><image src="{{data.imgUrl}}" mode="widthFix" class="data-v-464c8a33"></image></view></block>

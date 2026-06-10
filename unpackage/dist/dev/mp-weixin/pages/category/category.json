@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "商品分类",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
+    "uv-vtabs": "/uni_modules/uv-vtabs/components/uv-vtabs/uv-vtabs",
+    "uv-vtabs-item": "/uni_modules/uv-vtabs/components/uv-vtabs-item/uv-vtabs-item",
+    "uv-gap": "/uni_modules/uv-gap/components/uv-gap/uv-gap"
+  }
+}

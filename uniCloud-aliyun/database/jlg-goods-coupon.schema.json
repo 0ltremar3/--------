@@ -1,0 +1,42 @@
+{
+    "bsonType": "object",
+    "description": "优惠卷",
+    "required": [],
+    "permission": {
+        "read": "doc.user_id == auth.uid || 'experience' in auth.permission",
+        "create": "auth.uid != null && !('experience' in auth.permission)",
+        "update": "doc.user_id == auth.uid && !('experience' in auth.permission)",
+        "delete": "doc.user_id == auth.uid && !('experience' in auth.permission)"
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "coupon_id": {
+            "bsonType": "string",
+            "description": "优惠券规则ID",
+            "foreignKey": "jlg-goods-couponrule._id"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "领取的用户ID",
+            "foreignKey": "uni-id-users._id"
+        },
+        "order_id": {
+            "bsonType": "string",
+            "description": "使用的订单ID",
+            "trim": "both"
+        },
+        "is_use": {
+            "bsonType": "bool",
+            "description": "是否已使用"
+        },
+        "create_time": {
+            "bsonType": "timestamp",
+            "description": "创建时间",
+            "forceDefaultValue": {
+                "$env": "now"
+            }
+        }
+    }
+}

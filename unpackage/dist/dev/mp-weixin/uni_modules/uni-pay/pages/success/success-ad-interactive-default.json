@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "success-ad-interactive-default": "/uni_modules/uni-pay/pages/success/success-ad-interactive-default",
+    "ad-interactive": "/node-modules/@dcloudio/uni-cli-shared/components/ad-interactive"
+  }
+}

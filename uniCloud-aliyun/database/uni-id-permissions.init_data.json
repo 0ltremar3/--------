@@ -1,0 +1,11 @@
+[
+    {
+        "_id": {
+            "$oid": "64c0ea34bd0220bf8c403a04"
+        },
+        "permission_id": "experience",
+        "permission_name": "体验权限",
+        "comment": "只能读取信息",
+        "create_date": 1690364468035
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "_id": {
+            "$oid": "656f2ea4862066d0701aaca7"
+        },
+        "user_id": {
+            "$oid": "6485b697e766bb5445fdd1c1"
+        },
+        "device_id": "A7BFD6CCFCF29528267D6D969894AD95",
+        "token_expired": 0,
+        "push_clientid": "90e8e8a095841610b95b6cd1040cc4f7",
+        "appid": "__UNI__4637BCD"
+    }
+]

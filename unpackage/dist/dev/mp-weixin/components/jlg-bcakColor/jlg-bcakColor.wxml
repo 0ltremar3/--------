@@ -1,0 +1,1 @@
+<block wx:if="{{isShow}}"><view class="content"><canvas style="{{'position:absolute;top:-9999999999px;'+('width:'+(canvasW+'px')+';')+('height:'+(canvasH+'px')+';')}}" canvas-id="my-canvas"></canvas></view></block>

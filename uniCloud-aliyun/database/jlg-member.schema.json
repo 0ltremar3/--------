@@ -1,0 +1,37 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "grade": {
+            "bsonType": "int",
+            "description": "会员等级，0=svip|1=vip"
+        },
+        "user_id": {
+            "bsonType": "string",
+            "description": "用户id",
+            "foreignKey": "uni-id-users._id"
+        },
+        "opening_time": {
+            "bsonType": "timestamp",
+            "description": "开通时间"
+        },
+        "failure_time": {
+            "bsonType": "timestamp",
+            "description": "失效时间"
+        },
+        "order_no": {
+            "bsonType": "array",
+            "description": "关联订单号数组",
+            "foreignKey": "uni-pay-orders._id"
+        }
+    }
+}

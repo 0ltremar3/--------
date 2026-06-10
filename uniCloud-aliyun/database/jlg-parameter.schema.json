@@ -1,0 +1,36 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {
+		"read": true,
+		"create": false,
+		"update": false,
+		"delete": false
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"vip": {
+			"bsonType": "int",
+			"description": "vip价格,100等于1元",
+			"label": "vip价格"
+		},
+		"svip": {
+			"bsonType": "int",
+			"description": "svip价格,100等于1元",
+			"label": "svip价格"
+		},
+		"vip_price": {
+			"bsonType": "int",
+			"description": "vip购买商品时的折扣,90等于9折",
+			"label": "vip折扣"
+		},
+		"svip_price": {
+			"bsonType": "int",
+			"description": "vip购买商品时的折扣,95等于95折",
+			"label": "svip折扣"
+		}
+	}
+}

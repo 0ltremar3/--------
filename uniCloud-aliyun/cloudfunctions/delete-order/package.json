@@ -1,0 +1,19 @@
+{
+	"name": "delete-order",
+	"dependencies": {},
+	"extensions": {
+		"uni-cloud-jql": {}
+	},
+	"cloudfunction-config": {
+		"concurrency": 10,
+		"memorySize": 1024,
+		"timeout": 600,
+		"triggers": [{
+			"name": "myTrigger",
+			"type": "timer",
+			"config": "0 0 0 * * * *"
+		}],
+		"path": "",
+		"runtime": "Nodejs16"
+	}
+}

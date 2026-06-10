@@ -1,0 +1,7 @@
+{
+  "name": "jlg-cart",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

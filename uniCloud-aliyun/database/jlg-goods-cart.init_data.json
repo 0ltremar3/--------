@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "64c2172cfe975fba5a589faf",
+        "user_id": "64c2171086206658e9fa3bbc",
+        "goods_id": "647d900ae1a35c1a7f48a5c0",
+        "goods_suk": {
+            "specs": [
+                "铁灰",
+                "XL"
+            ],
+            "price": 5901
+        },
+        "goods_seckill": false,
+        "goods_number": 1,
+        "create_date": 1690441516386
+    }
+]

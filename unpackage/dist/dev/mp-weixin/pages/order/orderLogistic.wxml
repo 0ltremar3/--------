@@ -1,0 +1,1 @@
+<view><block wx:if="{{$root.g0==0}}"><uv-empty vue-id="9e5b1fbc-1" mode="data" icon="/static/temp/shwk.png" text="暂无物流信息" bind:__l="__l"></uv-empty></block><block wx:else><logistics vue-id="9e5b1fbc-2" wlInfo="{{wlInfo}}" bind:__l="__l"></logistics></block></view>

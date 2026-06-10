@@ -1,0 +1,27 @@
+{
+    "bsonType": "object",
+    "required": [],
+    "permission": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false
+    },
+    "properties": {
+        "_id": {
+            "description": "ID，系统自动生成"
+        },
+        "one_pro": {
+            "bsonType": "int",
+            "description": "一级分销比例，80等于80%"
+        },
+        "two_pro": {
+            "bsonType": "int",
+            "description": "二级分销比例，80等于80%"
+        },
+        "three_pro": {
+            "bsonType": "int",
+            "description": "三级分销比例，80等于80%"
+        }
+    }
+}

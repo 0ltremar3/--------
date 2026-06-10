@@ -1,0 +1,1 @@
+<view data-event-opts="{{[['tap',[['onclick',['$event']]]]]}}" bindtap="__e"><slot></slot><scoped-slots-default options="{{options}}" data="{{adData}}" loading="{{loading}}" error="{{errorMessage}}" class="scoped-ref" bind:__l="__l"></scoped-slots-default></view>

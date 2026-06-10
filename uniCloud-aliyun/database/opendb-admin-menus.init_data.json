@@ -1,0 +1,446 @@
+[
+    {
+        "_id": {
+            "$oid": "64619bbae766bb00855c7e26"
+        },
+        "create_date": 1684118458816,
+        "enable": true,
+        "icon": "",
+        "menu_id": "dingdan",
+        "name": "订单管理",
+        "parent_id": "shangpinguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 1,
+        "url": "/pages/uni-pay-orders/list"
+    },
+    {
+        "_id": {
+            "$oid": "647ed2d828064a22b1cdcbe4"
+        },
+        "create_date": 1686033112863,
+        "enable": true,
+        "icon": "",
+        "menu_id": "miaosha",
+        "name": "秒杀管理",
+        "parent_id": "shangpinguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 1,
+        "url": "pages/goods-seckill/list"
+    },
+    {
+        "_id": {
+            "$oid": "63c65c73f43e60780855c800"
+        },
+        "create_date": 1673944179421,
+        "enable": true,
+        "icon": "",
+        "menu_id": "lunbo",
+        "name": "轮播管理",
+        "parent_id": "shouyeguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 0,
+        "url": "pages/opendb-banner/list"
+    },
+    {
+        "_id": {
+            "$oid": "64461f05f5cf3a2df47f2036"
+        },
+        "create_date": 1682317060766,
+        "enable": true,
+        "icon": "",
+        "menu_id": "spclass",
+        "name": "商品分类",
+        "parent_id": "shangpinguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 1,
+        "url": "/pages/opendb-mall-categories/list"
+    },
+    {
+        "_id": {
+            "$oid": "64bfbc7499c62465435d9ce5"
+        },
+        "create_date": 1690287220491,
+        "enable": true,
+        "icon": "",
+        "menu_id": "tonggao",
+        "name": "首页通告",
+        "parent_id": "shouyeguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 2,
+        "url": "/pages/jlg-announce/list"
+    },
+    {
+        "_id": {
+            "$oid": "63c10c4ef43e60e635969a20"
+        },
+        "create_date": 1602662469396,
+        "enable": true,
+        "icon": "uni-icons-settings",
+        "menu_id": "system_menu",
+        "name": "菜单管理",
+        "parent_id": "system_management",
+        "permission": [
+            "zhidu"
+        ],
+        "sort": 1040,
+        "url": "/pages/system/menu/list"
+    },
+    {
+        "_id": {
+            "$oid": "6461e3c2f43e60d7b6ef4ace"
+        },
+        "create_date": 1684136898105,
+        "enable": true,
+        "icon": "uni-icons-shop",
+        "menu_id": "ruzhu",
+        "name": "入驻管理",
+        "parent_id": "shancgheng",
+        "permission": [],
+        "sort": null,
+        "url": "/pages/settle-farm/list"
+    },
+    {
+        "_id": {
+            "$oid": "63c10c4ef43e60e635969a1f"
+        },
+        "create_date": 1602662469396,
+        "enable": true,
+        "icon": "uni-icons-locked",
+        "menu_id": "system_permission",
+        "name": "权限管理",
+        "parent_id": "system_management",
+        "permission": [
+            "zhidu"
+        ],
+        "sort": 1030,
+        "url": "/pages/system/permission/list"
+    },
+    {
+        "_id": {
+            "$oid": "64c38550e0ec19bea1e281ae"
+        },
+        "create_date": 1690535248396,
+        "enable": true,
+        "icon": "",
+        "menu_id": "fenxiaodingdan",
+        "name": "分销订单",
+        "parent_id": "fenxiaoguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 1,
+        "url": "/pages/uni-pay-orders/distrList"
+    },
+    {
+        "_id": {
+            "$oid": "63c10c4ef43e60e635969a1e"
+        },
+        "create_date": 1602662469397,
+        "enable": true,
+        "icon": "uni-icons-personadd",
+        "menu_id": "system_role",
+        "name": "角色管理",
+        "parent_id": "system_management",
+        "permission": [
+            "zhidu"
+        ],
+        "sort": 1020,
+        "url": "/pages/system/role/list"
+    },
+    {
+        "_id": {
+            "$oid": "64795a9f819ce82bdab16a14"
+        },
+        "create_date": 1685674655199,
+        "enable": true,
+        "icon": "",
+        "menu_id": "shouyefenlei",
+        "name": "首页分类",
+        "parent_id": "shouyeguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 1,
+        "url": "pages/homepage-cetagories/list"
+    },
+    {
+        "_id": {
+            "$oid": "64c37f22189f866d65f408d5"
+        },
+        "create_date": 1690533666632,
+        "enable": true,
+        "icon": "",
+        "menu_id": "fenxiaobili",
+        "name": "分销比例",
+        "parent_id": "fenxiaoguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 0,
+        "url": "pages/jlg-distribution-propor/list"
+    },
+    {
+        "_id": {
+            "$oid": "6482cd84e766bb5445323206"
+        },
+        "create_date": 1686293892563,
+        "enable": true,
+        "icon": "uni-icons-email",
+        "menu_id": "youhuijuan",
+        "name": "优惠卷",
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "sort": null,
+        "url": "pages/goods-couponrule/list"
+    },
+    {
+        "_id": {
+            "$oid": "64462dc3819ce8deeec955b5"
+        },
+        "create_date": 1682320834583,
+        "enable": true,
+        "icon": "",
+        "menu_id": "splist",
+        "name": "商品列表",
+        "parent_id": "shangpinguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": 0,
+        "url": "/pages/opendb-mall-goods/list"
+    },
+    {
+        "_id": {
+            "$oid": "63c10c4ef43e60e635969a1d"
+        },
+        "create_date": 1602662469398,
+        "enable": true,
+        "icon": "uni-icons-person",
+        "menu_id": "system_user",
+        "name": "用户管理",
+        "parent_id": "system_management",
+        "permission": [
+            "zhidu"
+        ],
+        "sort": 1010,
+        "url": "/pages/system/user/list"
+    },
+    {
+        "_id": {
+            "$oid": "64c3ac327ad52ddc64bab268"
+        },
+        "create_date": 1690545202825,
+        "enable": true,
+        "icon": "",
+        "menu_id": "fenxiaotixian",
+        "name": "分销提现",
+        "parent_id": "fenxiaoguanli",
+        "permission": [
+            "experience"
+        ],
+        "sort": null,
+        "url": "/pages/jlg-withdrawal/list"
+    },
+    {
+        "_id": {
+            "$oid": "64babdac7ad52ddc647531f8"
+        },
+        "create_date": 1689959852641,
+        "enable": true,
+        "icon": "uni-icons-chat",
+        "menu_id": "pingjia",
+        "name": "评价管理",
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "sort": 0,
+        "url": "/pages/opendb-mall-comments/list"
+    },
+    {
+        "_id": {
+            "$oid": "63c10c4ef43e60e635969a1c"
+        },
+        "create_date": 1602662469396,
+        "enable": true,
+        "icon": "uni-icons-gear",
+        "menu_id": "system_management",
+        "name": "系统管理",
+        "parent_id": "",
+        "permission": [],
+        "sort": 1000,
+        "url": ""
+    },
+    {
+        "_id": {
+            "$oid": "64c51edea09a9bd68b056fa1"
+        },
+        "menu_id": "fenxiaoguanli",
+        "name": "分销管理",
+        "icon": "uni-icons-refresh",
+        "url": "",
+        "sort": 2,
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1690640094648
+    },
+    {
+        "_id": {
+            "$oid": "64c51f3e99c62465432006a9"
+        },
+        "menu_id": "shangpinguanli",
+        "name": "商品管理",
+        "icon": "uni-icons-cart",
+        "url": "",
+        "sort": 1,
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1690640190832
+    },
+    {
+        "_id": {
+            "$oid": "64c51fc4a09a9bd68b058c76"
+        },
+        "menu_id": "shouyeguanli",
+        "name": "首页管理",
+        "icon": "uni-icons-shop",
+        "url": "",
+        "sort": 3,
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1690640324900
+    },
+    {
+        "_id": {
+            "$oid": "64cb3d5da7c432baa08f4d23"
+        },
+        "menu_id": "neirongguanli",
+        "name": "内容管理",
+        "icon": "uni-icons-chatboxes",
+        "url": "",
+        "sort": 4,
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1691041117298
+    },
+    {
+        "_id": {
+            "$oid": "64cb3dae55b3378257883e86"
+        },
+        "menu_id": "neirongfenlei",
+        "name": "内容分类",
+        "icon": "",
+        "url": "/pages/opendb-news-categories/list",
+        "sort": 1,
+        "parent_id": "neirongguanli",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1691041198642
+    },
+    {
+        "_id": {
+            "$oid": "64cb3dd655b337825788462f"
+        },
+        "menu_id": "neirongliebiao",
+        "name": "内容列表",
+        "icon": "",
+        "url": "/pages/opendb-news-articles/list",
+        "sort": 0,
+        "parent_id": "neirongguanli",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1691041238421
+    },
+    {
+        "_id": {
+            "$oid": "654f95117ad52d2a0623533d"
+        },
+        "menu_id": "canshu",
+        "name": "会员价格",
+        "icon": "",
+        "url": "pages/jlg-parameter/list",
+        "sort": 0,
+        "parent_id": "huiyuanguanli",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1699714321189
+    },
+    {
+        "_id": {
+            "$oid": "654f9dd22139297f8bb88a17"
+        },
+        "menu_id": "huiyuanquanyi",
+        "name": "会员权益券",
+        "icon": "",
+        "url": "pages/vip-couponrule/list",
+        "sort": 0,
+        "parent_id": "huiyuanguanli",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1699716562841
+    },
+    {
+        "_id": {
+            "$oid": "6550cd05bd022034f4c3620f"
+        },
+        "menu_id": "huiyuandingd",
+        "name": "会员订单",
+        "icon": "",
+        "url": "pages/uni-pay-orders/viplist",
+        "sort": 0,
+        "parent_id": "huiyuanguanli",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1699794181467
+    },
+    {
+        "_id": {
+            "$oid": "6550cd769755e3e35f53145c"
+        },
+        "menu_id": "huiyuanguanli",
+        "name": "会员管理",
+        "icon": "uni-icons-person",
+        "url": "",
+        "sort": 1,
+        "parent_id": "",
+        "permission": [
+            "experience"
+        ],
+        "enable": true,
+        "create_date": 1699794294081
+    }
+]
