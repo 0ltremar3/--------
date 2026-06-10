@@ -992,15 +992,15 @@ view[class*='-round-area']{ border-radius: 20rpx;
 /**
  * 组件公共样式
  **/
-.price, .price-jf, .discount {font-size: 36rpx; color: #ff6a6c; line-height: 1; font-weight: 580;}
-.m-price{font-size: 24rpx;text-decoration: line-through;color: #909399;margin-left: 20rpx;}
+.price, .price-jf, .discount {font-size: 36rpx; color: #ff6a6c; line-height: 1; font-weight: 580; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}
+.m-price{font-size: 24rpx;text-decoration: line-through;color: #909399;margin-left: 20rpx; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}
 .price::before{ content: '￥'; font-size: 24rpx;
 }
 .m-price::before{ content: '￥'; font-size: 24rpx;
 }
 .price::after{ content: attr(data-decimal); font-size: 24rpx;
 }
-.s-price {font-size: 30rpx; color: #ff6a6c; line-height: 1; font-weight: 580;}
+.s-price {font-size: 30rpx; color: #ff6a6c; line-height: 1; font-weight: 580; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}
 .s-price::before{ content: '￥'; font-size: 22rpx;
 }
 .o-price {font-size: 24rpx; color: #bbb; line-height: 1;margin-left: 10rpx;}
@@ -1401,7 +1401,7 @@ to { opacity: 0;
 }
 .text-meta   { font-size: 24rpx; font-weight: 400; line-height: 1.45; color: #8E918D;
 }
-.text-price  { font-size: 32rpx; font-weight: 500; line-height: 1;    color: #1C7231;
+.text-price  { font-size: 32rpx; font-weight: 500; line-height: 1;    color: #1C7231; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 }
 .text-primary { color: #1C7231;
 }
@@ -7208,6 +7208,7 @@ image {
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+/* 品牌价格字体栈 —— 数字优先使用 Abel，降级至系统无衬线 */
 ::-webkit-scrollbar {
   display: none;
   width: 0;

@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {
+/* WEBPACK VAR INJECTION */(function(wx, uni) {
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
@@ -131,6 +131,18 @@ var _default = {
     };
     (0, _appInit.default)();
     (0, _init.default)();
+
+    // 小程序环境通过 wx.loadFontFace 加载 Abel（Latin 子集，含数字、标点）
+    wx.loadFontFace({
+      family: 'Abel',
+      source: "url('https://cdn.jsdelivr.net/npm/@fontsource/abel/files/abel-latin-400-normal.woff2')",
+      desc: {
+        weight: '400'
+      },
+      global: true,
+      success: function success() {},
+      fail: function fail() {}
+    });
   },
   onShow: function onShow() {
     //判断版本
@@ -160,7 +172,7 @@ var _default = {
   }
 };
 exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
 

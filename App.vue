@@ -16,6 +16,17 @@
 			this.globalData.$t = str => this.$t(str)
 			initApp();
 			uniIdPageInit()
+			// #ifdef MP-WEIXIN
+			// 小程序环境通过 wx.loadFontFace 加载 Abel（Latin 子集，含数字、标点）
+			wx.loadFontFace({
+				family: 'Abel',
+				source: "url('https://cdn.jsdelivr.net/npm/@fontsource/abel/files/abel-latin-400-normal.woff2')",
+				desc: { weight: '400' },
+				global: true,
+				success: () => {},
+				fail: () => {}
+			});
+			// #endif
 		},
 		onShow: function() {
 			// #ifndef MP-WEIXIN
@@ -63,6 +74,18 @@
 	/*
 		全局公共样式和字体图标
 	*/
+
+	/* ── 品牌价格字体：Abel（Latin 子集，含数字/标点，约 8 KB） ── */
+	/* #ifndef MP-WEIXIN */
+	@font-face {
+		font-family: 'Abel';
+		font-weight: 400;
+		font-style: normal;
+		src: url('https://cdn.jsdelivr.net/npm/@fontsource/abel/files/abel-latin-400-normal.woff2') format('woff2'),
+		     url('https://cdn.jsdelivr.net/npm/@fontsource/abel/files/abel-latin-400-normal.woff') format('woff');
+	}
+	/* #endif */
+
 	@font-face {
 		font-family: "iconfont";
 		/* Project id 4231601 */

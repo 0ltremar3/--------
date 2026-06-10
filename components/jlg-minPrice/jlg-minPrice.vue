@@ -41,11 +41,13 @@
 <style lang="scss">
 	.minprices {
 		font-size: 24rpx;
+		font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 
 		&:before {
 			content: '￥';
 			font-size: 24rpx;
 			margin: 0 2rpx 0 -4rpx;
+			font-family: inherit;
 		}
 	}
 </style>

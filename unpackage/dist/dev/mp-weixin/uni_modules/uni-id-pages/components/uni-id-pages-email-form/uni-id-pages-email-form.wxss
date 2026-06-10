@@ -26,6 +26,7 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
+/* 品牌价格字体栈 —— 数字优先使用 Abel，降级至系统无衬线 */
 .data-v-4835b4e9::-webkit-scrollbar {
   display: none;
   width: 0;

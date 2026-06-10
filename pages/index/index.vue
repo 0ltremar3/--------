@@ -59,7 +59,7 @@
 		</view>
 
 		<!-- 分类横向 tab（图标 + 文字，居中） -->
-		<view class="cat-tabs ds-divider">
+		<view class="cat-tabs">
 			<view class="cat-tabs__wrap">
 				<view @click="navToDetailPage(item.description,0)" class="cat-tabs__item"
 					v-for="(item,index) in cetagoriesList" :key="index">
@@ -107,12 +107,13 @@
 
 		<!-- 本周精选（热销）-->
 		<view class="section">
-			<view class="section__hd">
+			<view class="section__hd section__hd--3col">
+				<view class="flex-1"></view>
 				<text class="text-section-title">本周精选</text>
-			<view class="flex-dir-row flex-y-center" @click="allClick">
-				<text class="text-meta">查看更多</text>
-				<text class="iconfont ml-10 icon-uniE003 text-meta"></text>
-			</view>
+				<view class="flex-1 flex-dir-row flex-y-center flex-x-end" @click="allClick">
+					<text class="text-meta">查看更多</text>
+					<text class="iconfont ml-10 icon-uniE003 text-meta"></text>
+				</view>
 			</view>
 			<scroll-view class="goods-row" scroll-x="true">
 				<view v-for="(item, index) in rxgoodsList" :key="index" class="goods-row__item"
@@ -633,6 +634,7 @@
 	@import '@/static/common/common.scss';
 
 	page {
+		// background-color: #FFFFFF;
 		background-color: #F7F8F5;
 		box-sizing: border-box;
 	}
@@ -708,7 +710,8 @@
 		display: flex;
 		align-items: center;
 		padding: 16rpx 32rpx;
-		background: #FFFFFF;
+		// background: #FFFFFF;
+		background: #F7F8F5;
 		border-bottom: 1rpx solid #E5E6E2;
 
 		&__logo {
@@ -757,9 +760,9 @@
 		align-items: center;
 		height: 56rpx;
 		padding: 0 32rpx;
-		background: #FFFBF4;
-		border-top: 1rpx solid #F0E6D0;
-		border-bottom: 1rpx solid #F0E6D0;
+		background: #FFFFFF;
+		// border-top: 1rpx solid #E5E6E2;
+		// border-bottom: 1rpx solid #E5E6E2;
 		margin-top: 20rpx;
 		position: relative;
 		z-index: 2;
@@ -768,7 +771,7 @@
 		&__label {
 			font-size: 20rpx;
 			font-weight: 400;
-			color: #B89060;
+			color: #8E918D;
 			letter-spacing: 2rpx;
 			flex-shrink: 0;
 			margin-right: 20rpx;
@@ -784,7 +787,7 @@
 			white-space: nowrap;
 			font-size: 22rpx;
 			font-weight: 400;
-			color: #8A6A3A;
+			color: #8E918D;
 			line-height: 56rpx;
 			animation: marquee 14s linear infinite;
 		}
@@ -793,14 +796,15 @@
 	/* ── 分类横向 tab（图标+文字，居中） ── */
 	.cat-tabs {
 		width: 100%;
-		background: #FFFFFF;
-		margin-top: 2rpx;
+		// background: #FFFFFF;
+		background: #F7F8F5;
+		padding: 40rpx 0 32rpx;
 
 		&__wrap {
 			display: flex;
 			flex-wrap: nowrap;
 			justify-content: space-around;
-			padding: 24rpx 16rpx 20rpx;
+			padding: 0 8rpx;
 		}
 
 		&__item {
@@ -811,16 +815,18 @@
 		}
 
 		&__icon {
-			width: 88rpx;
-			height: 88rpx;
-			border-radius: 8rpx;
+			width: 100rpx;
+			height: 100rpx;
+			border-radius: 12rpx;
 			background: #ECEDE8;
-			margin-bottom: 10rpx;
+			margin-bottom: 16rpx;
 		}
 
 		&__label {
 			font-size: 24rpx;
+			font-weight: 400;
 			color: #2B2F2C;
+			letter-spacing: 1rpx;
 			white-space: nowrap;
 		}
 	}
@@ -848,7 +854,7 @@
 
 	/* ── 通用分区 ── */
 	.section {
-		background: #FFFFFF;
+		background: #F7F8F5;
 		margin-top: 16rpx;
 		padding: 32rpx;
 
@@ -860,6 +866,11 @@
 
 			&--center {
 				justify-content: center;
+				margin-bottom: 32rpx;
+			}
+
+			&--3col {
+				justify-content: space-between;
 				margin-bottom: 32rpx;
 			}
 		}
@@ -911,9 +922,9 @@
 		width: 103%;
 		overflow: hidden;
 		margin-top: 16rpx;
-		background: #FFFFFF;
-		border: 1rpx solid #E5E6E2;
-		border-radius: 8rpx;
+		background: #F7F8F5;
+		// border: 1rpx solid #E5E6E2;
+		// border-radius: 8rpx;
 
 		&__img {
 			width: 100%;
