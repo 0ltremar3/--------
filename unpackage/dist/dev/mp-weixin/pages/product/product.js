@@ -166,50 +166,52 @@ var render = function () {
     _vm.goodsdata.name && !_vm.control
       ? Math.round((_vm.minPrice / _vm.goodsdata.crossed_price) * 100)
       : null
-  var l0 = _vm.goodsdata.name
-    ? _vm.__map(_vm.couponList, function (item, index) {
-        var $orig = _vm.__get_orig(item)
-        var g4 =
-          (item.user_type === "所有人" ||
-            item.user_arr.includes(_vm.user_id)) &&
-          (item.allow_type !== "指定商品" ||
-            item.goods_arr.includes(_vm.goods_id))
-        return {
-          $orig: $orig,
-          g4: g4,
-        }
-      })
-    : null
-  var g5 = _vm.goodsdata.name ? _vm.specSelected.length : null
-  var g6 =
+  var g4 = _vm.goodsdata.name ? _vm.control || _vm.couponList.length > 0 : null
+  var l0 =
+    _vm.goodsdata.name && g4
+      ? _vm.__map(_vm.couponList, function (item, index) {
+          var $orig = _vm.__get_orig(item)
+          var g5 =
+            (item.user_type === "所有人" ||
+              item.user_arr.includes(_vm.user_id)) &&
+            (item.allow_type !== "指定商品" ||
+              item.goods_arr.includes(_vm.goods_id))
+          return {
+            $orig: $orig,
+            g5: g5,
+          }
+        })
+      : null
+  var g6 = _vm.goodsdata.name ? _vm.specSelected.length : null
+  var g7 =
     _vm.goodsdata.name &&
     !_vm.goodsdata.freight &&
     _vm.goodsdata.freight_amount > 0
       ? (_vm.goodsdata.freight_amount / 100).toFixed(2)
       : null
-  var g7 = _vm.goodsdata.name ? _vm.evaluateList.length : null
+  var g8 = _vm.goodsdata.name ? _vm.evaluateList.length : null
   var m0 =
-    _vm.goodsdata.name && g7 > 0
+    _vm.goodsdata.name && g8 > 0
       ? _vm.formatDate(_vm.evaluateList[0].create_date)
       : null
   var l1 = _vm.goodsdata.name
     ? _vm.__map(_vm.couponList, function (item, index) {
         var $orig = _vm.__get_orig(item)
-        var g8 =
+        var g9 =
           (item.user_type === "所有人" ||
             item.user_arr.includes(_vm.user_id)) &&
           (item.allow_type !== "指定商品" ||
             item.goods_arr.includes(_vm.goods_id))
-        var m1 = g8 ? _vm.formatDate(item.start_time) : null
-        var m2 = g8 ? _vm.formatDate(item.end_time) : null
-        var g9 =
-          g8 && !(item.type == "满减") ? (item.price / 10).toFixed(1) : null
+        var m1 = g9 ? _vm.formatDate(item.start_time) : null
+        var m2 = g9 ? _vm.formatDate(item.end_time) : null
+        var g10 =
+          g9 && !(item.type == "满减") ? (item.price / 10).toFixed(1) : null
         return {
           $orig: $orig,
-          g8: g8,
+          g9: g9,
           m1: m1,
           m2: m2,
-          g9: g9,
+          g10: g10,
         }
       })
     : null
@@ -221,10 +223,11 @@ var render = function () {
         g1: g1,
         g2: g2,
         g3: g3,
+        g4: g4,
         l0: l0,
-        g5: g5,
         g6: g6,
         g7: g7,
+        g8: g8,
         m0: m0,
         l1: l1,
       },
@@ -272,13 +275,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 32));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 35));
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -704,8 +700,10 @@ var _default = {
     //获取用户头像、昵称用于分享海报
     if (this.user_id) {
       db.collection("uni-id-users").doc(this.user_id).field("nickname,avatar_file").get().then(function (res) {
-        _this.usname = res.result.data[0].nickname ? res.result.data[0].nickname : '匿名用户';
-        _this.usimg = res.result.data[0].avatar_file.url ? res.result.data[0].avatar_file.url : 'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
+        var _userInfo$avatar_file;
+        var userInfo = res.result.data[0];
+        _this.usname = (userInfo === null || userInfo === void 0 ? void 0 : userInfo.nickname) || '匿名用户';
+        _this.usimg = (userInfo === null || userInfo === void 0 ? void 0 : (_userInfo$avatar_file = userInfo.avatar_file) === null || _userInfo$avatar_file === void 0 ? void 0 : _userInfo$avatar_file.url) || 'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
       });
     }
   },

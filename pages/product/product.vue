@@ -47,70 +47,64 @@
 				</view>
 			</view>
 			<view v-if="control" class="search-backurl">
-				<image src="../../static/temp/secskill-back.png" class="backimg"></image>
 				<view class="flex-dir-row flex-y-center flex-x-between" style="position: relative;">
 					<view class="flex-dir-row flex-y-center">
-						<view class="flex-x-baseline  dis-flex ">
-							<jlg-minPrice :min-price="minPrice" col="#fff" :Weight="600" maxSize="40rpx"></jlg-minPrice>
+						<view class="flex-x-baseline dis-flex">
+							<jlg-minPrice :min-price="minPrice" col="#fff" :Weight="600" maxSize="48rpx" minSize="32rpx"></jlg-minPrice>
 						</view>
-						<text class="deal-tip  ml-10">限时秒杀</text>
+						<text class="seckill-tag ml-10">限时精选</text>
 					</view>
-					<text class="col-e6e6e6 f-24 w-nowrap">距离结束还剩</text>
+					<text class="f-24 w-nowrap" style="color: #B8BBB6;">距离结束还剩</text>
 				</view>
-				<view class="flex-dir-row flex-y-center flex-x-between" style="position: relative;">
+				<view class="flex-dir-row flex-y-center flex-x-between" style="position: relative; margin-top: 12rpx;">
 					<view class="flex-dir-row flex-y-center">
-						<view class="flex-x-baseline  dis-flex ">
-							<text class="old-price col-e6e6e6 f-24 ml-10" style="line-height: 48rpx;">原价</text>
-							<text class="old-price col-e6e6e6 f-26 ml-10 minprice text-with-line"
-								style="line-height: 48rpx;">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
-						</view>
+						<text class="f-24" style="color: #8E918D; line-height: 48rpx;">原价</text>
+					<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
 					</view>
 					<uni-countdown @timeup="delayed" font-size="12" ref="coun" :hour="hours" :minute="minutes"
-						:second="seconds" color="#1C7231" background-color="#ffffff" splitorColor="#fff" />
+						:second="seconds" color="#FFFFFF" background-color="#1C7231" splitorColor="#FFFFFF" />
 				</view>
 			</view>
-			<view class=" list-item b-f flex-dir-column">
-				<view v-if="!control" class="flex-dir-row flex-y-center flex-x-between">
-					<view class="flex-dir-row flex-y-center">
-						<view class="flex-x-baseline  dis-flex ">
-							<jlg-minPrice :min-price="minPrice" maxSize="40rpx"></jlg-minPrice>
-							<text class="old-price col-9 f-26 ml-10 minprice text-with-line"
-								style="line-height: 52rpx;">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
-						</view>
-						<text class="deal-tips  ml-10"
-							style="margin-top: 6rpx;">{{(Math.round((minPrice / goodsdata.crossed_price) * 100)/10)}}折</text>
-
-					</view>
-					<text v-if="goodsdata.total_sell_count < 9999" class="col-9 w-nowrap f-24">
-						{{'销量: ' + goodsdata.total_sell_count}}</text>
-					<text v-else class="col-9 f-24 w-nowrap">销量: 9999+</text>
+			<view class="list-item flex-dir-column">
+				<!-- 商品名称 + 分享按钮 -->
+				<view class="flex-dir-row flex-y-center flex-x-between">
+					<view class="product-name">{{goodsdata.name}}</view>
+					<!-- #ifndef APP -->
+					<button @click="shareClick" class="share-btn">
+						<text class="iconfont icon-uniE044" style="font-size: 40rpx; color: #8E918D;"></text>
+					</button>
+					<!-- #endif -->
 				</view>
-				<view class="flex-dir-row flex-y-center col-1C7231 flex-x-between" :class="control?'':'mt-20'">
-					<view class="flex-dir-row ">
-						<view class="coupon-btn col-1C7231"
+				<!-- 价格 + 折扣 + 销量（普通商品） -->
+				<view v-if="!control" class="flex-dir-row flex-y-center flex-x-between" style="margin-top: 16rpx;">
+					<view class="flex-dir-row flex-y-center">
+						<view class="product-price-pair dis-flex">
+							<jlg-minPrice :min-price="minPrice" maxSize="48rpx" minSize="32rpx" :Weight="500"></jlg-minPrice>
+							<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
+						</view>
+						<text class="deal-tips ml-10">{{(Math.round((minPrice / goodsdata.crossed_price) * 100)/10)}}折</text>
+					</view>
+					<text v-if="goodsdata.total_sell_count < 9999" class="text-meta w-nowrap">
+						{{'销量: ' + goodsdata.total_sell_count}}</text>
+					<text v-else class="text-meta w-nowrap">销量: 9999+</text>
+				</view>
+				<!-- 优惠券标签 + 查看优惠：有可用优惠或秒杀模式时才显示 -->
+				<view v-if="control || couponList.length > 0"
+					class="flex-dir-row flex-y-center flex-x-between" style="margin-top: 20rpx;">
+					<view class="flex-dir-row flex-wrap">
+						<view class="coupon-btn"
 							v-if="(item.user_type === '所有人' || item.user_arr.includes(user_id)) && (item.allow_type !== '指定商品' || item.goods_arr.includes(goods_id))"
 							v-for="(item, index) in couponList" :key="index">
 							{{item.name}}
 						</view>
 					</view>
-					<view class="flex-dir-row col-1C7231 flex-y-center" @click="popup">
-						<text class="f-27">{{control?'秒杀商品不可用':'查看优惠'}}</text>
-						<text class="iconfont ml-20 f-27 icon-uniE003"></text>
+					<view class="flex-dir-row flex-y-center" @click="popup">
+						<text class="f-26 text-primary">{{control?'秒杀商品不可用':'查看优惠'}}</text>
+						<text class="iconfont ml-10 f-24 icon-uniE003 text-primary"></text>
 					</view>
 				</view>
-				<view class="flex-dir-row flex-y-center flex-x-between">
-					<view class="f-32 mt-20 col-0">{{goodsdata.name}}</view>
-					<!-- #ifndef APP -->
-					<button @click="shareClick"
-						class="flex-dir-column ml-10 col-3 f-32 w-nowrap flex-y-center flex-x-center"
-						style="background: #fff0;width: 50rpx;">
-						<text class="col-9 iconfont icon-uniE044" style="line-height: 40rpx;"></text>
-						<text class="col-9 f-26" style="line-height: 40rpx;">分享</text>
-					</button>
-					<!-- #endif -->
-				</view>
 			</view>
-			<view class=" list-item b-f " style="margin-top: 15rpx;">
+			<view class="list-item" style="margin-top: 2rpx;">
 				<view class="flex-dir-row flex-y-center  pb-25 b-b" @click="toggleSpec">
 					<text class="list-title-left col-9 f-28 w-nowrap">规格</text>
 					<view class="flex-x-betweenflex-y-center flex-dir-row w-100">
@@ -190,21 +184,20 @@
 			<!-- 底部操作菜单 -->
 			<view class="footer">
 				<view class="flex-dir-row flex-y-center flex-x-between" style="width: 95%;">
-					<view class="flex-dir-row flex-y-center ">
-						<navigator url="/pages/index/index" open-type="switchTab" class="footer-btn">
-							<text class="iconfont icon-shouyeshouye" style="font-size: 57rpx;"></text>
-							<text>首页</text>
-						</navigator>
-						<navigator url="/pages/cart/cart" open-type="switchTab" class="footer-btn">
-							<text class="iconfont icon-uniE026" style="color: #696969;};"></text>
-							<text>购物车</text>
-						</navigator>
-						<view class="footer-btn" :class="{active: favorite}" @click="toFavorite('add')">
-							<text :class="favorite?'iconfont icon-uniE023':'iconfont icon-shoucang'"></text>
-							<text>收藏</text>
-						</view>
-
+				<view class="flex-dir-row flex-y-center">
+					<navigator url="/pages/index/index" open-type="switchTab" class="footer-btn">
+						<text class="iconfont icon-shouyeshouye"></text>
+						<text>首页</text>
+					</navigator>
+					<navigator url="/pages/cart/cart" open-type="switchTab" class="footer-btn">
+						<text class="iconfont icon-uniE026"></text>
+						<text>购物车</text>
+					</navigator>
+					<view class="footer-btn" :class="{active: favorite}" @click="toFavorite('add')">
+						<text :class="favorite?'iconfont icon-uniE023':'iconfont icon-shoucang'"></text>
+						<text>收藏</text>
 					</view>
+				</view>
 					<view class="flex-dir-row flex-y-center">
 						<button v-if="!control" class="footer-left" @click="toggleSpec(1)">加入购物车</button>
 
@@ -221,8 +214,8 @@
 							<image :src="suks_img || goodsdata.goods_thumb">
 							</image>
 							<view class="right">
-								<jlg-minPrice v-if="suks_price" :min-price="suks_price * numberl"
-									maxSize="34rpx"></jlg-minPrice>
+							<jlg-minPrice v-if="suks_price" :min-price="suks_price * numberl"
+								maxSize="40rpx" minSize="28rpx" :Weight="500"></jlg-minPrice>
 								<text v-else class="col-1C7231 mb-10 f-29">选择规格</text>
 								<text class="f-24 col-3 mt-20">库存: {{suks_inventory}}件</text>
 								<view class=" f-24 col-3">
@@ -422,9 +415,10 @@
 			//获取用户头像、昵称用于分享海报
 			if (this.user_id) {
 				db.collection("uni-id-users").doc(this.user_id).field("nickname,avatar_file").get().then((res) => {
-					this.usname = res.result.data[0].nickname ? res.result.data[0].nickname : '匿名用户';
-					this.usimg = res.result.data[0].avatar_file.url ? res.result.data[0].avatar_file.url :
-						'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
+			const userInfo = res.result.data[0];
+				this.usname = userInfo?.nickname || '匿名用户';
+				this.usimg = userInfo?.avatar_file?.url ||
+					'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
 				})
 			}
 		},
@@ -914,39 +908,37 @@
 
 <style lang='scss'>
 	page {
-		background: #f5f5f5;
+		background: $brand-surface;
 		padding-bottom: 160rpx;
 	}
 
 	.b-b {
-		border-bottom: 1rpx solid #f3f3f3
+		border-bottom: 1rpx solid $brand-border;
 	}
 
 	.icon-uniE003 {
-		font-size: 30upx;
-		color: #888;
+		font-size: 26rpx;
+		color: $brand-muted;
 	}
 
 	.name {
 		margin-bottom: 11rpx;
 	}
 
-
-
 	.swiper-list {
-		height: 700rpx;
+		height: 750rpx;
 	}
-
-
 
 	.swiper {
-		height: 700rpx;
+		height: 750rpx;
 		position: relative;
 	}
 
+	/* 秒杀信息条 */
 	.search-backurl {
 		position: relative;
-		padding: 10rpx 20rpx;
+		padding: 20rpx 32rpx;
+		background: $brand-black;
 	}
 
 	.backimg {
@@ -961,17 +953,18 @@
 		z-index: 0;
 	}
 
+	/* 轮播图数字指示器 */
 	.current {
 		position: absolute;
-		bottom: 30rpx;
-		right: 30rpx;
-		background-color: #888;
-		color: #fff;
+		bottom: 24rpx;
+		right: 24rpx;
+		background-color: rgba(32, 35, 33, 0.45);
+		color: $brand-surface;
 		text-align: center;
-		border-radius: 30rpx;
-		padding: 6rpx 26rpx;
+		border-radius: 999rpx;
+		padding: 4rpx 20rpx;
 		box-sizing: border-box;
-		font-size: 26rpx;
+		font-size: 24rpx;
 	}
 
 	.swiperImg {
@@ -979,164 +972,208 @@
 		height: 100%;
 	}
 
+	/* 信息卡片 */
 	.list-item {
 		width: 100%;
-		padding: 25rpx;
+		padding: 28rpx 32rpx;
 		box-sizing: border-box;
+		background: $brand-surface;
 	}
 
+	/* 商品名称 */
+	.product-name {
+		font-size: 30rpx;
+		font-weight: $font-product-title-weight;
+		color: $brand-black;
+		line-height: 1.45;
+		flex: 1;
+	}
+
+	/* 分享按钮 */
+	.share-btn {
+		background: transparent !important;
+		width: 56rpx;
+		height: 56rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		margin-left: 16rpx;
+		flex-shrink: 0;
+		border: none !important;
+	}
+
+	/* 限时秒杀标签 */
 	.deal-tip {
-		align-items: center;
-		padding: 4upx 10upx;
-		background: #ffffff;
-		font-size: 22rpx;
-		color: #1C7231;
-		border-radius: 6upx;
+		font-size: $font-meta;
+		color: $brand-primary;
+		border: 1rpx solid $brand-primary;
 		line-height: 1;
-		transform: translateY(-4upx);
-		padding: 8rpx 16rpx;
-		border-radius: 20rpx;
-		margin-top: 18rpx;
+		padding: 5rpx 12rpx;
+		margin-left: 16rpx;
 	}
 
-	.deal-tips {
-		align-items: center;
-		padding: 4upx 10upx;
-		background: #F56C6C;
-		font-size: 22rpx;
-		color: #fff;
-		border-radius: 6upx;
+	/* 秒杀区白色小标签 */
+	.seckill-tag {
+		font-size: $font-meta;
+		color: $brand-surface;
+		border: 1rpx solid rgba(255, 255, 255, 0.5);
 		line-height: 1;
-		transform: translateY(-4upx);
+		padding: 5rpx 12rpx;
+	}
+
+	/* 折扣标签 */
+	.deal-tips {
+		font-size: $font-meta;
+		color: $brand-muted;
+		border: 1rpx solid $brand-light-muted;
+		line-height: 1;
+		padding: 5rpx 12rpx;
 	}
 
 	.list-title-left {
 		width: 110rpx;
 		text-align: left;
+		color: $brand-muted;
+		font-size: $font-body;
 	}
 
+	/* 加入购物车按钮（次按钮） */
 	.footer-left {
-		width: 200rpx;
-		font-size: 28rpx;
-		background-color: #f5eae9 !important;
-		color: #1C7231;
-		border-radius: 60rpx 0 0 60rpx;
-		font-size: 28rpx;
-		height: 75rpx;
-		line-height: 75rpx;
+		width: 210rpx;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		background-color: $brand-bg !important;
+		color: $brand-text;
+		border-radius: 0;
+		height: 88rpx;
+		line-height: 88rpx;
 	}
 
+	/* 立即购买按钮（主按钮） */
 	.footer-right {
-		width: 200rpx;
-		font-size: 28rpx;
-		background-color: #1C7231 !important;
-		color: #fff;
-		border-radius: 0 60rpx 60rpx 0;
-		height: 75rpx;
-		line-height: 75rpx;
+		width: 210rpx;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		background-color: $brand-primary !important;
+		color: $brand-surface;
+		border-radius: 0;
+		height: 88rpx;
+		line-height: 88rpx;
 	}
 
+	/* 秒杀立即购买按钮 */
 	.footer-rights {
 		width: 360rpx;
-		font-size: 28rpx;
-		background: linear-gradient(to right, #fe3d3d, #ff0077) !important;
-		color: #fff;
-		border-radius: 60rpx;
-		height: 75rpx;
-		line-height: 75rpx;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		background: $brand-primary !important;
+		color: $brand-surface;
+		border-radius: 0;
+		height: 88rpx;
+		line-height: 88rpx;
 	}
 
+	/* 优惠券标签 */
 	.coupon-btn {
-		background-color: #ffefef;
+		background-color: transparent;
+		border: 1rpx solid $brand-primary;
 		margin-right: 10rpx;
-		font-size: 25rpx;
-		padding: 6rpx 16rpx;
-		border-radius: 10rpx;
+		font-size: $font-meta;
+		padding: 5rpx 12rpx;
+		color: $brand-primary;
+		line-height: 1;
 	}
 
-	/* 评价 */
+	/* 评价区域 */
 	.eva-section {
 		display: flex;
 		flex-direction: column;
-		padding: 20upx 30upx;
-		background: #fff;
-		margin-top: 16upx;
+		padding: 28rpx 32rpx;
+		background: $brand-surface;
+		margin-top: 2rpx;
 
 		.e-header {
 			display: flex;
 			align-items: center;
-			height: 70upx;
-			font-size: 26rpx;
-			color: #8d8f94;
+			height: 60rpx;
+			font-size: $font-meta;
+			color: $brand-muted;
 
 			.tit {
-				font-size: 30rpx;
-				color: #000;
-				margin-right: 4rpx;
+				font-size: $font-product-title;
+				font-weight: $font-product-title-weight;
+				color: $brand-black;
+				margin-right: 6rpx;
 			}
 
 			.tip {
 				flex: 1;
 				text-align: right;
+				color: $brand-muted;
 			}
 
 			.icon-uniE003 {
-				margin-left: 10upx;
+				margin-left: 8rpx;
 			}
 		}
 	}
 
 	.eva-box {
 		display: flex;
-		padding: 20upx 0;
+		padding: 20rpx 0;
 
 		.portrait {
-			width: 80upx;
-			height: 80upx;
-			border-radius: 100px;
+			width: 72rpx;
+			height: 72rpx;
+			border-radius: 50%;
+			flex-shrink: 0;
 		}
 
 		.right {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
-			padding-left: 26rpx;
-			font-size: 28rpx;
-			color: #2e2f31;
+			padding-left: 24rpx;
+			font-size: $font-body;
+			color: $brand-text;
 
 			.con {
-				font-size: 28rpx;
-				padding: 20rpx 0;
-				color: #606266;
+				font-size: $font-body;
+				padding: 14rpx 0;
+				color: $brand-text;
+				line-height: 1.6;
 			}
 
 			.bot {
 				display: flex;
 				justify-content: space-between;
-				color: #606266;
-				font-size: 24rpx;
+				color: $brand-muted;
+				font-size: $font-meta;
 			}
 		}
 	}
 
-	/*  详情 */
+	/* 图文详情 */
 	.detail-desc {
-		background: #fff;
-		margin-top: 16rpx;
+		background: $brand-surface;
+		margin-top: 2rpx;
 		padding-bottom: 100rpx;
 
 		.d-header {
 			display: flex;
-			font-size: 30rpx;
+			font-size: $font-body;
+			font-weight: $font-body-weight;
+			letter-spacing: 2rpx;
 			align-items: center;
 			justify-content: center;
-			color: #606266;
+			color: $brand-muted;
 			position: relative;
-			height: 80rpx;
+			height: 88rpx;
 
 			text {
-				background: #fff;
-				padding: 0 20upx;
+				background: $brand-surface;
+				padding: 0 24rpx;
 				position: relative;
 				z-index: 1;
 			}
@@ -1149,45 +1186,44 @@
 				width: 300rpx;
 				height: 0;
 				content: '';
-				border-bottom: 1rpx solid #ccc;
-				border-bottom-width: 1rpx;
-				border-bottom-style: solid;
-				border-bottom-color: rgb(202, 202, 202);
+				border-bottom: 1rpx solid $brand-border;
 			}
 		}
 	}
 
-
 	/* 规格选择弹窗 */
 	.spec-content {
-		padding: 30rpx 30rpx;
+		padding: 32rpx;
 
 		.spec-top {
 			display: flex;
 
 			image {
-				width: 150rpx;
-				height: 150rpx;
-				border-radius: 20rpx;
+				width: 160rpx;
+				height: 160rpx;
+				border-radius: 4rpx;
+				background-color: $brand-image-bg;
+				flex-shrink: 0;
 			}
 
 			.right {
 				display: flex;
 				flex-direction: column;
 				padding-left: 24rpx;
-				font-size: 28rpx;
-				color: #000;
-				line-height: 42rpx;
+				font-size: $font-product-title;
+				color: $brand-black;
+				line-height: 44rpx;
 			}
 		}
 
 		.spec-list {
 			display: flex;
 			flex-direction: column;
-			font-size: 30rpx;
-			color: #000;
-			padding-top: 30rpx;
-			padding-left: 10rpx;
+			font-size: $font-product-title;
+			font-weight: $font-product-title-weight;
+			color: $brand-black;
+			padding-top: 32rpx;
+			padding-left: 0;
 		}
 
 		.item-list {
@@ -1199,27 +1235,27 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: #eee;
-				margin-right: 20rpx;
-				margin-bottom: 20rpx;
-				border-radius: 12rpx;
+				background: $brand-bg;
+				border: none;
+				margin-right: 16rpx;
+				margin-bottom: 16rpx;
+				border-radius: 32rpx;
 				min-width: 60rpx;
-				height: 55rpx;
+				height: 60rpx;
 				padding: 0 32rpx;
-				font-size: 26rpx;
-				color: #000;
+				font-size: $font-body;
+				color: $brand-text;
 			}
 
 			.selected {
-				background: #faf7f7;
-				color: #1C7231;
-				border: 1rpx solid #ffabcb;
+				background: rgba($brand-primary, 0.08);
+				color: $brand-primary;
+				border: 1rpx solid $brand-primary;
 			}
 		}
 	}
 
-
-	/* 底部操作菜单 */
+	/* 底部操作栏 */
 	.footer {
 		position: fixed;
 		left: 0;
@@ -1229,75 +1265,66 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		padding-top: 20rpx;
-		background: #fff;
-		border-top: 1rpx solid #E5E6E2;
-		box-shadow: 0 -6rpx 20rpx rgba(32, 35, 33, 0.025);
-		padding-bottom: calc(30rpx + constant(safe-area-inset-bottom));
-		padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+		padding-top: 16rpx;
+		background: $brand-surface;
+		border-top: 1rpx solid $brand-border;
+		padding-bottom: calc(24rpx + constant(safe-area-inset-bottom));
+		padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 	}
 
+	/* 底部快捷入口图标 */
 	.footer-btn {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		font-size: 26rpx;
-		color: #565656;
-		width: 85rpx;
+		font-size: $font-meta;
+		color: $brand-muted;
+		width: 80rpx;
 		height: 80rpx;
 
 		.iconfont {
-			font-size: 49rpx;
-			line-height: 49rpx;
-			color: #565656;
+			font-size: 40rpx;
+			line-height: 40rpx;
+			color: $brand-muted;
 		}
 
 		&.active,
 		&.active .iconfont {
-			color: #1C7231;
-		}
-
-		.icon-uniE02D {
-			font-size: 42rpx;
-			transform: translateY(-2rpx);
-		}
-
-		.icon-uniE027 {
-			font-size: 46rpx;
+			color: $brand-primary;
 		}
 	}
 
+	/* 规格弹窗确认按钮 */
 	.makesure {
 		width: 100%;
-		background-color: #1C7231;
-		border-radius: 50rpx;
-		font-size: 30rpx;
-		color: #fff;
+		background-color: $brand-primary;
+		border-radius: 0;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		color: $brand-surface;
 		text-align: center;
 		margin-top: 40rpx;
-		padding: 20rpx 0;
+		padding: 28rpx 0;
 		box-sizing: border-box;
-
 	}
 
-	/* 优惠卷 */
-
+	/* 优惠券弹窗 */
 	.coupon-diej {
 		position: absolute;
 		right: 0;
 		top: 0;
-		background: #ffaa00;
-		color: #fff;
+		background: $brand-muted;
+		color: $brand-surface;
 		z-index: 99;
-		font-size: 22rpx;
+		font-size: $font-meta;
 		padding: 5rpx 10rpx;
-		border-top-right-radius: 20rpx;
-		border-bottom-left-radius: 20rpx;
+		border-top-right-radius: 8rpx;
+		border-bottom-left-radius: 8rpx;
 	}
 
 	.coupon-z {
-		font-size: 40rpx;
+		font-size: 36rpx;
 		font-weight: 600;
 	}
 
@@ -1309,10 +1336,11 @@
 	.coupon-van {
 		width: 100%;
 		height: 200rpx;
-		background: #fff;
-		border-radius: 20rpx;
+		background: $brand-surface;
+		border-radius: 8rpx;
+		border: 1rpx solid $brand-border;
 		position: relative;
-		margin-top: 20rpx;
+		margin-top: 16rpx;
 	}
 
 	.coupon-letf {
@@ -1323,59 +1351,60 @@
 	}
 
 	.coupon-icqc {
-		height: 38rpx;
-		background: #1C7231;
-		border-radius: 100rpx;
-		color: #fff;
-		padding: 0 15rpx;
-		line-height: 38rpx;
-		font-size: 22rpx;
+		height: 36rpx;
+		background: $brand-primary;
+		border-radius: 4rpx;
+		color: $brand-surface;
+		padding: 0 12rpx;
+		line-height: 36rpx;
+		font-size: $font-meta;
 		margin-top: 30rpx;
 		margin-left: 20rpx;
 		margin-right: 10rpx;
 	}
 
 	.coupon-name {
-		font-size: 34rpx;
-		top: 30rpx;
+		font-size: 30rpx;
 		line-height: 85rpx;
-		color: #1b1b1b;
+		color: $brand-black;
+		font-weight: $font-product-title-weight;
 	}
 
 	.coupon-righ {
 		width: 33%;
 		height: 100%;
-		background: #1C7231;
+		background: $brand-primary;
 		position: absolute;
 		right: 0;
-		border-bottom-right-radius: 20rpx;
-		border-top-right-radius: 20rpx;
-		color: #fff;
+		border-bottom-right-radius: 8rpx;
+		border-top-right-radius: 8rpx;
+		color: $brand-surface;
 		text-align: center;
 	}
 
 	.coupon-qian {
-		font-size: 64rpx;
+		font-size: 52rpx;
 		font-weight: 600;
 		margin-top: 8rpx;
 	}
 
 	.coupon-lqsy {
-		font-size: 24rpx;
-		height: 38rpx;
-		background: #fff;
-		border-radius: 100rpx;
-		color: #1C7231;
-		line-height: 38rpx;
+		font-size: $font-meta;
+		height: 36rpx;
+		background: $brand-surface;
+		border-radius: 4rpx;
+		color: $brand-primary;
+		line-height: 36rpx;
 		margin: 12rpx auto auto auto;
-		width: 125rpx;
+		width: 120rpx;
+		text-align: center;
 	}
 
 	button::after {
 		border: none;
 	}
 
-	/* 自定义顶部导航 */
+	/* 微信小程序自定义顶部返回 */
 	.navbar {
 		width: 100%;
 		position: fixed;
@@ -1385,12 +1414,18 @@
 	}
 
 	.navbar .navbar-title {
-		background: #ffffff54;
-		border-radius: 200rpx;
+		background: rgba(255, 255, 255, 0.82);
+		width: 64rpx;
+		height: 64rpx;
+		border-radius: 50%;
 		position: fixed;
 		left: 20rpx;
 		z-index: 10;
-		padding: 4rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		overflow: hidden;
 	}
 
 	.navbar .navbar-return {
@@ -1404,35 +1439,45 @@
 
 	.navbar .icon-arrow-left {
 		font-size: 36rpx;
-		color: #333;
-	}
-
-	.navbar .search-content {
-		display: flex;
-		flex-direction: row;
-		width: 70%;
-		height: 60rpx;
-		background-color: #eaeaea;
-		border-radius: 100rpx;
-	}
-
-	.navbar .icon-search {
-		font-size: 40rpx;
-		color: #A0A0A0;
-		padding: 0 5rpx;
-	}
-
-	.navbar .search-input {
-		font-size: 25rpx;
-		color: #666;
-		height: 60rpx;
+		color: $brand-black;
 	}
 
 	.minprice {
 		&:before {
 			content: '￥';
-			font-size: 24rpx;
+			font-size: $font-meta;
 			margin: 0 2rpx 0 -4rpx;
+		}
+	}
+
+	/* 覆盖 jlg-minPrice 组件内 ¥ 前缀字号，与 maxSize 比例协调 */
+	.list-item .minprices::before {
+		font-size: 28rpx;
+	}
+
+	.product-price-pair {
+		align-items: flex-end;
+		line-height: 1;
+
+		.price-original {
+			margin-bottom: 6rpx;
+		}
+	}
+
+	/* 划线原价 */
+	.price-original {
+		font-family: $brand-price-font;
+		font-size: 26rpx;
+		font-weight: $font-meta-weight;
+		color: $brand-muted;
+		text-decoration: line-through;
+		line-height: 32rpx;
+
+		&::before {
+			content: '¥';
+			font-family: inherit;
+			font-size: 24rpx;
+			margin-right: 1rpx;
 		}
 	}
 </style>

@@ -74,6 +74,7 @@
 	/*
 		全局公共样式和字体图标
 	*/
+	@import '@/static/common/common.scss';
 
 	/* ── 品牌价格字体：Abel（Latin 子集，含数字/标点，约 8 KB） ── */
 	/* #ifndef MP-WEIXIN */
