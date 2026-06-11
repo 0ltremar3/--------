@@ -2,7 +2,8 @@
 	"easycom": {
 		"uv-sticky": "@/uni_modules/uv-sticky/components/uv-sticky/uv-sticky.vue",
 		"uv-tabs": "@/uni_modules/uv-tabs/components/uv-tabs/uv-tabs.vue",
-		"jlg-minPrice": "@/components/jlg-minPrice/jlg-minPrice.vue"
+		"jlg-minPrice": "@/components/jlg-minPrice/jlg-minPrice.vue",
+		"jlg-spec-popup": "@/components/jlg-spec-popup/jlg-spec-popup.vue"
 	},
 	"pages": [{
 			"path": "pages/index/index",

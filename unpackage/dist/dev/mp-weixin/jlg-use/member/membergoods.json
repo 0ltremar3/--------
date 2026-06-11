@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "权益商品",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice"
-  }
-}

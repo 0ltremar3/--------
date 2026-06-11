@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "成员信息",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty"
-  }
-}

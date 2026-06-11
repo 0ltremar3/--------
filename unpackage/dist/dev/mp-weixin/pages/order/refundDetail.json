@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "商品评价",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
-    "uni-rate": "/uni_modules/uni-rate/components/uni-rate/uni-rate"
-  }
-}

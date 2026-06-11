@@ -1,1 +1,0 @@
-<view><text class="minprices" style="{{'color:'+(col)+';'+('font-size:'+(maxSize)+';')+('font-weight:'+(Weight)+';')}}"><text>{{$root.g0[0]}}</text><text style="{{'color:'+(col)+';'+('font-size:'+(minSize)+';')+('font-weight:'+(Weight)+';')}}"><text>{{"."+$root.g1[1]}}</text></text></text></view>

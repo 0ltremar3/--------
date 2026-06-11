@@ -199,14 +199,14 @@
 					</view>
 				</view>
 					<view class="flex-dir-row flex-y-center">
-						<button v-if="!control" class="footer-left" @click="toggleSpec(1)">加入购物车</button>
+						<button v-if="!control" class="footer-left" @click="openCartSpec">加入购物车</button>
 
 						<button :class="control?'footer-rights':'footer-right'" @click="toggleSpec(0)">立即购买</button>
 					</view>
 				</view>
 			</view>
 
-			<!-- 规格弹窗 -->
+			<!-- 立即购买规格弹窗 -->
 			<view>
 				<uv-popup bgColor="#ffffff" ref="closepopup" :round="10" mode="bottom">
 					<view class="layer  spec-content">
@@ -247,6 +247,9 @@
 					</view>
 				</uv-popup>
 			</view>
+
+			<!-- 加入购物车规格弹窗（统一品牌风格组件） -->
+			<jlg-spec-popup ref="cartSpecPopup" :userId="user_id" />
 
 			<!-- 优惠卷 -->
 			<view>
@@ -501,7 +504,18 @@
 					})
 				})
 			},
-			//规格弹窗开关
+			// 加入购物车 —— 使用统一规格弹窗组件
+			openCartSpec() {
+				if (this.tokenData()) {
+					uni.showToast({ title: '未登录或登录状态过期', icon: 'none', duration: 1000 });
+					setTimeout(() => {
+						uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd' });
+					}, 1000);
+					return;
+				}
+				this.$refs.cartSpecPopup.open(this.goodsdata, this.goodsdata);
+			},
+			//规格弹窗开关（立即购买）
 			toggleSpec(e) {
 				if (this.tokenData()) {
 					uni.showToast({

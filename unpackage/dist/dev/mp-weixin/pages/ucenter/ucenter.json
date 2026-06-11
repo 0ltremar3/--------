@@ -1,7 +1,0 @@
-{
-  "navigationStyle": "custom",
-  "navigationBarTitleText": "个人中心",
-  "usingComponents": {
-    "uv-badge": "/uni_modules/uv-badge/components/uv-badge/uv-badge"
-  }
-}

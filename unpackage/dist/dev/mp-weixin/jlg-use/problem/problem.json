@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "常见问题",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "uv-tabs": "/uni_modules/uv-tabs/components/uv-tabs/uv-tabs"
-  }
-}

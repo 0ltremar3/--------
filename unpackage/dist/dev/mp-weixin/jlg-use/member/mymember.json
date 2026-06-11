@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "会员中心",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "uni-pay": "/uni_modules/uni-pay/components/uni-pay/uni-pay"
-  }
-}

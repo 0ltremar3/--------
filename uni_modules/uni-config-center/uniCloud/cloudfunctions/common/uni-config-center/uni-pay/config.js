@@ -10,7 +10,7 @@ module.exports = {
 	},
 	// 微信支付相关
 	"wxpay": {
-		"enable": true, // 是否启用微信支付
+		"enable": false, // 是否启用微信支付
 		"mp": {
 			"appId": "", // 小程序的appid
 			"secret": "", // 小程序的secret

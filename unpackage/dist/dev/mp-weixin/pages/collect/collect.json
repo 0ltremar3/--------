@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "我的收藏",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
-    "uni-swipe-action": "/uni_modules/uni-swipe-action/components/uni-swipe-action/uni-swipe-action",
-    "uni-swipe-action-item": "/uni_modules/uni-swipe-action/components/uni-swipe-action-item/uni-swipe-action-item"
-  }
-}

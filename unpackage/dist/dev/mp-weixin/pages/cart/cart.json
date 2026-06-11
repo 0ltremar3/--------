@@ -1,9 +1,0 @@
-{
-  "enablePullDownRefresh": true,
-  "navigationBarTitleText": "购物车",
-  "usingComponents": {
-    "uv-empty": "/uni_modules/uv-empty/components/uv-empty/uv-empty",
-    "jlg-min-price": "/components/jlg-minPrice/jlg-minPrice",
-    "uni-number-box": "/uni_modules/uni-number-box/components/uni-number-box/uni-number-box"
-  }
-}
