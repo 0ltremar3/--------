@@ -62,7 +62,7 @@
 					<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
 					</view>
 					<uni-countdown @timeup="delayed" font-size="12" ref="coun" :hour="hours" :minute="minutes"
-						:second="seconds" color="#FFFFFF" background-color="#1C7231" splitorColor="#FFFFFF" />
+						:second="seconds" color="#FFFFFF" background-color="#61A189" splitorColor="#FFFFFF" />
 				</view>
 			</view>
 			<view class="list-item flex-dir-column">
@@ -160,7 +160,7 @@
 						mode="aspectFill"></image>
 					<view class="right">
 						<text class="name">{{evaluateList[0].usname[0]?evaluateList[0].usname[0]:"匿名用户"}}</text>
-						<uni-rate :readonly="true" activeColor="#1C7231" size="17" v-model="evaluateList[0].grade" />
+						<uni-rate :readonly="true" activeColor="#61A189" size="17" v-model="evaluateList[0].grade" />
 						<text class="con">{{evaluateList[0].content.text}}</text>
 						<view class="bot">
 							<text class="attr">购买类型：<text style="margin-right: 10rpx;"

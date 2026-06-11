@@ -1,8 +1,8 @@
 <template>
 	<view style="box-sizing: border-box;">
 		<uv-sticky bgColor="#fff" custom-nav-height="0">
-			<uv-tabs :list="list" @click="tabClick" lineColor="#1C7231" :scrollable="false"
-				:activeStyle="{color: '#1C7231'}"></uv-tabs>
+			<uv-tabs :list="list" @click="tabClick" lineColor="#61A189" :scrollable="false"
+				:activeStyle="{color: '#61A189'}"></uv-tabs>
 		</uv-sticky>
 		<uv-empty v-if="orderList.length ==0" mode="data" icon="/static/temp/shwk.png" text="暂无成员订单"></uv-empty>
 		<view v-else class="container">

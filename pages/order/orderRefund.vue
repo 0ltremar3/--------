@@ -10,7 +10,7 @@
 			<uni-easyinput type="textarea" v-model="message" placeholder="请输入退款理由" maxlength="50"></uni-easyinput>
 		</view>
 		<view class="btn_van">
-			<button class="but" color="#1C7231" block @click="submit(data._id)">提交申请</button>
+			<button class="but" color="#61A189" block @click="submit(data._id)">提交申请</button>
 		</view>
 	</view>
 </template>
@@ -73,7 +73,7 @@
 		border-radius: 50px;
 		line-height: 80rpx;
 		color: #fff;
-		background-color: #1C7231;
+		background-color: #61A189;
 	}
 
 	.btn_van {

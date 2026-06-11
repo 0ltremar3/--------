@@ -11,7 +11,7 @@
 						<view class="gssuk">
 							<text style="margin-right: 10rpx;" v-for="suk in item.goods_suk">{{suk}}</text>
 						</view>
-						<view class="flex-dir-row flex-x-between" style="color: #1C7231;">
+						<view class="flex-dir-row flex-x-between" style="color: #61A189;">
 							<text>￥{{item.goods_price /100}}</text>
 							<text style="color: #6d6d6d;font-size: 26rpx;line-height: 43rpx;">×{{item.goods_num}}</text>
 						</view>
@@ -20,7 +20,7 @@
 				<view class="flex-dir-row mt-20 flex-y-center ">
 					<text class="f-32 col-000 mr-20">商品描述</text>
 					<view class="mr-20">
-						<uni-rate activeColor="#1C7231" size="22" v-model="item.value" />
+						<uni-rate activeColor="#61A189" size="22" v-model="item.value" />
 					</view>
 				</view>
 				<view class="text-area mt-20">
@@ -204,7 +204,7 @@
 		width: 690rpx;
 		color: #fff;
 		font-size: 29rpx;
-		background-color: #1C7231;
+		background-color: #61A189;
 		border-radius: 50rpx;
 		box-sizing: border-box;
 		padding: 20rpx 0;

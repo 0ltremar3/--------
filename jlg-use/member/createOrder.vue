@@ -13,7 +13,7 @@
 					</view>
 				</view>
 				<view v-else class="flex-dir-row w-100">
-					<text class="iconfont icon-uniE03d col-1C7231"
+					<text class="iconfont icon-uniE03d col-61A189"
 						style="font-size: 40rpx;height: 20rpx;line-height: 48rpx;"></text>
 					<text class="ml-10 f-28" style="line-height: 46rpx;height: 30rpx;">请选择收货地址</text>
 				</view>
@@ -26,7 +26,7 @@
 		</view>
 		<view class="list-item flex-dir-column" style="padding: 20rpx 25rpx 30rpx 25rpx;">
 			<view class="flex-dir-row b-b pb-20 flex-y-center">
-				<text class="iconfont  f-32 icon-uniE01f col-1C7231"
+				<text class="iconfont  f-32 icon-uniE01f col-61A189"
 					style="line-height: 20rpx;font-size: 60rpx;"></text>
 				<text class="col-3 f-29 ml-10">山前食养商城</text>
 			</view>
@@ -75,7 +75,7 @@
 		</view>
 		<!-- 底部 -->
 		<view class="footer">
-			<view class="pl-30 col-1C7231  flex-dir-row flex-y-baseline">
+			<view class="pl-30 col-61A189  flex-dir-row flex-y-baseline">
 				<text class="col-0 f-26">实付款:</text>
 				<jlg-minPrice :min-price="(payment) + (freight)" maxSize="40rpx" minSize="27rpx"></jlg-minPrice>
 			</view>
@@ -84,7 +84,7 @@
 		<!-- 优惠卷 -->
 		<view>
 			<uv-popup bgColor="#eaeaea" ref="popup" :round="10" mode="bottom">
-				<view style="font-size: 22rpx;color: #1C7231;padding: 11px 0px 0px 12px;">提示：秒杀商品不计优惠</view>
+				<view style="font-size: 22rpx;color: #61A189;padding: 11px 0px 0px 12px;">提示：秒杀商品不计优惠</view>
 				<!-- <scroll-view></scroll-view> -->
 				<scroll-view scroll-y class="coupon-cen">
 					<view v-if="item.allowType[0] !== '指定商品' || goods_id.some(id=> item.goodsArr[0].includes(id))"
@@ -680,7 +680,7 @@
 		line-height: 76rpx;
 		font-size: 29rpx;
 		border-radius: 77rpx;
-		background-color: #1C7231;
+		background-color: #61A189;
 		margin: 20rpx 30rpx;
 	}
 
@@ -760,7 +760,7 @@
 
 	.coupon-icqc {
 		height: 38rpx;
-		background: #1C7231;
+		background: #61A189;
 		border-radius: 100rpx;
 		color: #fff;
 		padding: 0 15rpx;
@@ -781,7 +781,7 @@
 	.coupon-righ {
 		width: 33%;
 		height: 100%;
-		background: #1C7231;
+		background: #61A189;
 		position: absolute;
 		right: 0;
 		border-bottom-right-radius: 20rpx;
@@ -801,7 +801,7 @@
 		height: 38rpx;
 		background: #fff;
 		border-radius: 100rpx;
-		color: #1C7231;
+		color: #61A189;
 		line-height: 38rpx;
 		margin: 12rpx auto auto auto;
 		width: 125rpx;

@@ -528,7 +528,7 @@
 
 	.price_text {
 		flex: 1;
-		color: #1C7231;
+		color: #61A189;
 	}
 
 	.icon-uniE003 {

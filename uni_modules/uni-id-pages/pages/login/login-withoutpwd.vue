@@ -11,10 +11,10 @@
 			</view>
 			<view class="login-actions">
 				<button class="uni-btn wechat-btn" @click="quickWechatLogin">
-					<text class="wechat-icon">微</text>
+					<!-- <text class="wechat-icon"></text> -->
 					<text>微信快捷登录</text>
 				</button>
-				<button type="primary" open-type="getPhoneNumber|agreePrivacyAuthorization"
+				<button open-type="getPhoneNumber|agreePrivacyAuthorization"
 					@getphonenumber="quickMobileLogin" class="uni-btn phone-auth-btn">手机号授权登录</button>
 				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 				<!-- 短信验证码登录入口按需恢复
@@ -326,7 +326,7 @@
 	}
 
 	.uni-btn {
-		background-color: #1C7231;
+		background-color: #61A189;
 		border-radius: 100rpx;
 		line-height: 90rpx;
 		height: 90rpx;
@@ -411,7 +411,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: #1C7231;
+		background-color: #61A189;
 		color: #FFFFFF;
 		box-shadow: 0 14rpx 30rpx rgba(28, 114, 49, 0.16);
 	}
@@ -432,8 +432,8 @@
 	.phone-auth-btn {
 		margin-top: 28rpx !important;
 		border: 1rpx solid rgba(28, 114, 49, 0.28);
-		background-color: rgba(255, 255, 255, 0.72);
-		color: #1C7231;
+		background-color: rgba(255, 255, 255, 0.72) !important;
+		color: #61A189 !important;
 		box-shadow: none;
 	}
 
@@ -446,7 +446,7 @@
 	}
 
 	.login-actions ::v-deep .agreement {
-		color: #1C7231;
+		color: #61A189;
 	}
 
 	.login-actions ::v-deep .checkbox-box {
@@ -457,7 +457,7 @@
 	.link-btn {
 		margin-top: 30rpx;
 		background-color: transparent;
-		color: #1C7231;
+		color: #61A189;
 		font-size: 28rpx;
 		line-height: 60rpx;
 		height: 60rpx;

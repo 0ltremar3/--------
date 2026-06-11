@@ -390,7 +390,7 @@
 			color: #8E918D;
 
 			&--active {
-				color: #1C7231;
+				color: #61A189;
 			}
 		}
 	}
@@ -402,7 +402,7 @@
 			padding: 20rpx 64rpx;
 			font-size: 28rpx;
 			color: #FFFFFF;
-			background: #1C7231;
+			background: #61A189;
 			text-align: center;
 		}
 	}
@@ -523,12 +523,12 @@
 		&__seckill-tip {
 			margin-top: 8rpx;
 			padding: 4rpx 12rpx;
-			border: 1rpx solid #1C7231;
+			border: 1rpx solid #61A189;
 			align-self: flex-start;
 
 			text {
 				font-size: 20rpx;
-				color: #1C7231;
+				color: #61A189;
 			}
 		}
 
@@ -549,7 +549,7 @@
 		margin-right: 16rpx;
 
 		&.checked {
-			color: #1C7231;
+			color: #61A189;
 		}
 	}
 
@@ -626,15 +626,15 @@
 			font-size: 30rpx;
 			font-weight: 600;
 			color: #FFFFFF;
-			background: #1C7231;
+			background: #61A189;
 			border-radius: 0;
 			box-shadow: none;
 			transition: background 0.2s, color 0.2s;
 
 			&--ghost {
 				background: #FFFFFF;
-				color: #1C7231;
-				border: 1rpx solid #1C7231;
+				color: #61A189;
+				border: 1rpx solid #61A189;
 			}
 
 			&--disabled {

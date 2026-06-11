@@ -5,8 +5,8 @@
 				@search="searchClick" @clear="clearClick"></uv-search>
 		</view>
 		<uv-sticky bgColor="#fff" :custom-nav-height="navTop">
-			<uv-tabs :list="list" @click="tabClick" lineColor="#1C7231" :current="labelIndex" :scrollable="false"
-				:activeStyle="{color: '#1C7231'}"></uv-tabs>
+			<uv-tabs :list="list" @click="tabClick" lineColor="#61A189" :current="labelIndex" :scrollable="false"
+				:activeStyle="{color: '#61A189'}"></uv-tabs>
 		</uv-sticky>
 		<view class="list">
 			<!-- 空白页 -->
@@ -421,7 +421,7 @@
 			},
 			//订单状态颜色
 			orderStateExp(state) {
-				let stateTipColor = '#1C7231';
+				let stateTipColor = '#61A189';
 				switch (state) {
 					case 2:
 					case 3:
@@ -562,9 +562,9 @@
 		padding: 0;
 		text-align: center;
 		font-size: 28rpx;
-		color: #1C7231;
+		color: #61A189;
 		border-radius: 100px;
-		border: 1rpx solid #1C7231;
+		border: 1rpx solid #61A189;
 
 		background-color: #fff7fa;
 		line-height: 56rpx;

@@ -5,7 +5,7 @@
 				@clear="clearClick"></uv-search>
 		</view>
 		<uv-sticky bgColor="#fff" :custom-nav-height="0">
-			<uv-tabs :list="list" lineColor="#1C7231" @click="loadData" :activeStyle="{color: '#1C7231'}"
+			<uv-tabs :list="list" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
 				:scrollable="false">
 			</uv-tabs>
 		</uv-sticky>
@@ -334,7 +334,7 @@
 
 	.hot-price {
 		font-size: 30rpx;
-		color: #1C7231;
+		color: #61A189;
 
 		&:before {
 			content: '￥';
@@ -373,7 +373,7 @@
 	.coupon-name {
 		width: 96%;
 		height: 75rpx;
-		background-color: #1C7231;
+		background-color: #61A189;
 		border-radius: 20rpx;
 		line-height: 76rpx;
 		color: #fff;

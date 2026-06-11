@@ -28,7 +28,7 @@
 <script>
 	// 与 uni.scss 品牌 Token 保持一致，SCSS 变量无法在 JS 中直接引用，故在此镜像定义
 	const BRAND = Object.freeze({
-		primary:    '#1C7231', // $brand-primary
+		primary:    '#61A189', // $brand-primary
 		black:      '#202321', // $brand-black
 		text:       '#2A3033', // $brand-text
 		muted:      '#8E918D', // $brand-muted

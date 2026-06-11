@@ -347,7 +347,7 @@
 		transform: translateX(-50%);
 		font-size: 32rpx;
 		color: #ffffff;
-		background-color: #1C7231;
+		background-color: #61A189;
 		border-radius: 100rpx;
 		height: 84rpx;
 		line-height: 84rpx;

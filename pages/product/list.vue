@@ -6,7 +6,7 @@
 		</view>
 		<view :style="{display: sticky?'':'none'}">
 			<uv-sticky bgColor="#fff" :custom-nav-height="0">
-				<uv-tabs :list="list" lineColor="#1C7231" @click="loadData" :activeStyle="{color: '#1C7231'}"
+				<uv-tabs :list="list" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
 					:scrollable="false">
 					<template v-slot:right>
 						<view style="padding-left: 4px;" @tap="toast('show')">
@@ -78,7 +78,7 @@
 			<view class="pop-van">
 				<scroll-view scroll-y>
 					<view class="pop-fathname">{{fatherName}}</view>
-					<view :class="item._id==goods_id?'pop-list col-1C7231':'pop-list col-505050'"
+					<view :class="item._id==goods_id?'pop-list col-61A189':'pop-list col-505050'"
 						v-for="item in cateList" :key="item._id" @click="changeCate(item._id)">
 						{{item.name}}
 					</view>
@@ -338,7 +338,7 @@
 
 	.hot-price {
 		font-size: 30rpx;
-		color: #1C7231;
+		color: #61A189;
 
 		&:before {
 			content: '￥';

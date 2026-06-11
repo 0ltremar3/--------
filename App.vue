@@ -725,8 +725,8 @@
 		color: #fff;
 	}
 
-	.col-1C7231 {
-		color: #1C7231;
+	.col-61A189 {
+		color: #61A189;
 	}
 
 	.col-505050 {

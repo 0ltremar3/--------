@@ -449,7 +449,7 @@
 
 	.product_btn {
 		color: #fff;
-		background: linear-gradient(to right, #ff3a3a, #1C7231);
+		background: linear-gradient(to right, #ff3a3a, #61A189);
 		border-radius: 8rpx;
 		box-sizing: border-box;
 		text-align: center;

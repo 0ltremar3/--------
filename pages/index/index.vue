@@ -39,7 +39,7 @@
 			<view class="hero-bg" :style="{backgroundColor:titleBackground}"></view>
 			<!-- #endif -->
 			<view :style="{marginTop:(navHeight + 10) + 'px'}">
-				<swiper :indicator-dots="true" autoplay indicator-active-color="#1C7231"
+				<swiper :indicator-dots="true" autoplay indicator-active-color="#61A189"
 					indicator-color="rgba(255,255,255,0.4)" :duration="1000" class="hero__swiper" circular
 					@change="loadImage">
 					<swiper-item v-if="item.category_id == 1" v-for="(item, index) in carouselList" :key="index"
@@ -88,7 +88,7 @@
 					<text v-if="control" class="text-meta">距结束</text>
 					<text v-else class="text-meta">距下场</text>
 					<uni-countdown @timeup="delayed" ref="coun" class="ml-10" :hour="hours" :minute="minutes"
-						:second="seconds" color="#1C7231" background-color="transparent" />
+						:second="seconds" color="#61A189" background-color="transparent" />
 				</view>
 			</view>
 			<scroll-view class="goods-row" scroll-x="true">
@@ -951,8 +951,8 @@
 
 	/* ── 优惠券标签（绿色细边框） ── */
 	.coupon-tag {
-		border: 1rpx solid #1C7231;
-		color: #1C7231;
+		border: 1rpx solid #61A189;
+		color: #61A189;
 		font-size: 22rpx;
 		padding: 4rpx 12rpx;
 		border-radius: 4rpx;

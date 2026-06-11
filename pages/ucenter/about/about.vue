@@ -35,7 +35,7 @@
 				articles: [],
 				currentArticle: null,
 				loading: true,
-				primaryColor: '#1C7231',
+				primaryColor: '#61A189',
 				mutedColor: '#8E918D',
 			}
 		},

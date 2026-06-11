@@ -18,7 +18,7 @@
 						<view class="margin-left-sm">
 							<text class="fwbd margin-right"
 								style="display: block;">{{ item.usname[0]?item.usname[0]:"匿名用户" }}</text>
-							<uni-rate :readonly="true" activeColor="#1C7231" size="17" v-model="item.grade" />
+							<uni-rate :readonly="true" activeColor="#61A189" size="17" v-model="item.grade" />
 						</view>
 					</view>
 					<text class="time fs-xs ft-dark">{{formatDate(item.create_date)}}</text>

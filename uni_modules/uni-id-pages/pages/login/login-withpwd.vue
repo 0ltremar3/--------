@@ -229,7 +229,7 @@
 
 	.link {
 		font-size: 12px;
-		color: #1C7231;
+		color: #61A189;
 	}
 
 	.inp_text {
@@ -247,7 +247,7 @@
 	}
 
 	.uni-btn {
-		background-color: #1C7231;
+		background-color: #61A189;
 		border-radius: 100rpx;
 		line-height: 90rpx;
 		height: 90rpx;

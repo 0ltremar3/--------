@@ -6,7 +6,7 @@
 
 核心目标：
 
-- 保持主题色 `#1C7231` 不变。
+- 保持主题色 `#61A189` 不变。
 - 将现有“促销商城模板感”升级为“高端养生品牌零售感”。
 - 统一首页、购物车、个人中心的视觉语言。
 - 替换字体包，建立统一字体系统。
@@ -73,7 +73,7 @@
 - `uni.scss` 只有基础 uni-app 变量，缺少品牌设计 token。
 - `static/common/common.scss` 中 `.price`、`.use-btn` 等仍使用红粉色。
 - `App.vue` 只声明了 iconfont，没有品牌正文字体。
-- `pages.json` 中 tabBar 选中色为 `#f86c8a`，需要改为 `#1C7231`。
+- `pages.json` 中 tabBar 选中色为 `#f86c8a`，需要改为 `#61A189`。
 
 ## 3. 设计系统
 
@@ -92,7 +92,7 @@
 保留主色：
 
 ```scss
-$brand-primary: #1C7231;
+$brand-primary: #61A189;
 ```
 
 新增品牌色：
@@ -111,7 +111,7 @@ $brand-danger: #A33A2E;
 
 使用规则：
 
-- `#1C7231` 只用于关键动作、选中态、价格、重要细线。
+- `#61A189` 只用于关键动作、选中态、价格、重要细线。
 - 标题、图标优先使用 `#202321`。
 - 辅助文案使用 `#8E918D`。
 - 页面背景使用 `#FFFFFF` 或 `#F7F8F5`。
@@ -247,7 +247,7 @@ $font-price-weight: 500;
 	font-size: $font-price;
 	font-weight: $font-price-weight;
 	line-height: 1;
-	color: #1C7231;
+	color: #61A189;
 }
 ```
 
@@ -414,7 +414,7 @@ $border-light: 1rpx solid #E5E6E2;
 
 - 图标颜色默认 `#202321`。
 - 未选中图标 `#A6A9A4`。
-- 选中图标 `#1C7231`。
+- 选中图标 `#61A189`。
 - 功能入口不再使用彩色图标。
 - 底部 tab 图标统一线性风格。
 - 图标尺寸：
@@ -430,7 +430,7 @@ $border-light: 1rpx solid #E5E6E2;
 .ds-button-primary {
 	height: 88rpx;
 	line-height: 88rpx;
-	background: #1C7231;
+	background: #61A189;
 	color: #FFFFFF;
 	border-radius: 0;
 	font-size: 28rpx;
@@ -446,8 +446,8 @@ $border-light: 1rpx solid #E5E6E2;
 	height: 80rpx;
 	line-height: 80rpx;
 	background: #FFFFFF;
-	color: #1C7231;
-	border: 1rpx solid #1C7231;
+	color: #61A189;
+	border: 1rpx solid #61A189;
 	border-radius: 0;
 	font-size: 28rpx;
 	box-shadow: none;
@@ -495,7 +495,7 @@ $border-light: 1rpx solid #E5E6E2;
 .ds-product-price {
 	margin-top: 12rpx;
 	font-size: 30rpx;
-	color: #1C7231;
+	color: #61A189;
 	font-weight: 500;
 }
 ```
@@ -523,7 +523,7 @@ $border-light: 1rpx solid #E5E6E2;
 .ds-tab-line {
 	width: 64rpx;
 	height: 4rpx;
-	background: #1C7231;
+	background: #61A189;
 }
 ```
 
@@ -553,7 +553,7 @@ $border-light: 1rpx solid #E5E6E2;
 - 中间显示品牌名“山前食养”或品牌 Logo。
 - 分类宫格改为横向文字 tab。
 - 首页首屏轮播使用大图，弱化指示点。
-- 将 `indicator-active-color="red"` 改为 `#1C7231`。
+- 将 `indicator-active-color="red"` 改为 `#61A189`。
 - 将商品图片 `mode="scaleToFill"` 改为 `mode="aspectFill"`。
 - 秒杀模块从强促销区改为“限时精选”，样式克制。
 - 热销模块改名为“本周精选”或“食养精选”。
@@ -650,8 +650,8 @@ Hi, 尊敬的顾客 / 用户昵称
 - 新增字体变量。
 - 新增间距、圆角、边框变量。
 - 新增通用 `.ds-*` 类。
-- 将公共价格色从红粉改为 `#1C7231`。
-- 将公共按钮色从模板红粉改为 `#1C7231`。
+- 将公共价格色从红粉改为 `#61A189`。
+- 将公共按钮色从模板红粉改为 `#61A189`。
 
 验收：
 
@@ -667,7 +667,7 @@ Hi, 尊敬的顾客 / 用户昵称
 
 任务：
 
-- `selectedColor` 改为 `#1C7231`。
+- `selectedColor` 改为 `#61A189`。
 - `color` 改为 `#A6A9A4`。
 - 替换底部 tab 图标为线性图标。
 - 修正购物车 iconPath 和 selectedIconPath。
@@ -837,4 +837,4 @@ Hi, 尊敬的顾客 / 用户昵称
 - 页面干净、克制、可信。
 - 商品图片和品牌内容是主角。
 - 购买路径仍然清晰。
-- `#1C7231` 成为稳定的品牌识别色，而不是到处铺满的装饰色。
+- `#61A189` 成为稳定的品牌识别色，而不是到处铺满的装饰色。

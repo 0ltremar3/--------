@@ -184,9 +184,9 @@
 								<view class="mb-10 f-28 ellipsis">
 									{{item.name}}
 								</view>
-								<view class="flex-dir-row flex-y-center col-1C7231" :class="control?'':'mt-20'"
+								<view class="flex-dir-row flex-y-center col-61A189" :class="control?'':'mt-20'"
 									style="flex-wrap: wrap;">
-									<view class="coupon-btn col-1C7231" v-for="(ius, index) in couponList" :key="index"
+									<view class="coupon-btn col-61A189" v-for="(ius, index) in couponList" :key="index"
 										v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
 										{{ius.name}}
 									</view>
@@ -214,9 +214,9 @@
 								<view class="mb-10 f-28 ellipsis">
 									{{item.name}}
 								</view>
-								<view class="flex-dir-row flex-y-center col-1C7231" :class="control?'':'mt-20'"
+								<view class="flex-dir-row flex-y-center col-61A189" :class="control?'':'mt-20'"
 									style="flex-wrap: wrap;">
-									<view class="coupon-btn col-1C7231" v-for="(ius, index) in couponList" :key="index"
+									<view class="coupon-btn col-61A189" v-for="(ius, index) in couponList" :key="index"
 										v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
 										{{ius.name}}
 									</view>
@@ -537,7 +537,7 @@
 
 	.hot-price {
 		font-size: 30rpx;
-		color: #1C7231;
+		color: #61A189;
 	}
 
 	.allLike {
@@ -853,7 +853,7 @@
 		font-size: 22rpx;
 		padding: 3rpx 10rpx;
 		background: #ffd2d2;
-		color: #1C7231;
+		color: #61A189;
 		margin-top: 10rpx;
 	}
 
@@ -862,7 +862,7 @@
 		justify-content: space-between;
 		align-items: center !important;
 		flex-direction: row;
-		color: #1C7231;
+		color: #61A189;
 	}
 
 	.price-element {

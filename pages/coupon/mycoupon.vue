@@ -2,8 +2,8 @@
 	<view class="center">
 		<view class="">
 			<uv-sticky bgColor="#fff" :custom-nav-height="0">
-				<uv-tabs :list="list" @click="tabClick" lineColor="#1C7231" :scrollable="false"
-					:activeStyle="{color: '#1C7231'}"></uv-tabs>
+				<uv-tabs :list="list" @click="tabClick" lineColor="#61A189" :scrollable="false"
+					:activeStyle="{color: '#61A189'}"></uv-tabs>
 			</uv-sticky>
 			<uv-empty v-if="couponList.length ==0" mode="data" icon="/static/temp/shwk.png" text="暂无优惠"></uv-empty>
 			<view v-else class="coupon-cen">
@@ -169,7 +169,7 @@
 
 	.coupon-icqc {
 		height: 38rpx;
-		background: #1C7231;
+		background: #61A189;
 		border-radius: 100rpx;
 		color: #fff;
 		padding: 0 15rpx;
@@ -190,7 +190,7 @@
 	.coupon-righ {
 		width: 33%;
 		height: 100%;
-		background: #1C7231;
+		background: #61A189;
 		position: absolute;
 		right: 0;
 		border-bottom-right-radius: 20rpx;
@@ -210,7 +210,7 @@
 		height: 38rpx;
 		background: #fff;
 		border-radius: 100rpx;
-		color: #1C7231;
+		color: #61A189;
 		line-height: 38rpx;
 		margin: 12rpx auto auto auto;
 		width: 125rpx;

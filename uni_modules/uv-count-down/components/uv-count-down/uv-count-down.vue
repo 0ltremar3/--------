@@ -1,7 +1,7 @@
 <template>
 	<view class="uv-count-down" :style="[$uv.addStyle(customStyle)]">
 		<slot>
-			<text style="color: #1C7231;font-size: 26rpx;" class="uv-count-down__text">{{ formattedTime }}</text>
+			<text style="color: #61A189;font-size: 26rpx;" class="uv-count-down__text">{{ formattedTime }}</text>
 		</slot>
 	</view>
 </template>
