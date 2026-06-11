@@ -12,12 +12,16 @@
 		<canvas @click.stop="" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"
 			canvas-id="my-canvas"></canvas>
 		<!-- #endif -->
-		<!-- #ifdef H5-->
-		<view class="save-btn" @click.stop="saveImage">长按保存图片</view>
-		<!-- #endif -->
-		<!-- #ifdef MP-WEIXIN-->
-		<view class="save-btn" @click.stop="saveImage">保存图片</view>
-		<!-- #endif -->
+		<view class="btn-row">
+			<!-- #ifdef H5-->
+			<view class="save-btn ghost" @click.stop="saveQrcode">保存商品码</view>
+			<view class="save-btn" @click.stop="saveImage">长按保存图片</view>
+			<!-- #endif -->
+			<!-- #ifdef MP-WEIXIN-->
+			<view class="save-btn ghost" @click.stop="saveQrcode">保存商品码</view>
+			<view class="save-btn" @click.stop="saveImage">保存图片</view>
+			<!-- #endif -->
+		</view>
 	</view>
 </template>
 
@@ -71,7 +75,8 @@
 				ctx: null,
 				isShow: false,
 				qrcode: '',
-				pahta: ''
+				pahta: '',
+				qrcodeFilePath: ''
 			}
 		},
 		methods: {
@@ -87,179 +92,158 @@
 			},
 			//初始化画布
 			async __init() {
-				uni.showLoading({
-					title: '生成海报中...',
-					mask: true
-				})
+				uni.showLoading({ title: '生成海报中...', mask: true })
 				this.ctx = uni.createCanvasContext('my-canvas', this)
-				this.canvasW = uni.upx2px(650);
-				this.canvasH = uni.upx2px(980);
-				//设置画布背景透明
-				this.ctx.setFillStyle('rgba(255,255,255,0)')
-				//设置画布大小
-				this.ctx.fillRect(0, 0, this.canvasW, this.canvasH)
-				//绘制圆角背景
-				this.drawRoundRect(this.ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), BRAND.surface)
-				//绘制用户头像
-				let radius = 25; // 定义头像半径
-				let x = 18; // 头像的 x 坐标
-				let y = 8; // 头像的 y 坐标
-				// 绘制头像
-				this.ctx.save(); // 保存当前绘图状态
-				this.ctx.beginPath();
-				this.ctx.arc(x + radius, y + radius, radius, 0, 2 * Math.PI);
-				this.ctx.closePath();
-				this.ctx.clip(); // 裁剪路径
+				this.canvasW = uni.upx2px(650)
+
+				// ── 阶段1：预加载所有图片 ──
+				let brandLogoImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
 				// #ifdef H5
-			let tximg = 'http://test.slwjd.com/hbimage/logo.png'
-			this.ctx.drawImage(tximg, x, y, radius * 2, radius * 2);
-			// #endif
-				// #ifdef MP-WEIXIN
-				let width = uni.upx2px(100); // 头像的宽度
-				let height = uni.upx2px(100); // 头像的高度
-				let avcimgsImg = await this.getImageInfo(this.avcimgs)
-				this.drawRoundImg(this.ctx, avcimgsImg.path, x, y,
-					width,
-					height, 20)
-				// #endif
-				// 绘制头像图片
-
-				this.ctx.restore(); // 恢复之前保存的绘图状态
-
-				// 绘制昵称
-				let textX = x + radius * 2 + 7; // 文字的 x 坐标
-				let textY = y + radius - 3; // 文字的 y 坐标
-
-			this.ctx.font = '15px Arial';
-			this.ctx.fillStyle = BRAND.black;
-			this.ctx.fillText(this.username, textX, textY);
-
-			// 绘制昵称下的文字
-			let texts = '发现优质好物，一起开启品质生活之旅';
-			let textXs = x + radius * 2 + 7;
-			let textYs = y + radius + 15;
-
-			this.ctx.font = '12px Arial';
-			this.ctx.fillStyle = BRAND.muted;
-			this.ctx.fillText(texts, textXs, textYs);
-
-				//获取标题图片
-				// #ifdef H5
-				let headerImg = {
-					path: 'http://test.slwjd.com/hbimage/btimg.jpg'
-				}
+				let headerImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
 				// #endif
 				// #ifdef MP-WEIXIN
 				let headerImg = await this.getImageInfo(this.headerImg)
+				let avcimgsImg = await this.getImageInfo(this.avcimgs)
 				// #endif
-				let hW = uni.upx2px(570);
-				let hH = uni.upx2px(490);
-				//绘制标题图
-				this.drawRoundImg(this.ctx, headerImg.path, ((this.canvasW - hW) / 2), ((this.canvasW - hW) / 0.6),
-					hW,
-					hH, uni.upx2px(16))
-				//绘制标题
-				this.drawTitle(this.ctx, this.title, ((this.canvasW - hW) / 2), (
-					((this.canvasW - hW) / 1.3) + hH + uni.upx2px(130)), uni.upx2px(570), 23)
-				// this.ctx.setFontSize(16); //设置标题字体大小
-				// this.ctx.setFillStyle('#333'); //设置标题文本颜色
-				// this.ctx.fillText(this.title, ((this.canvasW - hW) / 2), (
-				// 	((this.canvasW - hW) / 1.5) + hH + uni.upx2px(130)))
-			// 绘制价格
-			this.ctx.setFontSize(14);
-			this.ctx.setFillStyle(BRAND.primary);
-			this.ctx.fillText('￥', ((this.canvasW - hW) / 2), (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(
-				200)));
-			this.ctx.setFontSize(22);
-			this.ctx.fillText(this.price, (((this.canvasW - hW) / 2) + uni.upx2px(36)), (((this
-					.canvasW - hW) /
-				0.9) + hH + uni.upx2px(200)));
 
-				// 绘制原价
-			const originalPriceX = (((this.canvasW - hW) / 2) + uni.upx2px(36) + this.ctx.measureText('￥' + this
-				.price).width + uni.upx2px(5));
-			const originalPriceY = (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200));
-			this.ctx.setFontSize(14);
-			this.ctx.setFillStyle(BRAND.muted);
-			this.ctx.fillText('原价：', originalPriceX - uni.upx2px(30), originalPriceY);
+				// ── 阶段2：根据图片真实比例算高度，再算 canvasH ──
+				let hW = uni.upx2px(570)
+				let rawRatio = (headerImg.width && headerImg.height) ? headerImg.width / headerImg.height : 1.16
+				let hH = Math.min(Math.max(Math.round(hW / rawRatio), uni.upx2px(340)), uni.upx2px(520))
+				// canvasH = 产品图高 + 上方用户区(~134upx) + 标题价格(~160upx) + 分割线+底部内容(~230upx) + 底部留白(~36upx)
+				this.canvasH = hH + uni.upx2px(560)
 
-			const originalPrice = '￥' + this.origprice.toFixed(2);
+				// ── 阶段3：绘制白色圆角背景（高度已确定）──
+				this.ctx.setFillStyle('rgba(255,255,255,0)')
+				this.ctx.fillRect(0, 0, this.canvasW, this.canvasH)
+				this.drawRoundRect(this.ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), BRAND.surface)
 
-			this.ctx.fillText(originalPrice, originalPriceX + uni.upx2px(35), originalPriceY);
+				// ── 阶段4：绘制用户头像 ──
+				let radius = 25
+				let x = 18
+				let y = 8
+				this.ctx.save()
+				this.ctx.beginPath()
+				this.ctx.arc(x + radius, y + radius, radius, 0, 2 * Math.PI)
+				this.ctx.closePath()
+				this.ctx.clip()
+				// #ifdef H5
+				this.drawRoundImg(this.ctx, brandLogoImg.path, x, y, radius * 2, radius * 2, radius)
+				// #endif
+				// #ifdef MP-WEIXIN
+				this.drawRoundImg(this.ctx, brandLogoImg.path, x, y, uni.upx2px(100), uni.upx2px(100), 20)
+				// #endif
+				this.ctx.restore()
 
-			// 绘制删除线
-			this.ctx.setStrokeStyle(BRAND.lightMuted);
-			this.ctx.setLineWidth(1);
-			this.ctx.beginPath();
-			this.ctx.moveTo(originalPriceX + uni.upx2px(76), originalPriceY + uni.upx2px(-8));
-			this.ctx.lineTo(originalPriceX + uni.upx2px(35) + this.ctx.measureText(originalPrice).width,
-				originalPriceY + uni
-				.upx2px(-8));
-			this.ctx.stroke();
+				// ── 阶段5：绘制昵称与副标题 ──
+				let textX = x + radius * 2 + 7
+				let textY = y + radius - 3
+				this.ctx.font = '15px Arial'
+				this.ctx.fillStyle = BRAND.black
+				this.ctx.fillText(this.username, textX, textY)
+				this.ctx.font = '12px Arial'
+				this.ctx.fillStyle = BRAND.muted
+				this.ctx.fillText('发现优质好物，一起开启品质生活之旅', x + radius * 2 + 7, y + radius + 15)
 
+				// ── 阶段6：绘制商品主图（自适应比例）──
+				this.drawRoundImg(this.ctx, headerImg.path,
+					(this.canvasW - hW) / 2,
+					(this.canvasW - hW) / 0.6,
+					hW, hH, uni.upx2px(16))
 
+				// ── 阶段7：绘制标题 ──
+				this.drawTitle(this.ctx, this.title,
+					(this.canvasW - hW) / 2,
+					(this.canvasW - hW) / 1.3 + hH + uni.upx2px(130),
+					uni.upx2px(570), 23)
 
-				//绘制价格
-				// this.ctx.setFontSize(14);
-				// this.ctx.setFillStyle(BRAND.primary);
-				// this.ctx.fillText('￥', ((this.canvasW - hW) / 2), (
-				// 	((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200)))
-				// this.ctx.setFontSize(22);
-				// this.ctx.fillText(this.price, (((this.canvasW - hW) / 2) + uni.upx2px(36)), (
-				// 	((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200)))
-				//绘制虚线
-				this.drawDashLine(this.ctx, uni.upx2px(20), (((this.canvasW - hW) / 1.1) + hH + uni.upx2px(240)), (this
-					.canvasW - uni.upx2px(20)), (((this.canvasW - hW) / 1.1) + hH + uni.upx2px(240)), 5)
-				//左边实心圆
-				this.drawEmptyRound(this.ctx, 0, (((this.canvasW - hW) / 1.1) + hH + uni.upx2px(240)), uni.upx2px(20))
-				//右边实心圆
-				this.drawEmptyRound(this.ctx, this.canvasW, (((this.canvasW - hW) / 1.1) + hH + uni.upx2px(240)), uni
-					.upx2px(20))
+				// ── 阶段8：绘制价格与原价 ──
+				let priceY = (this.canvasW - hW) / 0.9 + hH + uni.upx2px(200)
+				this.ctx.setFontSize(14)
+				this.ctx.setFillStyle(BRAND.primary)
+				this.ctx.fillText('￥', (this.canvasW - hW) / 2, priceY)
+				this.ctx.setFontSize(22)
+				this.ctx.fillText(this.price, (this.canvasW - hW) / 2 + uni.upx2px(36), priceY)
+				const origX = (this.canvasW - hW) / 2 + uni.upx2px(36) + this.ctx.measureText('￥' + this.price).width + uni.upx2px(5)
+				this.ctx.setFontSize(14)
+				this.ctx.setFillStyle(BRAND.muted)
+				this.ctx.fillText('原价：', origX - uni.upx2px(30), priceY)
+				const origPriceStr = '￥' + this.origprice.toFixed(2)
+				this.ctx.fillText(origPriceStr, origX + uni.upx2px(35), priceY)
+				this.ctx.setStrokeStyle(BRAND.muted)
+				this.ctx.setLineWidth(1)
+				this.ctx.beginPath()
+				this.ctx.moveTo(origX + uni.upx2px(76), priceY - uni.upx2px(8))
+				this.ctx.lineTo(origX + uni.upx2px(35) + this.ctx.measureText(origPriceStr).width, priceY - uni.upx2px(8))
+				this.ctx.stroke()
 
-				//品牌标识区域
-				let brandLogoImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
-				let logoSize = uni.upx2px(100)
-				let logoX = ((this.canvasW - hW) / 2) + uni.upx2px(8)
-				let logoY = (((this.canvasW - hW) / 1.7) + hH + uni.upx2px(316))
-				this.drawRoundImg(this.ctx, brandLogoImg.path, logoX, logoY, logoSize, logoSize, logoSize / 2)
-				this.ctx.setFontSize(16);
-				this.ctx.setFillStyle(BRAND.black);
-				this.ctx.fillText('山前食养', logoX + logoSize + uni.upx2px(16), logoY + uni.upx2px(38))
-				this.ctx.setFontSize(11);
-				this.ctx.setFillStyle(BRAND.muted);
-				this.ctx.fillText('养生 · 美食 · 原产好物', logoX + logoSize + uni.upx2px(16), logoY + uni.upx2px(68))
-				//提示文案
-				this.ctx.setFontSize(12);
-				this.ctx.setFillStyle(BRAND.muted);
-				this.ctx.fillText('长按识别"山前食养"小程序', (((this.canvasW - hW) / 2) + uni.upx2px(14)), (((this.canvasW -
-					hW) / 1.4) + hH + uni.upx2px(300)))
-								//小程序码
+				// ── 阶段9：虚线分割 ──
+				// 价格基线在 hH+144px，分割线放在价格后 ~20px：uni.upx2px(330)=165px
+				let margin = (this.canvasW - hW) / 2
+				let dividerY = hH + uni.upx2px(330)
+				this.drawDashLine(this.ctx, uni.upx2px(20), dividerY, this.canvasW - uni.upx2px(20), dividerY, 5)
+
+				// ── 阶段10-12：底部品牌 + 二维码（在分割线与卡片底部之间垂直居中）──
+				let qrSize   = uni.upx2px(150)
+				let logoSize = uni.upx2px(120)
+				// 内容块高度 = 提示文案行(24upx) + 间距(16upx) + 主行(max(qrSize, logoSize))
+				let contentH = uni.upx2px(24) + uni.upx2px(16) + Math.max(qrSize, logoSize)
+				let bottomAvail = this.canvasH - dividerY
+				let topPad = Math.round((bottomAvail - contentH) / 2)
+				// 提示文案基线 Y（字号 12px ≈ 24upx，故顶部偏移 = topPad + 24upx）
+				let hintY = dividerY + topPad + uni.upx2px(24)
+				// 主行起始 Y（提示文案基线 + 间距）
+				let rowY  = hintY + uni.upx2px(16)
+
+				// QR code 右对齐
+				let qrX = this.canvasW - margin - qrSize
+				let qrY = rowY
+				// 品牌 logo 左对齐，纵向与 QR code 居中对齐
+				let logoX = margin + uni.upx2px(8)
+				let logoY = rowY + Math.round((qrSize - logoSize) / 2)
+
+				// 绘制提示文案
+				this.ctx.setFontSize(12)
+				this.ctx.setFillStyle(BRAND.muted)
+				this.ctx.fillText('长按识别"山前食养"小程序', margin + uni.upx2px(14), hintY)
+
+				// 绘制品牌 logo
+				this.drawRoundImg(this.ctx, brandLogoImg.path, logoX, logoY, logoSize, logoSize, uni.upx2px(8))
+				// 品牌名与标语垂直居中于 logo
+				this.ctx.setFontSize(16)
+				this.ctx.setFillStyle(BRAND.black)
+				this.ctx.fillText('山前食养', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.38))
+				this.ctx.setFontSize(11)
+				this.ctx.setFillStyle(BRAND.muted)
+				this.ctx.fillText('养生 · 美食 · 原产好物', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.65))
+
+				// 绘制二维码
 				// #ifdef H5
 				let qrcodeImg = this.qrcode
 				// #endif
 				// #ifdef MP-WEIXIN
 				let qrcodeImg = await this.base64Save(this.qrcode)
 				// #endif
-				this.ctx.drawImage(qrcodeImg, uni.upx2px(460), (((this.canvasW - hW) / 1.5) + hH + uni.upx2px(
-						274)),
-					uni.upx2px(150), uni.upx2px(150))
-				//延迟渲染
+				this.qrcodeFilePath = qrcodeImg
+				this.ctx.drawImage(qrcodeImg, qrX, qrY, qrSize, qrSize)
+
+								// ── 阶段13：延迟渲染 ──
 				setTimeout(() => {
 					this.ctx.draw(true, () => {
 						// #ifdef H5
-						var that = this
 						uni.canvasToTempFilePath({
 							canvasId: 'my-canvas',
 							quality: 1,
 							complete: (res) => {
 								this.pahta = res.tempFilePath
 							}
-						}, this);
+						}, this)
 						// #endif
 						uni.hideLoading()
 					})
 				}, 500)
 			},
+
 			//绘制实心圆
 		drawEmptyRound(ctx, x, y, radius) {
 			ctx.save()
@@ -423,6 +407,40 @@
 					});
 				});
 			},
+			//仅保存商品二维码
+			saveQrcode() {
+				if (!this.qrcodeFilePath) {
+					uni.showToast({ title: '请先生成海报', icon: 'none' })
+					return
+				}
+				// #ifdef MP-WEIXIN
+				uni.getSetting({
+					success: (res) => {
+						const needAuth = !res.authSetting['scope.writePhotosAlbum']
+						if (needAuth) {
+							uni.openSetting({})
+							return
+						}
+						uni.saveImageToPhotosAlbum({
+							filePath: this.qrcodeFilePath,
+							success: () => {
+								uni.showToast({ title: '商品码已保存', icon: 'success', duration: 2000 })
+							},
+							fail: () => {
+								uni.showToast({ title: '保存失败，请检查相册权限', icon: 'none' })
+							}
+						})
+					}
+				})
+				// #endif
+				// #ifdef H5
+				const a = document.createElement('a')
+				a.href = this.qrcodeFilePath
+				a.download = 'qrcode.png'
+				a.click()
+				// #endif
+			},
+
 			//保存图片到相册
 			saveImage() {
 				// #ifdef MP-WEIXIN
@@ -494,14 +512,25 @@
 		justify-content: center;
 		align-items: center;
 
+		.btn-row {
+			margin-top: 50rpx;
+			display: flex;
+			flex-direction: row;
+			gap: 24rpx;
+		}
+
 		.save-btn {
-			margin-top: 65rpx;
 			color: $brand-surface;
 			background: $brand-primary;
-			padding: 18rpx 60rpx;
+			padding: 18rpx 48rpx;
 			border-radius: $uni-border-radius-sm;
 			font-size: $uni-font-size-base;
 			letter-spacing: 2rpx;
+
+			&.ghost {
+				color: $brand-primary;
+				background: $brand-surface;
+			}
 		}
 	}
 </style>
