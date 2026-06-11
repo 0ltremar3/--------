@@ -1,223 +1,186 @@
 <template>
-	<view class="about">
-		<view class="box">
-			<image class="logoImg" :src="about.logo"></image>
-			<text class="tip appName">{{about.appName}}</text>
-			<text class="tip">Version {{version}}</text>
-
-			<text class="tip">{{$t('about.sacnQR')}} {{about.appName}} {{$t('about.client')}}</text>
+	<view class="about-page">
+		<!-- Tab 导航 -->
+		<view class="tabs-wrap">
+			<uv-tabs
+				:list="tabList"
+				:lineColor="primaryColor"
+				:activeStyle="{ color: primaryColor, fontWeight: '600' }"
+				:inactiveStyle="{ color: mutedColor }"
+				:scrollable="true"
+				@click="onTabClick"
+			/>
 		</view>
-		<view class="copyright">
-			<view class="agreement-box" v-for="(agreement,index) in agreements" :key="index">
-				<text class="agreement" @click="navigateTo(agreement)">《{{agreement.title}}》</text>
-				<text class="hint" v-if="agreements.length-1>index">{{$t('about.and')}}</text>
-			</view>
-			<text class="hint">Copyright © {{year}}</text>
-			<text class="hint">{{about.company}}</text>
+
+		<!-- 文章内容 -->
+		<view class="article-wrap" v-if="currentArticle">
+			<mp-html :content="currentArticle.content" />
+		</view>
+
+		<!-- 骨架/空态 -->
+		<view class="empty-state" v-if="!loading && tabList.length === 0">
+			<text class="text-meta">暂无内容</text>
 		</view>
 	</view>
 </template>
+
 <script>
-	// // #ifdef APP
-	// import UniShare from '@/uni_modules/uni-share/js_sdk/uni-share.js';
-	// const uniShare = new UniShare()
-	// // #endif
-	import uniIdPagesConfig from '@/uni_modules/uni-id-pages/config.js'
+	const db = uniCloud.database();
+	const CATEGORY_ID = '6a2970ba86206654516c6b00';
+
 	export default {
-		// #ifdef APP
-		onBackPress({
-			from
-		}) {
-			if (from == 'backbutton') {
-				this.$nextTick(function() {
-					uniShare.hide()
-				})
-				return uniShare.isShow;
-			}
-		},
-		// #endif
-		onLoad() {
-			// #ifdef APP-PLUS
-			this.version = plus.runtime.version
-			// #endif
-		},
-		computed: {
-			uniStarterConfig() {
-				return getApp().globalData.config
-			},
-			agreements() {
-				if (!uniIdPagesConfig.agreements) {
-					return []
-				}
-				let {
-					serviceUrl,
-					privacyUrl
-				} = uniIdPagesConfig.agreements
-				return [{
-						url: serviceUrl,
-						title: "用户服务协议"
-					},
-					{
-						url: privacyUrl,
-						title: "隐私政策条款"
-					}
-				]
-			}
-		},
 		data() {
 			return {
-				version: "V1.0.0",
-				year: "2020",
-				about: {}
-			};
+				tabList: [],
+				articles: [],
+				currentArticle: null,
+				loading: true,
+				primaryColor: '#1C7231',
+				mutedColor: '#8E918D',
+			}
 		},
-		created() {
-			this.about = this.uniStarterConfig.about
-			uni.setNavigationBarTitle({
-				title: this.$t('about.about') + " " + this.about.appName
-			})
-			this.year = (new Date).getFullYear()
+		onLoad() {
+			uni.setNavigationBarTitle({ title: '关于我们' });
+			this.loadArticles();
 		},
-		onNavigationBarButtonTap() {
-			let {
-				download,
-				appName,
-				slogan,
-				logo
-			} = this.about
-			uniShare.show({
-				content: { //公共的分享类型（type）、链接（herf）、标题（title）、summary（描述）、imageUrl（缩略图）
-					type: 0,
-					href: download,
-					title: appName,
-					summary: slogan,
-					imageUrl: logo + '?x-oss-process=image/resize,m_fill,h_100,w_100' //压缩图片解决，在ios端分享图过大导致的图片失效问题
-				},
-				menus: [{
-						"img": "/static/app-plus/sharemenu/wechatfriend.png",
-						"text": this.$t('common.wechatFriends'),
-						"share": {
-							"provider": "weixin",
-							"scene": "WXSceneSession"
-						}
-					},
-					{
-						"img": "/static/app-plus/sharemenu/wechatmoments.png",
-						"text": this.$t('common.wechatBbs'),
-						"share": {
-							"provider": "weixin",
-							"scene": "WXSceneTimeline"
-						}
-					},
-					{
-						"img": "/static/app-plus/sharemenu/weibo.png",
-						"text": this.$t('common.weibo'),
-						"share": {
-							"provider": "sinaweibo"
-						}
-					},
-					{
-						"img": "/static/app-plus/sharemenu/qq.png",
-						"text": "QQ",
-						"share": {
-							"provider": "qq"
-						}
-					},
-					{
-						"img": "/static/app-plus/sharemenu/copyurl.png",
-						"text": this.$t('common.copy'),
-						"share": "copyurl"
-					},
-					{
-						"img": "/static/app-plus/sharemenu/more.png",
-						"text": this.$t('common.more'),
-						"share": "shareSystem"
-					}
-				],
-				cancelText: this.$t('common.cancelShare'),
-			}, e => { //callback
-				console.log(e);
-			})
+		onShareTimeline() {
+			return { title: this.currentArticle ? this.currentArticle.title : '关于我们' };
+		},
+		onShareAppMessage() {
+			return { title: this.currentArticle ? this.currentArticle.title : '关于我们' };
 		},
 		methods: {
-			navigateTo({
-				url,
-				title
-			}) {
-				uni.navigateTo({
-					url: '/uni_modules/uni-id-pages/pages/common/webview/webview?url=' + url + '&title=' + title,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+			loadArticles() {
+				db.collection('opendb-news-articles')
+					.where({ category_id: CATEGORY_ID })
+					.orderBy('article_order', 'asc')
+					.get()
+					.then(res => {
+						this.articles = res.result.data;
+						this.tabList = this.articles.map(item => ({ name: item.title }));
+						if (this.articles.length > 0) {
+							this.currentArticle = this.articles[0];
+						}
+					})
+					.finally(() => {
+						this.loading = false;
+					});
+			},
+			onTabClick(e) {
+				const index = this.tabList.findIndex(t => t.name === e.name);
+				if (index !== -1) {
+					this.currentArticle = this.articles[index];
+				}
 			}
 		}
 	}
 </script>
-<style lang="scss" scoped>
-	/* #ifndef APP-NVUE */
-	view {
+
+<style lang="scss">
+	@import "@/static/common/common.scss";
+
+	page {
+		background: $brand-bg;
+	}
+
+	.about-page {
+		min-height: 100vh;
+		background: $brand-bg;
+	}
+
+	/* ── Tab ── */
+	.tabs-wrap {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: $brand-bg;
+		border-bottom: 1rpx solid $brand-border;
+	}
+
+	/* ── 文章内容 ── */
+	.article-wrap {
+		padding: 48rpx 32rpx 80rpx;
+
+		mp-html {
+			display: block;
+			width: 100%;
+		}
+	}
+
+	/* mp-html 富文本排版（复用详情页风格） */
+	::v-deep .mp-html-container,
+	::v-deep ._root {
+		font-size: $font-body;
+		font-weight: $font-body-weight;
+		color: $brand-text;
+		line-height: 1.8;
+		word-break: break-word;
+
+		p {
+			margin: 0 0 28rpx;
+		}
+
+		h1, h2, h3 {
+			font-weight: 600;
+			color: $brand-black;
+			margin: 48rpx 0 20rpx;
+			line-height: 1.4;
+		}
+
+		h1 { font-size: $font-page-title; }
+		h2 { font-size: $font-section-title; }
+		h3 { font-size: $font-product-title; }
+
+		img {
+			max-width: 100%;
+			height: auto;
+			display: block;
+			margin: 24rpx 0;
+			border-radius: $uni-border-radius-sm;
+		}
+
+		a {
+			color: $brand-primary;
+			text-decoration: none;
+		}
+
+		ul, ol {
+			padding-left: 40rpx;
+			margin: 0 0 24rpx;
+
+			li {
+				margin-bottom: 12rpx;
+				line-height: 1.7;
+			}
+		}
+
+		blockquote {
+			margin: 24rpx 0;
+			padding: 20rpx 24rpx;
+			border-left: 4rpx solid $brand-primary;
+			background: $brand-bg;
+			color: $brand-muted;
+			font-size: $font-meta;
+		}
+
+		hr {
+			border: none;
+			border-top: 1rpx solid $brand-border;
+			margin: 40rpx 0;
+		}
+
+		strong, b {
+			font-weight: 600;
+			color: $brand-black;
+		}
+
+		em { font-style: italic; }
+	}
+
+	/* ── 空态 ── */
+	.empty-state {
 		display: flex;
-		box-sizing: border-box;
-		flex-direction: column;
-	}
-
-	/* #endif */
-	.about {
-		flex-direction: column;
 		justify-content: center;
-		align-items: center;
-	}
-
-	.box {
-		margin-top: 60px;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.logoImg {
-		margin-bottom: 10rpx;
-		width: 160rpx;
-		height: 160rpx;
-		border-radius: 15px;
-	}
-
-	.tip {
-		text-align: center;
-		font-size: 24rpx;
-		margin-top: 10px;
-		padding: 10rpx;
-	}
-
-	.appName {
-		margin-top: 20px;
-		font-size: 42rpx;
-		font-weight: 500;
-	}
-
-	.copyright {
-		font-size: 32rpx;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		bottom: 20px;
-		// left: 0;
-		position: fixed;
-	}
-
-	.agreement-box {
-		justify-content: center;
-	}
-
-	.agreement {
-		color: #2285ff;
-		font-size: 26rpx;
-	}
-
-	.hint {
-		text-align: center;
-		color: #999999;
-		font-size: 26rpx;
+		padding: 120rpx 0;
 	}
 </style>

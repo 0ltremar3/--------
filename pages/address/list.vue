@@ -147,60 +147,63 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
-		background: #f3f3f3;
+		background: $brand-bg;
 		height: 100%;
 	}
 
 	.container {
 		position: relative;
-		padding: 30rpx;
-		padding-bottom: 200rpx;
+		padding: 32rpx;
+		padding-bottom: 160rpx;
 	}
 
 	.ress_van {
 		width: 100%;
-		height: 250rpx;
-		background-color: #fff;
-		border-radius: 25rpx;
-		margin-bottom: 30rpx;
+		background-color: $brand-surface;
+		border: 1rpx solid $brand-border;
+		border-radius: $uni-border-radius-base;
+		margin-bottom: 24rpx;
 	}
 
 	.ress_top {
 		width: 100%;
-		height: 175rpx;
 		display: flex;
 		flex-direction: row;
-		border-bottom: 1rpx solid #d8d8d8;
+		align-items: flex-start;
+		padding: 24rpx 0;
+		border-bottom: 1rpx solid $brand-border;
 	}
 
 	.ress_dwt {
-		width: 58rpx;
-		height: 58rpx;
-		margin: auto 20rpx;
-		border-radius: 50%;
+		width: 40rpx;
+		height: 40rpx;
+		margin: 4rpx 20rpx 0;
+		flex-shrink: 0;
 	}
 
 	.ress_text_van {
-		margin: auto 0rpx;
-		width: 72%;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.fs_34 {
-		font-size: 34rpx
+		font-size: $font-section-title;
+		font-weight: $font-section-title-weight;
+		color: $brand-black;
 	}
 
 	.ress_mo {
-		font-size: 30rpx;
-		margin-left: 10rpx;
-		color: #4c4c4c;
+		font-size: $font-body;
+		margin-left: 16rpx;
+		color: $brand-muted;
 	}
 
 	.ress_ed {
-		margin-top: 6rpx;
-		font-size: 30rpx;
-		color: #4c4c4c;
+		margin-top: 8rpx;
+		font-size: $font-body;
+		color: $brand-muted;
 		word-break: break-all;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -210,34 +213,40 @@
 	}
 
 	.ress_bjt {
-		width: 50rpx;
-		height: 50rpx;
-		margin: auto 20rpx;
+		width: 40rpx;
+		height: 40rpx;
+		margin: 0 20rpx;
+		flex-shrink: 0;
 	}
 
 	.ress_bot {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
+		padding: 16rpx 20rpx;
 	}
 
 	.ress_mrt {
-		margin: auto 10rpx auto 20rpx;
-		font-size: 58rpx;
-		color: #d8d8d8;
+		font-size: 44rpx;
+		color: $brand-light-muted;
 	}
 
 	.ress_mrtext {
-		display: flex;
 		flex: 1;
-		margin: auto 0rpx;
-		font-size: 30rpx;
-		color: #4c4c4c;
+		margin-left: 8rpx;
+		font-size: $font-body;
+		color: $brand-muted;
 	}
 
 	.ress_scbut {
-		background-color: rgba(255, 255, 255, 0);
-		font-size: 30rpx;
-		color: #4c4c4c;
+		background-color: transparent;
+		font-size: $font-meta;
+		color: $brand-muted;
+		border: 1rpx solid $brand-border;
+		border-radius: $uni-border-radius-sm;
+		padding: 0 24rpx;
+		height: 56rpx;
+		line-height: 56rpx;
 	}
 
 	button::after {
@@ -245,21 +254,21 @@
 	}
 
 	.but {
-		width: 94%;
+		width: calc(100% - 64rpx);
 		position: fixed;
-		bottom: 16rpx;
-		left: 50%;
-		transform: translateX(-50%);
-		font-size: 32rpx;
-		color: #ffffff;
-		background-color: #1C7231;
-		border-radius: 100rpx;
-		height: 84rpx;
-		line-height: 84rpx;
-		z-index: 9999;
+		bottom: env(safe-area-inset-bottom, 32rpx);
+		left: 32rpx;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		color: $brand-surface;
+		background-color: $brand-primary;
+		border-radius: $uni-border-radius-base;
+		height: 88rpx;
+		line-height: 88rpx;
+		box-shadow: none;
 	}
 
 	.checked {
-		color: #1C7231;
+		color: $brand-primary;
 	}
 </style>

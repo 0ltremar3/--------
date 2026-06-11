@@ -59,7 +59,7 @@ view[class*='-round-area']{ border-radius: 20rpx; }
  **/
 .price, .price-jf, .discount {font-size: 36rpx; color: #ff6a6c; line-height: 1; font-weight: 580; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}
 .m-price{font-size: 24rpx;text-decoration: line-through;color: #909399;margin-left: 20rpx; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}
-.price::before{ content: '￥'; font-size: 24rpx; } .m-price::before{ content: '￥'; font-size: 24rpx; }
+.price::before{ content: '￥'; font-size: 26rpx; } .m-price::before{ content: '￥'; font-size: 22rpx; }
 .price::after{ content: attr(data-decimal); font-size: 24rpx; }
 
 .s-price {font-size: 30rpx; color: #ff6a6c; line-height: 1; font-weight: 580; font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;}

@@ -73,21 +73,15 @@
 				"enablePullDownRefresh": false
 			}
 
-		}
-		// #ifdef APP-PLUS
-		, {
+		},
+		{
 			"path": "pages/ucenter/about/about",
 			"style": {
-				"navigationBarTitleText": "关于",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"type": "share"
-						}]
-					}
-				}
+				"navigationBarTitleText": "关于我们"
 			}
-		},
+		}
+		// #ifdef APP-PLUS
+		,
 		{
 			"path": "uni_modules/uni-upgrade-center-app/pages/upgrade-popup",
 			"style": {

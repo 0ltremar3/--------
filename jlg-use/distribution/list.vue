@@ -1,19 +1,19 @@
 <template>
 	<view class="container p-r">
 		<!-- #ifdef MP-WEIXIN -->
-		<view class=" navbar" @click="goBack" :style="{top:(navTop ) + 'px'}">
-			<uni-icons type="back" size="27" color="#fff"></uni-icons>
+		<view class="navbar" @click="goBack" :style="{top:(navTop ) + 'px'}">
+			<uni-icons type="back" size="27" color="#202321"></uni-icons>
 		</view>
 		<!-- #endif -->
 		<view class="header">
-			<view class="flex-dir-row flex-y-center flex-x-between " :style="{marginTop:(navTop +30 ) + 'px'}">
+			<view class="flex-dir-row flex-y-center flex-x-between user-row" :style="{marginTop:(navTop +30 ) + 'px'}">
 				<view class="flex-dir-row flex-y-center">
-					<image :src="data.image?data.image[0].url:'/static/logo.png'" class="litpic" mode=""></image>
-					<view class="header-right flex-dir-column ">
+					<image :src="avatarUrl" class="litpic" mode="aspectFill" @error="avatarLoadError = true"></image>
+					<view class="header-right flex-dir-column">
 						<view class="header-title f-w f-32">
-							{{data.name[0]?data.name[0]:'匿名用户'}}
+							{{userName}}
 						</view>
-						<view class="flex-dir-row mt-5 flex-y-center f-27">
+						<view class="flex-dir-row mt-5 flex-y-center user-badge">
 							<text>分销商</text>
 						</view>
 					</view>
@@ -23,107 +23,87 @@
 				</view>
 			</view>
 
-			<view class="header-center  col-ff721c">
+			<view class="header-center">
 				<view class="flex-dir-row flex-x-around flex-y-center header-center-top">
-					<view class="flex-dir-column flex-y-center">
-						<view class=" f-26 ">
-							累计佣金(元)
-						</view>
-						<view class="f-36 mt-10 flex-y-baseline f-w600">
+					<view class="flex-dir-column flex-y-center comm-stat">
+						<view class="comm-label">累计佣金(元)</view>
+						<view class="comm-amount flex-y-baseline f-w600">
 							<text>￥</text>
 							<text>{{data.accu_comm /100?data.accu_comm /100:0}}</text>
 						</view>
-
 					</view>
-					<view class="flex-dir-column flex-y-center">
-						<view class=" f-26 ">
-							已提佣金(元)
-						</view>
-						<view class="f-36 mt-10 flex-y-baseline f-w600">
+					<view class="flex-dir-column flex-y-center comm-stat">
+						<view class="comm-label">已提佣金(元)</view>
+						<view class="comm-amount flex-y-baseline f-w600">
 							<text>￥</text>
 							<text>{{data.with_comm /100?data.with_comm /100:0}}</text>
 						</view>
-
 					</view>
-					<view class="flex-dir-column  flex-y-center">
-						<view class=" f-26">
-							佣金余额(元)
-						</view>
-						<view class="f-36 mt-10 f-w600">
+					<view class="flex-dir-column flex-y-center comm-stat">
+						<view class="comm-label">佣金余额(元)</view>
+						<view class="comm-amount f-w600">
 							<text>￥</text>
-							<text class="">{{data.uodr_comm /100?data.uodr_comm /100:0}}</text>
+							<text>{{data.uodr_comm /100?data.uodr_comm /100:0}}</text>
 						</view>
-
 					</view>
 				</view>
 
-				<view class="flex-dir-row  pl-30 pr-30 flex-y-center">
-					<view class="flex-dir-column pt-20 pb-20  pl-30 f-26 col-6 w-50 f-28"
-						style="border-right: 1rpx solid #eee;border-bottom: 1rpx solid #eee;">
-						<text>待审核佣金</text>
-						<text class="col-0 f-32 mt-10 f-w600">￥{{examprice/100}}</text>
+				<view class="flex-dir-row flex-y-center comm-grid">
+					<view class="flex-dir-column comm-cell cell-rb">
+						<text class="comm-cell-label">待审核佣金</text>
+						<text class="comm-cell-value">￥{{examprice/100}}</text>
 					</view>
-					<view class="flex-dir-column  pt-20 pb-20 pl-30 f-26 col-6  w-50 f-28"
-						style="border-bottom: 1rpx solid #eee;">
-						<text>可提现</text>
-						<text class="col-0 f-32 mt-10 f-w600">￥{{data.uodr_comm /100?data.uodr_comm /100:0}}</text>
+					<view class="flex-dir-column comm-cell cell-b">
+						<text class="comm-cell-label">可提现</text>
+						<text class="comm-cell-value">￥{{data.uodr_comm /100?data.uodr_comm /100:0}}</text>
 					</view>
 				</view>
-				<view class="flex-dir-row pl-30 pr-30  flex-y-center ">
-					<view class="flex-dir-column  pt-20 pb-20 pl-30 f-26 col-6  w-50 f-28"
-						style="border-right: 1rpx solid #eee;">
-						<text>审核中的提现</text>
-						<text class="col-0 f-32 mt-10 f-w600">￥{{winprice/100}}</text>
+				<view class="flex-dir-row flex-y-center comm-grid">
+					<view class="flex-dir-column comm-cell cell-r">
+						<text class="comm-cell-label">审核中的提现</text>
+						<text class="comm-cell-value">￥{{winprice/100}}</text>
 					</view>
-					<view class="flex-dir-column  pt-20 pb-20 pl-30 f-26 col-6  w-50 f-28">
-						<text>已提现</text>
-						<text class="col-0 f-32 mt-10 f-w600">￥{{data.with_comm /100?data.with_comm /100:0}}</text>
+					<view class="flex-dir-column comm-cell">
+						<text class="comm-cell-label">已提现</text>
+						<text class="comm-cell-value">￥{{data.with_comm /100?data.with_comm /100:0}}</text>
 					</view>
 				</view>
-				<view class="flex-dir-row mb-10 plr-30 flex-y-center w-100">
-					<view style="flex: 0 0 calc(47%);margin: auto;">
-						<view class=" btn1 f-28" @click="navigator(4)">
-							提现记录
-						</view>
+				<view class="flex-dir-row comm-btns flex-y-center">
+					<view class="comm-btn-wrap">
+						<view class="btn-ghost f-28" @click="navigator(4)">提现记录</view>
 					</view>
-					<view style="flex: 0 0 calc(47%);margin: auto;">
-						<view class=" btn2  f-28" @click="navigator(2)">
-							立即提现
-						</view>
+					<view class="comm-btn-wrap">
+						<view class="btn-primary f-28" @click="navigator(2)">立即提现</view>
 					</view>
 				</view>
 			</view>
+
 			<view class="center flex-dir-column">
 				<view class="flex-dir-row b-b pb-25 mb-25 flex-y-center flex-x-between">
 					<view class="flex-dir-row flex-y-center">
-						<text class="ml-20 mr-10"
-							style="color:#3e9dff;font-size: 56rpx;height: 20rpx;line-height: 28rpx;"></text>
-						<text class="f-32">更多功能</text>
+						<text class="f-32 entry-title">更多功能</text>
 					</view>
 				</view>
 				<view class="flex-dir-row b-b pb-25 mb-25 flex-y-center flex-x-between" @click="navigator(0)">
 					<view class="flex-dir-row flex-y-center">
-						<text class="iconfont ml-20 mr-10 icon-xiangmuchaxun-guanlichengyuan"
-							style="color:#3e9dff;font-size: 50rpx;height: 20rpx;line-height: 24rpx;"></text>
-						<text class="f-30">成员信息</text>
+						<text class="iconfont icon-xiangmuchaxun-guanlichengyuan entry-icon ml-20 mr-10"></text>
+						<text class="f-30 entry-text">成员信息</text>
 					</view>
-					<text class="iconfont ml-20 icon-uniE003" style="color:#999;"></text>
+					<text class="iconfont icon-uniE003 icon-chevron ml-20"></text>
 				</view>
 				<view class="flex-dir-row b-b pb-25 mb-25 flex-y-center flex-x-between" @click="navigator(3)">
 					<view class="flex-dir-row flex-y-center">
-						<text class="iconfont ml-20 icon-xinxi"
-							style="color:#d557ff;font-size: 44rpx;height: 20rpx;line-height: 24rpx;margin-right: 14rpx;"></text>
-						<text class="f-30">提现信息</text>
+						<text class="iconfont icon-xinxi entry-icon ml-20 mr-14"></text>
+						<text class="f-30 entry-text">提现信息</text>
 					</view>
-					<text class="iconfont ml-20 icon-uniE003" style="color:#999;"></text>
+					<text class="iconfont icon-uniE003 icon-chevron ml-20"></text>
 				</view>
-				<view class="flex-dir-row  flex-y-center flex-x-between" @click="navigator(1)">
+				<view class="flex-dir-row flex-y-center flex-x-between" @click="navigator(1)">
 					<view class="flex-dir-row flex-y-center">
-						<text class="iconfont ml-20 mr-10 icon-dingdan21"
-							style="color:#ffaa00;font-size: 50rpx;height: 20rpx;line-height: 24rpx;margin-left: 17rpx;"></text>
-						<text class="f-30">分销订单</text>
+						<text class="iconfont icon-dingdan21 entry-icon ml-20 mr-10"></text>
+						<text class="f-30 entry-text">分销订单</text>
 					</view>
-					<text class="iconfont ml-20 icon-uniE003" style="color:#999;"></text>
+					<text class="iconfont icon-uniE003 icon-chevron ml-20"></text>
 				</view>
 			</view>
 		</view>
@@ -136,14 +116,31 @@
 		data() {
 			return {
 				user_id: uniCloud.getCurrentUserInfo().uid,
-				data: [],
+				data: {},
 				commpropo: [],
 				dataURL: null,
 				show: false,
+				defaultAvatar: '/static/logo.png',
+				avatarLoadError: false,
 				navTop: -30,
 				navHeight: null,
 				winprice: 0,
 				examprice: 0,
+			}
+		},
+		computed: {
+			avatarUrl() {
+				if (this.avatarLoadError) {
+					return this.defaultAvatar
+				}
+				return this.getAvatarUrl(this.data.image)
+			},
+			userName() {
+				const name = this.data.name
+				if (Array.isArray(name)) {
+					return name[0] || '匿名用户'
+				}
+				return name || '匿名用户'
 			}
 		},
 		onLoad() {
@@ -222,9 +219,11 @@
 						"user_id.avatar_file as image,level,user_id.nickname as name,user_arr.avatar_file as images,user_arr.nickname as names,user_arr._id as userid,accu_comm,with_comm,uodr_comm"
 					)
 					.get().then((res) => {
-						that.data = res.result.data[0]
 						uni.hideLoading();
-						if (res.result.data.length == 0) {
+						if (res.result.data.length > 0) {
+							that.avatarLoadError = false
+							that.data = res.result.data[0]
+						} else {
 							db.collection("jlg-distribution").add({
 								"user_arr": [],
 								"level": 0,
@@ -238,6 +237,19 @@
 			},
 			goBack() {
 				uni.navigateBack()
+			},
+			getAvatarUrl(image) {
+				if (Array.isArray(image)) {
+					const avatar = image.find(item => item && (typeof item === 'string' || item.url))
+					return avatar ? this.getAvatarUrl(avatar) : this.defaultAvatar
+				}
+				if (typeof image === 'string') {
+					return image || this.defaultAvatar
+				}
+				if (image && typeof image === 'object') {
+					return image.url || this.defaultAvatar
+				}
+				return this.defaultAvatar
 			},
 			navigator(e) {
 				if (e == 0) {
@@ -320,225 +332,199 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
-		background-color: #f5f5f5;
-		color: #fff;
+		background-color: $brand-bg;
+		color: $brand-text;
 		height: 100%;
 	}
 
-
 	.header {
-		background-image: url('/static/temp/back.jpg');
-		background-repeat: no-repeat;
-		background-size: 100% 130vh;
 		width: 100%;
-		height: 100vh;
-		padding: 40rpx 30rpx 100rpx 30rpx;
+		min-height: 100vh;
+		padding: 40rpx 32rpx 100rpx 32rpx;
 		box-sizing: border-box;
+		background-color: $brand-bg;
+	}
+
+	.user-row {
+		margin-bottom: 4rpx;
 	}
 
 	.litpic {
-		width: 115rpx;
-		height: 115rpx;
-		background-color: #fff;
-		border-radius: 50%;
-	}
-
-	.header-center {
-		margin: 30rpx 0 0 0;
-		background-color: #fff;
-		box-sizing: border-box;
-		border-radius: 30rpx;
-		box-shadow: 0rpx 16rpx 30rpx -1rpx #bfbfbf;
+		width: 112rpx;
+		height: 112rpx;
+		background-color: $brand-image-bg;
+		border-radius: $uni-border-radius-circle;
 	}
 
 	.header-right {
-		margin-left: 30rpx;
+		margin-left: 24rpx;
 	}
 
+	.user-badge {
+		font-size: $font-meta;
+		color: $brand-muted;
+		margin-top: 8rpx;
+	}
+
+	/* 邀请按钮 — ghost 风格 */
+	.share-btn {
+		font-size: $font-meta;
+		color: $brand-primary;
+		border: 1rpx solid $brand-primary;
+		border-radius: $uni-border-radius-sm;
+		padding: 12rpx 28rpx;
+	}
+
+	/* 佣金数据卡 */
+	.header-center {
+		margin: 32rpx 0 0 0;
+		background-color: $brand-surface;
+		box-sizing: border-box;
+		border-radius: $uni-border-radius-lg;
+		border: 1rpx solid $brand-border;
+	}
+
+	.header-center-top {
+		padding: 40rpx 24rpx;
+		border-bottom: 1rpx solid $brand-border;
+		border-radius: $uni-border-radius-lg $uni-border-radius-lg 0 0;
+	}
+
+	.comm-stat {
+		flex: 1;
+		align-items: center;
+	}
+
+	.comm-label {
+		font-size: $font-meta;
+		color: $brand-muted;
+		font-weight: $font-meta-weight;
+	}
+
+	.comm-amount {
+		font-size: 36rpx;
+		color: $brand-primary;
+		margin-top: 12rpx;
+	}
+
+	/* 四格明细区 */
+	.comm-grid {
+		padding: 0 32rpx;
+	}
+
+	.comm-cell {
+		flex: 1;
+		padding: 24rpx 0 24rpx 24rpx;
+	}
+
+	.cell-r  { border-right: 1rpx solid $brand-border; }
+	.cell-b  { border-bottom: 1rpx solid $brand-border; }
+	.cell-rb { border-right: 1rpx solid $brand-border; border-bottom: 1rpx solid $brand-border; }
+
+	.comm-cell-label {
+		font-size: $font-meta;
+		color: $brand-muted;
+	}
+
+	.comm-cell-value {
+		font-size: $font-price;
+		font-weight: $font-price-weight;
+		color: $brand-text;
+		margin-top: 10rpx;
+	}
+
+	/* 操作按钮区 */
+	.comm-btns {
+		padding: 24rpx 32rpx 28rpx 32rpx;
+		gap: 16rpx;
+	}
+
+	.comm-btn-wrap {
+		flex: 1;
+	}
+
+	.btn-ghost {
+		height: 80rpx;
+		line-height: 80rpx;
+		background: $brand-surface;
+		color: $brand-primary;
+		border: 1rpx solid $brand-primary;
+		border-radius: $uni-border-radius-sm;
+		text-align: center;
+		font-size: $font-body;
+		font-weight: $font-product-title-weight;
+	}
+
+	.btn-primary {
+		height: 80rpx;
+		line-height: 80rpx;
+		background: $brand-primary;
+		color: $brand-surface;
+		border: 1rpx solid $brand-primary;
+		border-radius: $uni-border-radius-sm;
+		text-align: center;
+		font-size: $font-body;
+		font-weight: $font-product-title-weight;
+	}
+
+	/* 功能入口卡 */
 	.center {
 		width: 100%;
-		margin-top: 60rpx;
+		margin-top: 32rpx;
 		box-sizing: border-box;
-		color: #000;
-		background: #fff;
-		padding: 25rpx 20rpx;
-		border-radius: 30rpx;
+		color: $brand-text;
+		background: $brand-surface;
+		padding: 28rpx 24rpx;
+		border-radius: $uni-border-radius-lg;
+		border: 1rpx solid $brand-border;
 	}
 
-
-
-
-	.list-item {
-		background-color: #fff;
-		box-shadow: 0px 1px 14px 1px #f5f5f5;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		margin-bottom: 50rpx;
-		width: 40%;
-		color: #000;
-		border-radius: 20rpx;
-		padding: 40rpx 30rpx;
-		box-sizing: border-box;
-		font-size: 30rpx;
+	.entry-icon {
+		font-size: 48rpx;
+		height: 28rpx;
+		line-height: 28rpx;
+		color: $brand-primary;
 	}
 
-	.list-item image {
-		width: 110rpx;
-		height: 110rpx;
-		border-radius: 15rpx;
-		padding: 20rpx;
-		margin-bottom: 20rpx;
+	.entry-title {
+		font-size: $font-section-title;
+		font-weight: $font-section-title-weight;
+		color: $brand-black;
 	}
 
-	.popup {
-		top: 390rpx;
-		left: 0%;
-		width: 100%;
-		z-index: 10000000000000000000000;
+	.entry-text {
+		font-size: $font-product-title;
+		color: $brand-text;
 	}
 
-	.popup-center {
-		position: absolute;
-		top: 20rpx;
-		left: 26%;
-	}
-
-	.avatarimg {
-		width: 140rpx;
-		height: 140rpx;
-		border-radius: 50%;
-	}
-
-	.popup-name {
-		color: #9c684a;
+	.icon-chevron {
 		font-size: 32rpx;
-		margin-bottom: 90rpx;
-		margin-top: 5px;
+		color: $brand-light-muted;
 	}
 
-	.popup-text {
-		color: #9c684a;
-		font-size: 42rpx;
-		font-weight: 700;
-		margin-bottom: 60rpx;
+	.b-b {
+		border-bottom: 1rpx solid $brand-border;
 	}
 
-	.popup-join {
-		color: #9c684a;
-		font-size: 36rpx;
-		margin-top: 40rpx
+	.mr-14 {
+		margin-right: 14rpx;
 	}
 
-	.p-a {
-		position: absolute;
-	}
-
-	.p-r {
-		position: relative;
-	}
+	/* 定位辅助 */
+	.p-a { position: absolute; }
+	.p-r { position: relative; }
 
 	button::after {
 		border: none;
 	}
 
-	.but {
-		width: 94%;
-		position: fixed;
-		bottom: 16rpx;
-		left: 50%;
-		transform: translateX(-50%);
-		font-size: 32rpx;
-		color: #ffffff;
-		background-color: #1C7231;
-		border-radius: 100rpx;
-		height: 84rpx;
-		line-height: 84rpx;
-		z-index: 9999;
-	}
-
-	.share-btn {
-		font-size: 27rpx;
-		color: #ec3758;
-		background-color: #ffe7c9;
-		border-radius: 97rpx;
-		padding: 10rpx 30rpx;
-	}
-
-	.header-center-top {
-		background: linear-gradient(to right, #fff6eb, #ffdfb9);
-		padding: 40rpx 30rpx;
-		border-radius: 20rpx 20rpx 0 0;
-		color: #9c684a;
-	}
-
-	.btn1 {
-		border: #ec3758 1rpx solid;
-		color: #ec3758;
-		text-align: center;
-		border-radius: 50rpx;
-		padding: 22rpx 0rpx;
-	}
-
-	.btn2 {
-		background-color: #ec3758;
-		border: #ec3758 1rpx solid;
-		color: #FFF;
-		text-align: center;
-		border-radius: 50rpx;
-		padding: 22rpx 0rpx;
-	}
-
-	.b-b {
-		border-bottom: 1rpx solid #eee;
-	}
-
-	/* 自定义顶部导航 */
-
-
+	/* 自定义顶部返回按钮 */
 	.navbar {
-		border-radius: 200rpx;
 		position: fixed;
 		left: 20rpx;
 		z-index: 10;
 		padding: 4rpx;
-	}
-
-	.navbar .navbar-return {
-		width: 70rpx;
-		height: 60rpx;
-		line-height: 60rpx;
-		text-align: center;
-		position: fixed;
-		left: 0;
-	}
-
-	.navbar .icon-arrow-left {
-		font-size: 36rpx;
-		color: #333;
-	}
-
-	.navbar .search-content {
-		display: flex;
-		flex-direction: row;
-		width: 70%;
-		height: 60rpx;
-		background-color: #eaeaea;
-		border-radius: 100rpx;
-	}
-
-	.navbar .icon-search {
-		font-size: 40rpx;
-		color: #A0A0A0;
-		padding: 0 5rpx;
-	}
-
-	.navbar .search-input {
-		font-size: 25rpx;
-		color: #666;
-		height: 60rpx;
 	}
 </style>

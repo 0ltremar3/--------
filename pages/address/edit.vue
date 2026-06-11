@@ -22,14 +22,14 @@
 						popup-title="请选择城市" collection="opendb-city-china" field="code as value, name as text"
 						orderby="value asc" :step-searh="true" self-field="code" parent-field="parent_code"
 						@change="onchange" v-model="model.ressData.area" />
-					<!-- #ifdef MP-WEIXIN -->
-					<view style="margin: auto 0rpx;" @click="getLocation">
-						<uni-icons type="location" color="#797979" size="30"></uni-icons>
-					</view>
-					<!-- #endif -->
+				<!-- #ifdef MP-WEIXIN -->
+				<view class="location-icon" @click="getLocation">
+					<uni-icons type="location" color="#8E918D" size="28"></uni-icons>
+				</view>
+				<!-- #endif -->
 				</view>
 			</uv-form-item>
-			<uv-form-item labelPosition="top" label="详细地址" prop="ressData.addRess" borderBottom labelWidth="80">
+			<uv-form-item label="详细地址" prop="ressData.addRess" borderBottom labelWidth="80">
 				<uni-easyinput @input="ressstrclick" :placeholderStyle="derStyle" :inputBorder="false" type="textarea"
 					placeholder="请输入详细地址" v-model="model.ressData.addRess"></uni-easyinput>
 			</uv-form-item>
@@ -339,43 +339,102 @@
 	}
 </script>
 
-<style>
-	.container {
-		background-color: #ffffff;
-		padding: 40rpx;
-		box-sizing: border-box;
+<style lang="scss">
+	page {
+		background-color: $brand-surface;
 	}
 
+	.container {
+		background-color: $brand-surface;
+		box-sizing: border-box;
+		min-height: 100vh;
+	}
+
+	/* 微信地址快捷行 */
 	.wxress_van {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
+		// justify-content: flex-end;
+		padding: 20rpx 32rpx;
+		// border-bottom: 1rpx solid $brand-border;
 	}
 
 	.wxress_img {
-		width: 40rpx;
-		height: 40rpx;
+		width: 32rpx;
+		height: 32rpx;
+		flex-shrink: 0;
 	}
 
 	.wxress_text {
-		margin-left: 10rpx;
-		height: 40rpx;
-		line-height: 40rpx;
-		font-size: 30rpx;
-		color: #303133;
+		margin-left: 12rpx;
+		font-size: $font-meta;
+		color: $brand-primary;
+		font-weight: $font-product-title-weight;
+		line-height: 1.5;
 	}
 
+	/* uv-form 整体左右留白与分割线颜色 */
+	::v-deep .uv-form {
+		padding: 0 32rpx;
+	}
+
+	/* 每行 form-item 统一行高和纵向 padding */
+	::v-deep .uv-form-item__body {
+		padding: 28rpx 0;
+		min-height: 96rpx;
+		align-items: center;
+	}
+
+	/* 标签文字风格 */
+	::v-deep .uv-form-item__body__left .uv-form-item__body__left__content__label {
+		font-size: $font-body;
+		color: $brand-black;
+		font-weight: $font-body-weight;
+	}
+
+	/* 输入框 placeholder 与值字号 */
+	::v-deep .uv-input__content__field-wrapper__field,
+	::v-deep .uv-input__content__field-wrapper input {
+		font-size: $font-body;
+		color: $brand-text;
+	}
+
+	/* 详细地址 textarea 对齐 */
+	::v-deep .uv-form-item--textarea .uv-form-item__body {
+		align-items: flex-start;
+		padding-top: 28rpx;
+	}
+
+	/* 底部分割线与设计 token 保持一致 */
+	::v-deep .uv-form-item--border-bottom::after {
+		border-color: $brand-border;
+	}
+
+	/* 位置图标区域垂直居中 */
+	.location-icon {
+		display: flex;
+		align-items: center;
+		padding-left: 16rpx;
+		flex-shrink: 0;
+	}
+
+	/* 提交按钮 */
 	.but {
-		width: 94%;
-		position: absolute;
-		bottom: 16rpx;
-		left: 50%;
-		transform: translateX(-50%);
-		font-size: 32rpx;
-		color: #ffffff;
-		background-color: #1C7231;
-		border-radius: 100rpx;
-		height: 84rpx;
-		line-height: 84rpx;
-		z-index: 9999;
+		display: block;
+		width: calc(100% - 64rpx);
+		margin: 48rpx 32rpx 64rpx;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		color: $brand-surface;
+		background-color: $brand-primary;
+		border-radius: 0;
+		height: 88rpx;
+		line-height: 88rpx;
+		box-shadow: none;
+	}
+
+	button::after {
+		border: none;
 	}
 </style>

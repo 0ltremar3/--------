@@ -1,23 +1,43 @@
 <template>
-	<view class="center">
-		<view class="img-dw">
-			<image class="img-van"
-				src="https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/wenti2.jpg">
-			</image>
+	<view class="problem-page">
+		<!-- 顶部 banner -->
+		<view class="banner-wrap">
+			<image
+				class="banner-img"
+				src="https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/wenti2.jpg"
+				mode="aspectFill"
+			/>
+			<view class="banner-overlay">
+				<button open-type="contact" class="contact-btn">联系客服</button>
+			</view>
 		</view>
-		<view style="width: 150rpx;">
-			<button open-type="contact" class="but">联系客服</button>
+
+		<!-- 分类 Tab -->
+		<view class="tabs-wrap">
+			<uv-tabs
+				:list="list"
+				:lineColor="primaryColor"
+				:activeStyle="{ color: primaryColor, fontWeight: '600' }"
+				:inactiveStyle="{ color: mutedColor }"
+				:scrollable="true"
+				@click="loadData"
+			/>
 		</view>
-		<view style="margin-top: 40rpx;">
-			<uv-tabs :list="list" lineColor="#55aaff" @click="loadData" :activeStyle="{color: '#55aaff'}"
-				:scrollable="true">
-			</uv-tabs>
-		</view>
-		<view class="mt-20">
-			<view class="f-27" @click="navTo(item._id)"
-				style="height: 80rpx;line-height: 80rpx;border-bottom: 1rpx solid #e8e8e8;padding: 0rpx 20rpx;"
-				v-for="(item,index) in loadList" :key="index">
-				<text>{{item.title}}</text>
+
+		<!-- 问题列表 -->
+		<view class="list-wrap">
+			<view
+				class="list-item dflex-b"
+				v-for="(item, index) in loadList"
+				:key="index"
+				@click="navTo(item._id)"
+				hover-class="item-hover"
+			>
+				<text class="item-title text-body">{{ item.title }}</text>
+				<text class="iconfont icon-right item-arrow"></text>
+			</view>
+			<view v-if="loadList.length === 0" class="empty-state">
+				<text class="text-meta">暂无相关内容</text>
 			</view>
 		</view>
 	</view>
@@ -30,6 +50,8 @@
 			return {
 				list: [],
 				loadList: [],
+				primaryColor: '#1C7231',
+				mutedColor: '#8E918D',
 			}
 		},
 		onLoad() {
@@ -51,9 +73,7 @@
 					"category_id": '64cb3e83337a9f4db7bcb3a2'
 				}).field("excerpt,category_id").distinct().get().then((res) => {
 					res.result.data.forEach(item => {
-						this.list.push({
-							name: item.excerpt
-						})
+						this.list.push({ name: item.excerpt })
 					})
 					this.loadData(this.list[0])
 				})
@@ -74,41 +94,101 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	@import "@/static/common/common.scss";
+
 	page {
-		height: 100%;
+		background: $brand-bg;
 	}
 
-	.center {
-		padding: 30rpx;
-		box-sizing: border-box;
+	.problem-page {
+		min-height: 100vh;
+		background: $brand-bg;
 	}
 
-	.img-dw {
-		position: absolute;
-		top: 20rpx;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 92.5%;
+	/* ── banner ── */
+	.banner-wrap {
+		position: relative;
+		width: 100%;
+		height: 300rpx;
+		background: $brand-image-bg;
+	}
+
+	.banner-img {
+		width: 100%;
 		height: 300rpx;
 	}
 
-	.but {
-		width: 128rpx;
-		font-size: 22rpx;
-		color: #0052cc;
-		background: #fff;
-		border-radius: 10rpx;
-		height: 40rpx;
-		line-height: 40rpx;
-		margin-left: 58rpx;
-		margin-top: 125rpx;
-		padding: 0 !important;
+	.banner-overlay {
+		position: absolute;
+		right: 32rpx;
+		bottom: 32rpx;
 	}
 
-	.img-van {
-		width: 100%;
-		height: 200rpx;
-		border-radius: 20rpx;
+	.contact-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 64rpx;
+		line-height: 64rpx;
+		padding: 0 28rpx;
+		font-size: $font-meta;
+		font-weight: 500;
+		color: $brand-primary;
+		background: $brand-surface;
+		border: 1rpx solid $brand-primary;
+		border-radius: $uni-border-radius-sm;
+		box-shadow: none;
+		letter-spacing: 0.02em;
+
+		&::after {
+			border: none;
+		}
+	}
+
+	/* ── tabs ── */
+	.tabs-wrap {
+		border-bottom: 1rpx solid $brand-border;
+		background: $brand-bg;
+	}
+
+	/* ── 列表 ── */
+	.list-wrap {
+		padding: 0 32rpx;
+		background: $brand-bg;
+	}
+
+	.list-item {
+		height: 96rpx;
+		border-bottom: 1rpx solid $brand-border;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.item-hover {
+		background: $brand-bg;
+	}
+
+	.item-title {
+		flex: 1;
+		color: $brand-text;
+		font-size: $font-body;
+	}
+
+	.item-arrow {
+		font-size: 28rpx;
+		color: $brand-light-muted;
+		margin-left: 16rpx;
+	}
+
+	.empty-state {
+		padding: 80rpx 0;
+		display: flex;
+		justify-content: center;
 	}
 </style>

@@ -1,29 +1,23 @@
 <!-- 免密登录页 -->
 <template>
 	<!-- #ifdef MP-WEIXIN -->
-	<view class="uni-content" style="padding: 0rpx !important;">
-		<image style="position: absolute;width: 100%;height: 100%;z-index: -1;"
-			src="../../../../static/temp/beijing.png"></image>
-		<view style="padding: 0 60rpx;">
-			<view class="login-logo">
-				<image :src="logo"></image>
-			</view>
-			<!-- 顶部文字 -->
-			<text class="title"></text>
-			<!-- 快捷登录框 当url带参数时有效 -->
-			<template v-if="['apple','weixin', 'weixinMobile'].includes(type)">
-				<text class="tip"></text>
-				<view class="quickLogin">
-					<image v-if="type !== 'weixinMobile'" @click="quickLogin" :src="imgSrc" mode="widthFix"
-						class="quickLoginBtn"></image>
-					<button v-else type="primary" open-type="getPhoneNumber" @getphonenumber="quickLogin"
-						class="uni-btn">手机号快捷登录</button>
-					<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
-					<view class="qtlogin">———— 其他方式登录 ————</view>
+	<view class="uni-content mp-login-page">
+		<view class="mp-login-inner">
+			<view class="brand-area">
+				<view class="login-logo brand-logo">
+					<image :src="logo" mode="aspectFit"></image>
 				</view>
-			</template>
-			<template v-else>
-				<text class="tips"></text>
+				<text class="brand-subtitle">NATURAL NOURISHMENT</text>
+			</view>
+			<view class="login-actions">
+				<button class="uni-btn wechat-btn" @click="quickWechatLogin">
+					<text class="wechat-icon">微</text>
+					<text>微信快捷登录</text>
+				</button>
+				<button type="primary" open-type="getPhoneNumber|agreePrivacyAuthorization"
+					@getphonenumber="quickMobileLogin" class="uni-btn phone-auth-btn">手机号授权登录</button>
+				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
+				<!-- 短信验证码登录入口按需恢复
 				<view class="inp_text">
 					<view class="phone-box">
 						<view @click="chooseArea" class="area">+86</view>
@@ -32,12 +26,10 @@
 							placeholder="请输入手机号" />
 					</view>
 				</view>
-				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 				<button class="uni-btn" @click="toSmsPage">获取验证码</button>
-				<view class="qtlogin">————— 其他方式登录 —————</view>
-			</template>
-			<!-- 固定定位的快捷登录按钮 -->
-			<uni-id-pages-fab-login bottom="530rpx" ref="uniFabLogin"></uni-id-pages-fab-login>
+				-->
+			</view>
+			<uni-id-pages-fab-login v-show="false" ref="uniFabLogin"></uni-id-pages-fab-login>
 		</view>
 	</view>
 	<!-- #endif -->
@@ -108,11 +100,12 @@
 		async onLoad(e) {
 			//获取通过url传递的参数type设置当前登录方式，如果没传递直接默认以配置的登录
 			let type = e.type || config.loginTypes[0]
+			this.type = type
 			// #ifdef APP
 			this.type = 'weixin'
 			// #endif
-			// #ifndef APP
-			this.type = type
+			// #ifdef MP-WEIXIN
+			this.type = 'weixin'
 			// #endif
 
 			// console.log("this.type: -----------",this.type);
@@ -168,13 +161,27 @@
 			quickLogin(e) {
 				let options = {}
 
-				if (e.detail?.code) {
+				if (e?.detail?.code) {
 					options.phoneNumberCode = e.detail.code
 				}
 
-				if (this.type === 'weixinMobile' && !e.detail?.code) return
+				if (this.type === 'weixinMobile' && !e?.detail?.code) {
+					return uni.showToast({
+						title: e?.detail?.errMsg === 'getPhoneNumber:fail user deny' ? '您已拒绝授权手机号' : '获取手机号失败',
+						icon: 'none',
+						duration: 3000
+					})
+				}
 
 				this.$refs.uniFabLogin.login_before(this.type, true, options)
+			},
+			quickWechatLogin() {
+				this.type = 'weixin'
+				this.quickLogin()
+			},
+			quickMobileLogin(e) {
+				this.type = 'weixinMobile'
+				this.quickLogin(e)
 			},
 			toSmsPage() {
 				if (!this.isPhone) {
@@ -323,6 +330,137 @@
 		border-radius: 100rpx;
 		line-height: 90rpx;
 		height: 90rpx;
+	}
+
+	.login-actions .uni-btn {
+		width: 100%;
+		margin-top: 30rpx;
+	}
+
+	/* #ifdef MP-WEIXIN */
+	.mp-login-page {
+		min-height: 100vh;
+		height: 100vh;
+		background-color: #F7F8F5;
+		padding: 0 80rpx !important;
+		box-sizing: border-box;
+		justify-content: center;
+	}
+
+	.mp-login-inner {
+		width: 100%;
+		min-height: 100vh;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding: 150rpx 0 96rpx;
+	}
+
+	.brand-area {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.brand-logo {
+		width: 320rpx;
+		height: 320rpx;
+		margin: 0 0 44rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.brand-logo image {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	.brand-subtitle {
+		padding-left: 12rpx;
+		color: #8A9A8E;
+		font-size: 20rpx;
+		font-weight: 300;
+		letter-spacing: 8rpx;
+		line-height: 1.4;
+	}
+
+	.login-actions {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.login-actions .uni-btn {
+		width: 100%;
+		height: 96rpx;
+		margin: 0;
+		border-radius: 999rpx;
+		line-height: 96rpx;
+		font-size: 28rpx;
+		font-weight: 500;
+		letter-spacing: 4rpx;
+	}
+
+	.wechat-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #1C7231;
+		color: #FFFFFF;
+		box-shadow: 0 14rpx 30rpx rgba(28, 114, 49, 0.16);
+	}
+
+	.wechat-icon {
+		width: 38rpx;
+		height: 38rpx;
+		margin-right: 18rpx;
+		border-radius: 50%;
+		background-color: rgba(255, 255, 255, 0.18);
+		color: #FFFFFF;
+		font-size: 20rpx;
+		line-height: 38rpx;
+		text-align: center;
+		letter-spacing: 0;
+	}
+
+	.phone-auth-btn {
+		margin-top: 28rpx !important;
+		border: 1rpx solid rgba(28, 114, 49, 0.28);
+		background-color: rgba(255, 255, 255, 0.72);
+		color: #1C7231;
+		box-shadow: none;
+	}
+
+	.login-actions ::v-deep .root {
+		margin-top: 80rpx;
+		justify-content: center;
+		color: #8A9A8E;
+		font-size: 20rpx;
+		line-height: 34rpx;
+	}
+
+	.login-actions ::v-deep .agreement {
+		color: #1C7231;
+	}
+
+	.login-actions ::v-deep .checkbox-box {
+		margin-right: 4rpx;
+	}
+	/* #endif */
+
+	.link-btn {
+		margin-top: 30rpx;
+		background-color: transparent;
+		color: #1C7231;
+		font-size: 28rpx;
+		line-height: 60rpx;
+		height: 60rpx;
 	}
 
 	button::after {

@@ -55,12 +55,6 @@
 		data() {
 			return {
 				servicesList: [{
-						"id": "username",
-						"text": "账号登录",
-						"logo": "/uni_modules/uni-id-pages/static/login/uni-fab-login/user.png",
-						"path": "/uni_modules/uni-id-pages/pages/login/login-withpwd"
-					},
-					{
 						"id": "smsCode",
 						"text": "短信验证码",
 						"logo": "/uni_modules/uni-id-pages/static/login/uni-fab-login/sms.png",

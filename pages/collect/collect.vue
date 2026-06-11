@@ -2,25 +2,22 @@
 	<view>
 		<uv-empty v-if="data.length == 0" mode="data" icon="/static/temp/shwk.png" text="暂无收藏商品"></uv-empty>
 		<view v-else class="swipe-cell">
-			<view v-for="(item,index) in data" :key="item._id">
+			<view v-for="item in data" :key="item._id">
 				<uni-swipe-action>
 					<uni-swipe-action-item :right-options="options" @click="beforeClose(item._id)">
 						<view @click="navigator(item.id,item.goods_seckill)"
 							class="flex-dir-row flex-x-between list flex-y-center">
-							<image :src="item.thumbgoods" class="litpic" mode=""></image>
-							<view class="flex-dir-column list-right ">
-								<view class="title">
+							<image :src="item.thumbgoods" class="litpic" mode="aspectFill"></image>
+							<view class="flex-dir-column list-right">
+								<view class="title text-product-title">
 									{{item.goodsname[0]}}
 								</view>
-								<view class="mt-20" :show-scrollbar="false" scroll-x>
-									<view class="services_van">
-										<view class="services_vans" v-for="give in item.services[0]">
-											<view class="goods_services">{{give}}</view>
-										</view>
+								<view class="mt-20 services_van">
+									<view class="services_vans" v-for="give in item.services[0]" :key="give">
+										<view class="goods_services">{{give}}</view>
 									</view>
 								</view>
-								<text class="price mt-20"
-									style="justify-content: flex-end;display: flex;">￥{{(item.gssuks[0].reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price / 100).toFixed(2)}}</text>
+								<text class="price mt-20" style="justify-content: flex-end;display: flex;">{{(item.gssuks[0].reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price / 100).toFixed(2)}}</text>
 							</view>
 						</view>
 					</uni-swipe-action-item>
@@ -90,8 +87,11 @@
 </script>
 
 <style lang="scss">
+	@import "@/static/common/common.scss";
+
 	.list {
-		padding: 30upx 30upx;
+		padding: 28rpx 32rpx;
+		border-bottom: 1rpx solid $brand-border;
 	}
 
 	.mt-20 {
@@ -112,14 +112,22 @@
 		justify-content: space-between;
 	}
 
+	.flex-y-center {
+		align-items: center;
+	}
+
 	.litpic {
-		width: 210rpx;
-		height: 210rpx;
-		border-radius: 20rpx;
+		width: 200rpx;
+		height: 200rpx;
+		border-radius: $uni-border-radius-sm;
+		background: $brand-image-bg;
+		flex-shrink: 0;
 	}
 
 	.list-right {
-		width: 68%;
+		flex: 1;
+		margin-left: 24rpx;
+		overflow: hidden;
 	}
 
 	.title {
@@ -129,55 +137,37 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
-
-	}
-
-	.attr {
-		font-size: 26upx;
-		color: #909399;
-		height: 50upx;
-		line-height: 50upx;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-		.suk_text {
-			margin-right: 20rpx;
-		}
-	}
-
-	.list-right {
-		margin-left: 20rpx;
+		line-clamp: 2;
+		color: $brand-text;
+		font-size: $font-product-title;
+		font-weight: $font-product-title-weight;
+		line-height: 1.45;
 	}
 
 	.price {
-		font-size: 34rpx;
-		color: #1C7231;
-		height: 40upx;
-		line-height: 40upx;
+		font-size: $font-price;
+		font-weight: $font-price-weight;
+		color: $brand-primary;
+		line-height: 1;
 	}
 
 	.services_van {
 		display: flex;
 		flex-direction: row;
-		text-align: center;
-		overflow: hidden;
+		flex-wrap: wrap;
+		gap: 10rpx;
 
 		.services_vans {
-			border: 1rpx solid #ff5500;
+			border: 1rpx solid $brand-border;
 			height: 40rpx;
-			margin-bottom: 10rpx;
-			margin-right: 10rpx;
-			border-radius: 8rpx;
-			line-height: 36rpx;
+			border-radius: $uni-border-radius-sm;
+			line-height: 38rpx;
 			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
 			flex-shrink: 0;
 
 			.goods_services {
-				color: #ff5500;
-				font-size: 21rpx;
+				color: $brand-muted;
+				font-size: 20rpx;
 				padding: 0 10rpx;
 			}
 		}
