@@ -22,6 +22,17 @@
 </template>
 
 <script>
+	// 与 uni.scss 品牌 Token 保持一致，SCSS 变量无法在 JS 中直接引用，故在此镜像定义
+	const BRAND = Object.freeze({
+		primary:    '#1C7231', // $brand-primary
+		black:      '#202321', // $brand-black
+		text:       '#2A3033', // $brand-text
+		muted:      '#8E918D', // $brand-muted
+		lightMuted: '#B8BBB6', // $brand-light-muted
+		border:     '#E5E6E2', // $brand-border
+		surface:    '#FFFFFF', // $brand-surface
+	})
+
 	export default {
 		props: {
 			headerImg: {
@@ -84,11 +95,11 @@
 				this.canvasW = uni.upx2px(650);
 				this.canvasH = uni.upx2px(980);
 				//设置画布背景透明
-				this.ctx.setFillStyle('rgba(255, 255, 255, 0)')
+				this.ctx.setFillStyle('rgba(255,255,255,0)')
 				//设置画布大小
 				this.ctx.fillRect(0, 0, this.canvasW, this.canvasH)
 				//绘制圆角背景
-				this.drawRoundRect(this.ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), '#FFFFFF')
+				this.drawRoundRect(this.ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), BRAND.surface)
 				//绘制用户头像
 				let radius = 25; // 定义头像半径
 				let x = 18; // 头像的 x 坐标
@@ -100,9 +111,9 @@
 				this.ctx.closePath();
 				this.ctx.clip(); // 裁剪路径
 				// #ifdef H5
-				let tximg = 'http://test.slwjd.com/hbimage/logo.png'
-				this.ctx.drawImage(tximg, x, y, radius * 2, radius * 2);
-				// #endif
+			let tximg = 'http://test.slwjd.com/hbimage/logo.png'
+			this.ctx.drawImage(tximg, x, y, radius * 2, radius * 2);
+			// #endif
 				// #ifdef MP-WEIXIN
 				let width = uni.upx2px(100); // 头像的宽度
 				let height = uni.upx2px(100); // 头像的高度
@@ -119,18 +130,18 @@
 				let textX = x + radius * 2 + 7; // 文字的 x 坐标
 				let textY = y + radius - 3; // 文字的 y 坐标
 
-				this.ctx.font = '15px Arial'; // 设置字体样式和大小
-				this.ctx.fillStyle = '#464646'; // 设置文字颜色
-				this.ctx.fillText(this.username, textX, textY); // 绘制文字
+			this.ctx.font = '15px Arial';
+			this.ctx.fillStyle = BRAND.black;
+			this.ctx.fillText(this.username, textX, textY);
 
-				// 绘制昵称下的文字
-				let texts = '发现优质好物！一起开启优质购物之旅吧！';
-				let textXs = x + radius * 2 + 7; // 文字的 x 坐标
-				let textYs = y + radius + 15; // 文字的 y 坐标
+			// 绘制昵称下的文字
+			let texts = '发现优质好物，一起开启品质生活之旅';
+			let textXs = x + radius * 2 + 7;
+			let textYs = y + radius + 15;
 
-				this.ctx.font = '12px Arial'; // 设置字体样式和大小
-				this.ctx.fillStyle = '#ff0f0f'; // 设置文字颜色
-				this.ctx.fillText(texts, textXs, textYs); // 绘制文字
+			this.ctx.font = '12px Arial';
+			this.ctx.fillStyle = BRAND.muted;
+			this.ctx.fillText(texts, textXs, textYs);
 
 				//获取标题图片
 				// #ifdef H5
@@ -154,42 +165,43 @@
 				// this.ctx.setFillStyle('#333'); //设置标题文本颜色
 				// this.ctx.fillText(this.title, ((this.canvasW - hW) / 2), (
 				// 	((this.canvasW - hW) / 1.5) + hH + uni.upx2px(130)))
-				// 绘制价格
-				this.ctx.setFontSize(14);
-				this.ctx.setFillStyle('#f54545');
-				this.ctx.fillText('￥', ((this.canvasW - hW) / 2), (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(
-					200)));
-				this.ctx.setFontSize(22);
-				this.ctx.fillText(this.price, (((this.canvasW - hW) / 2) + uni.upx2px(36)), (((this
-						.canvasW - hW) /
-					0.9) + hH + uni.upx2px(200)));
+			// 绘制价格
+			this.ctx.setFontSize(14);
+			this.ctx.setFillStyle(BRAND.primary);
+			this.ctx.fillText('￥', ((this.canvasW - hW) / 2), (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(
+				200)));
+			this.ctx.setFontSize(22);
+			this.ctx.fillText(this.price, (((this.canvasW - hW) / 2) + uni.upx2px(36)), (((this
+					.canvasW - hW) /
+				0.9) + hH + uni.upx2px(200)));
 
 				// 绘制原价
-				const originalPriceX = (((this.canvasW - hW) / 2) + uni.upx2px(36) + this.ctx.measureText('￥' + this
-					.price).width + uni.upx2px(5));
-				const originalPriceY = (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200));
-				this.ctx.setFontSize(14);
-				this.ctx.setFillStyle('#999'); // 设置原价文本颜色为灰色
-				this.ctx.fillText('原价：', originalPriceX - uni.upx2px(30), originalPriceY);
+			const originalPriceX = (((this.canvasW - hW) / 2) + uni.upx2px(36) + this.ctx.measureText('￥' + this
+				.price).width + uni.upx2px(5));
+			const originalPriceY = (((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200));
+			this.ctx.setFontSize(14);
+			this.ctx.setFillStyle(BRAND.muted);
+			this.ctx.fillText('原价：', originalPriceX - uni.upx2px(30), originalPriceY);
 
-				const originalPrice = '￥' + this.origprice.toFixed(2); // 假设原价为￥100.00，你可以替换为实际的原价数据
+			const originalPrice = '￥' + this.origprice.toFixed(2);
 
-				this.ctx.fillText(originalPrice, originalPriceX + uni.upx2px(35), originalPriceY);
+			this.ctx.fillText(originalPrice, originalPriceX + uni.upx2px(35), originalPriceY);
 
-				// 绘制删除线
-				this.ctx.setLineWidth(1);
-				this.ctx.beginPath();
-				this.ctx.moveTo(originalPriceX + uni.upx2px(76), originalPriceY + uni.upx2px(-8)); // 偏移7个像素，使得删除线在文字上方
-				this.ctx.lineTo(originalPriceX + uni.upx2px(35) + this.ctx.measureText(originalPrice).width,
-					originalPriceY + uni
-					.upx2px(-8));
-				this.ctx.stroke();
+			// 绘制删除线
+			this.ctx.setStrokeStyle(BRAND.lightMuted);
+			this.ctx.setLineWidth(1);
+			this.ctx.beginPath();
+			this.ctx.moveTo(originalPriceX + uni.upx2px(76), originalPriceY + uni.upx2px(-8));
+			this.ctx.lineTo(originalPriceX + uni.upx2px(35) + this.ctx.measureText(originalPrice).width,
+				originalPriceY + uni
+				.upx2px(-8));
+			this.ctx.stroke();
 
 
 
 				//绘制价格
 				// this.ctx.setFontSize(14);
-				// this.ctx.setFillStyle('#f54545');
+				// this.ctx.setFillStyle(BRAND.primary);
 				// this.ctx.fillText('￥', ((this.canvasW - hW) / 2), (
 				// 	((this.canvasW - hW) / 0.9) + hH + uni.upx2px(200)))
 				// this.ctx.setFontSize(22);
@@ -204,23 +216,24 @@
 				this.drawEmptyRound(this.ctx, this.canvasW, (((this.canvasW - hW) / 1.1) + hH + uni.upx2px(240)), uni
 					.upx2px(20))
 
-				//底部广告
-				// #ifdef MP-WEIXIN
-				let abImg = "https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/ggimg.png";
-				let BottomAdImg = await this.getImageInfo(abImg)
-				// #endif
-				// #ifndef MP-WEIXIN
-				let BottomAdImg = await this.getImageInfo(this.abImg)
-				// #endif
-				this.ctx.drawImage(BottomAdImg.path, (((this.canvasW - hW) / 2)), (((this.canvasW - hW) / 1.7) + hH +
-					uni
-					.upx2px(310)), uni.upx2px(400), uni.upx2px(110))
+				//品牌标识区域
+				let brandLogoImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
+				let logoSize = uni.upx2px(100)
+				let logoX = ((this.canvasW - hW) / 2) + uni.upx2px(8)
+				let logoY = (((this.canvasW - hW) / 1.7) + hH + uni.upx2px(316))
+				this.drawRoundImg(this.ctx, brandLogoImg.path, logoX, logoY, logoSize, logoSize, logoSize / 2)
+				this.ctx.setFontSize(16);
+				this.ctx.setFillStyle(BRAND.black);
+				this.ctx.fillText('山前食养', logoX + logoSize + uni.upx2px(16), logoY + uni.upx2px(38))
+				this.ctx.setFontSize(11);
+				this.ctx.setFillStyle(BRAND.muted);
+				this.ctx.fillText('养生 · 美食 · 原产好物', logoX + logoSize + uni.upx2px(16), logoY + uni.upx2px(68))
 				//提示文案
 				this.ctx.setFontSize(12);
-				this.ctx.setFillStyle('#858585');
-				this.ctx.fillText('长按识别“山前食养”小程序', (((this.canvasW - hW) / 2) + uni.upx2px(14)), (((this.canvasW -
+				this.ctx.setFillStyle(BRAND.muted);
+				this.ctx.fillText('长按识别"山前食养"小程序', (((this.canvasW - hW) / 2) + uni.upx2px(14)), (((this.canvasW -
 					hW) / 1.4) + hH + uni.upx2px(300)))
-				//小程序码
+								//小程序码
 				// #ifdef H5
 				let qrcodeImg = this.qrcode
 				// #endif
@@ -248,12 +261,12 @@
 				}, 500)
 			},
 			//绘制实心圆
-			drawEmptyRound(ctx, x, y, radius) {
-				ctx.save()
-				ctx.beginPath();
-				ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-				ctx.setFillStyle('rgba(0, 0, 0, .4)')
-				ctx.fill();
+		drawEmptyRound(ctx, x, y, radius) {
+			ctx.save()
+			ctx.beginPath();
+			ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+			ctx.setFillStyle('rgba(0,0,0,.18)')
+			ctx.fill();
 				ctx.restore()
 				ctx.closePath()
 			},
@@ -268,9 +281,9 @@
 
 				ctx.restore(); // 恢复之前保存的绘图状态
 			},
-			//绘制虚线
-			drawDashLine(ctx, x1, y1, x2, y2, dashLength) {
-				ctx.setStrokeStyle("#cccccc") //设置线条的颜色
+		//绘制虚线
+		drawDashLine(ctx, x1, y1, x2, y2, dashLength) {
+			ctx.setStrokeStyle(BRAND.border)
 				ctx.setLineWidth(1) //设置线条宽度
 				var dashLen = dashLength,
 					xpos = x2 - x1, //得到横向的宽度;
@@ -287,10 +300,10 @@
 				}
 				ctx.stroke();
 			},
-			//绘制标题
-			drawTitle(ctx, title, x, y, maxWidth, lineHeight) {
-				const fontSize = 16;
-				const color = '#333';
+		//绘制标题
+		drawTitle(ctx, title, x, y, maxWidth, lineHeight) {
+			const fontSize = 16;
+			const color = BRAND.text;
 				ctx.setFontSize(fontSize);
 				ctx.setFillStyle(color);
 
@@ -475,7 +488,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(0, 0, 0, .4);
+		background: $uni-bg-color-mask;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -483,10 +496,12 @@
 
 		.save-btn {
 			margin-top: 65rpx;
-			color: #FFFFFF;
-			background: linear-gradient(to right, #fe3d3d, #fe6f61);
-			padding: 15rpx 40rpx;
-			border-radius: 50rpx;
+			color: $brand-surface;
+			background: $brand-primary;
+			padding: 18rpx 60rpx;
+			border-radius: $uni-border-radius-sm;
+			font-size: $uni-font-size-base;
+			letter-spacing: 2rpx;
 		}
 	}
 </style>
