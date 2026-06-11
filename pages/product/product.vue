@@ -186,12 +186,12 @@
 				<view class="flex-dir-row flex-y-center flex-x-between" style="width: 95%;">
 				<view class="flex-dir-row flex-y-center">
 					<navigator url="/pages/index/index" open-type="switchTab" class="footer-btn">
-						<text class="iconfont icon-shouyeshouye"></text>
+						<image src="@/static/tabbar/home.svg" style="width: 40rpx; height: 40rpx; display: block; margin: 0 auto;" mode="aspectFit"></image>
 						<text>首页</text>
 					</navigator>
 					<navigator url="/pages/cart/cart" open-type="switchTab" class="footer-btn">
-						<text class="iconfont icon-uniE026"></text>
-						<text>购物车</text>
+						<image src="@/static/tabbar/cart.svg" style="width: 40rpx; height: 40rpx; display: block; margin: 0 auto;" mode="aspectFit"></image>
+						<text>购物袋</text>
 					</navigator>
 					<view class="footer-btn" :class="{active: favorite}" @click="toFavorite('add')">
 						<text :class="favorite?'iconfont icon-uniE023':'iconfont icon-shoucang'"></text>
@@ -199,7 +199,7 @@
 					</view>
 				</view>
 					<view class="flex-dir-row flex-y-center">
-						<button v-if="!control" class="footer-left" @click="openCartSpec">加入购物车</button>
+						<button v-if="!control" class="footer-left" @click="openCartSpec">加入购物袋</button>
 
 						<button :class="control?'footer-rights':'footer-right'" @click="toggleSpec(0)">立即购买</button>
 					</view>
@@ -1058,7 +1058,7 @@
 		font-size: $font-product-title;
 		font-weight: $font-product-title-weight;
 		background-color: $brand-bg !important;
-		color: $brand-text;
+		color: $brand-primary;
 		border-radius: 0;
 		height: 88rpx;
 		line-height: 88rpx;
