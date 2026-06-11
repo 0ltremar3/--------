@@ -206,49 +206,9 @@
 				</view>
 			</view>
 
-			<!-- 立即购买规格弹窗 -->
-			<view>
-				<uv-popup bgColor="#ffffff" ref="closepopup" :round="10" mode="bottom">
-					<view class="layer  spec-content">
-						<view class="spec-top">
-							<image :src="suks_img || goodsdata.goods_thumb">
-							</image>
-							<view class="right">
-							<jlg-minPrice v-if="suks_price" :min-price="suks_price * numberl"
-								maxSize="40rpx" minSize="28rpx" :Weight="500"></jlg-minPrice>
-								<text v-else class="col-1C7231 mb-10 f-29">选择规格</text>
-								<text class="f-24 col-3 mt-20">库存: {{suks_inventory}}件</text>
-								<view class=" f-24 col-3">
-									已选：
-									<text class="mr-10" v-for="(sItem, sIndex) in specSelected" :key="sIndex">
-										{{sItem.name}}
-									</text>
-								</view>
-							</view>
-						</view>
-						<view v-for="(item,index) in specList" :key="index" class="spec-list">
-							<text>{{item.name}}</text>
-							<view class="item-list">
-								<text v-for="(childItem, childIndex) in specChildList" v-if="childItem.pid === item.id"
-									:key="childIndex" class="tit" :class="{selected: childItem.selected}"
-									@click="selectSpec(childIndex, childItem.pid,childItem.name)">
-									{{childItem.name}}
-								</text>
-							</view>
-						</view>
-						<view class="flex-dir-row mt-10 flex-y-center flex-x-between">
-							<text>数量</text>
-							<uni-number-box background="#e2e2e2" :step="1" :min="1" :max="suks_inventory"
-								v-model="numberl"></uni-number-box>
-						</view>
-						<view class="popup-footer">
-							<view class="makesure" @click="toggleSpecs">完成</view>
-						</view>
-					</view>
-				</uv-popup>
-			</view>
-
-			<!-- 加入购物车规格弹窗（统一品牌风格组件） -->
+			<!-- 规格弹窗（统一品牌风格组件） -->
+			<jlg-spec-popup ref="buySpecPopup" :userId="user_id" action="select" confirm-text="完成"
+				:seckill="control" @confirm="handleSpecConfirm" />
 			<jlg-spec-popup ref="cartSpecPopup" :userId="user_id" />
 
 			<!-- 优惠卷 -->
@@ -315,14 +275,8 @@
 				numberl: 1,
 				favorite: false,
 				shareList: [],
-				specList: [],
-				specChildList: [],
-				suks_price: null,
-				suks_inventory: 0,
-				suks_img: '',
 				goods_id: '',
 				control: false,
-				shopCart: false,
 				createOrder: false,
 				couponList: [],
 				user_id: uniCloud.getCurrentUserInfo().uid,
@@ -444,37 +398,11 @@
 							var price = parseInt(item.price);
 							return price < min ? price : min;
 						}, Infinity);
-						for (let i = 0; i < this.goodsdata.orig_fs_suks.length; i++) {
-							this.specList.push({
-								id: i,
-								name: this.goodsdata.orig_fs_suks[i].name
-							})
-							for (let ii = 0; ii < this.goodsdata.orig_fs_suks[i].values.length; ii++) {
-								this.specChildList.push({
-									id: ii,
-									pid: i,
-									name: this.goodsdata.orig_fs_suks[i].values[ii].name
-								})
-							}
-						}
 					} else {
 						this.minPrice = this.goodsdata.suks.reduce(function(min, item) {
 							var price = parseInt(item.price);
 							return price < min ? price : min;
 						}, Infinity);
-						for (let i = 0; i < this.goodsdata.orig_suks.length; i++) {
-							this.specList.push({
-								id: i,
-								name: this.goodsdata.orig_suks[i].name
-							})
-							for (let ii = 0; ii < this.goodsdata.orig_suks[i].values.length; ii++) {
-								this.specChildList.push({
-									id: ii,
-									pid: i,
-									name: this.goodsdata.orig_suks[i].values[ii].name
-								})
-							}
-						}
 					}
 					uni.hideLoading()
 				})
@@ -515,7 +443,7 @@
 				}
 				this.$refs.cartSpecPopup.open(this.goodsdata, this.goodsdata);
 			},
-			//规格弹窗开关（立即购买）
+			//规格弹窗开关（立即购买/规格选择）
 			toggleSpec(e) {
 				if (this.tokenData()) {
 					uni.showToast({
@@ -529,132 +457,30 @@
 						})
 					}, 1000)
 				} else {
-					this.$refs.closepopup.open();
-					if (e == 1) {
-						this.shopCart = true
-					} else {
-						this.shopCart = false
-					}
-					if (e == 0) {
-						this.createOrder = true
-					} else {
-						this.createOrder = false
-					}
+					this.createOrder = e == 0;
+					this.$refs.buySpecPopup.open(this.goodsdata, this.goodsdata, {
+						specSelected: this.specSelected,
+						numberl: this.numberl
+					});
 				}
 			},
-			toggleSpecs() {
-				this.$refs.closepopup.close();
-				if (this.createOrder && this.suks_price) {
+			handleSpecConfirm(payload) {
+				this.specSelected = payload.specSelected;
+				this.numberl = payload.numberl;
+				if (this.createOrder && payload.suks_price) {
 					let suk = this.specSelected.map(item => item.name)
 					let goodsData = [{
 						id: this.goods_id,
 						num: this.numberl,
 						seckill: this.control,
 						suk: {
-							price: this.suks_price,
+							price: payload.suks_price,
 							specs: suk
 						}
 					}]
 					uni.navigateTo({
-						url: `/pages/order/createOrder?suk=${JSON.stringify(goodsData)}&&motion=${(this.goodsdata.crossed_price * this.numberl)-(this.suks_price*this.numberl)}&control=${this.control}`
+						url: `/pages/order/createOrder?suk=${JSON.stringify(goodsData)}&&motion=${(this.goodsdata.crossed_price * this.numberl)-(payload.suks_price*this.numberl)}&control=${this.control}`
 					})
-				}
-				if (this.shopCart && this.suks_price && !this.control) {
-					this.$func.myFunction('jlg-cart', {
-							functionName: 'addToCart',
-							data: {
-								user_id: this.user_id,
-								goods_id: this.goods_id,
-								control: this.control,
-								specSelected: this.specSelected,
-								suks_price: this.suks_price,
-								numberl: this.numberl
-							}
-						}).then(res => {
-							if (res.result.message == '加购成功') {
-								this.shopCart = false;
-								uni.showToast({
-									title: "加购成功",
-									icon: "none",
-									duration: 1600
-								});
-							} else {
-								uni.showToast({
-									title: "加购失败",
-									icon: "none",
-									duration: 1600
-								});
-								this.shopCart = false;
-							}
-						})
-						.catch(error => {
-							this.shopCart = false;
-							uni.showModal({
-								content: error || '请求服务失败',
-								showCancel: false
-							});
-							console.error(error);
-						});
-				} else if (this.shopCart && this.control) {
-					uni.showToast({
-						title: "秒杀商品不能加购",
-						icon: "none",
-						duration: 1600
-					})
-				}
-			},
-			//选择规格
-			selectSpec(index, pid) {
-				let list = this.specChildList;
-				list.forEach(item => {
-					if (item.pid === pid) {
-						this.$set(item, 'selected', false);
-					}
-				})
-
-				this.$set(list[index], 'selected', true);
-				this.specSelected = [];
-				list.forEach(item => {
-					if (item.selected === true) {
-						this.specSelected.push(item);
-					}
-				})
-				if (this.control) {
-					for (let i = 0; i < this.goodsdata.fs_suks.length; i++) {
-						// 获取当前规格组合的规格数组
-						const specs = this.goodsdata.fs_suks[i].specs;
-						// 判断规格数组长度与已选规格数组长度是否相等，
-						// 并且使用 every() 方法逐个比较规格值是否相等
-						if (specs.length === this.specSelected.length && specs.every((spec, index) => spec === this
-								.specSelected[index].name)) {
-							// 若规格组合匹配成功，则设置商品价格为当前规格组合的价格
-							this.suks_price = this.goodsdata.fs_suks[i].price;
-							// 设置库存为当前规格库存
-							this.suks_inventory = this.goodsdata.suks[i].inventory;
-							//设置缩略图为当前规格图片
-							this.suks_img = this.goodsdata.suks[i].goods_thumb;
-							// 跳出循环，因为已找到匹配的规格组合
-							break;
-						}
-					}
-				} else {
-					for (let i = 0; i < this.goodsdata.suks.length; i++) {
-						// 获取当前规格组合的规格数组
-						const specs = this.goodsdata.suks[i].specs;
-						// 判断规格数组长度与已选规格数组长度是否相等，
-						// 并且使用 every() 方法逐个比较规格值是否相等
-						if (specs.length === this.specSelected.length && specs.every((spec, index) => spec === this
-								.specSelected[index].name)) {
-							// 若规格组合匹配成功，则设置商品价格为当前规格组合的价格
-							this.suks_price = this.goodsdata.suks[i].price;
-							// 设置库存为当前规格库存
-							this.suks_inventory = this.goodsdata.suks[i].inventory;
-							//设置缩略图为当前规格图片
-							this.suks_img = this.goodsdata.suks[i].goods_thumb;
-							// 跳出循环，因为已找到匹配的规格组合
-							break;
-						}
-					}
 				}
 			},
 			popup() {
@@ -1205,70 +1031,6 @@
 		}
 	}
 
-	/* 规格选择弹窗 */
-	.spec-content {
-		padding: 32rpx;
-
-		.spec-top {
-			display: flex;
-
-			image {
-				width: 160rpx;
-				height: 160rpx;
-				border-radius: 4rpx;
-				background-color: $brand-image-bg;
-				flex-shrink: 0;
-			}
-
-			.right {
-				display: flex;
-				flex-direction: column;
-				padding-left: 24rpx;
-				font-size: $font-product-title;
-				color: $brand-black;
-				line-height: 44rpx;
-			}
-		}
-
-		.spec-list {
-			display: flex;
-			flex-direction: column;
-			font-size: $font-product-title;
-			font-weight: $font-product-title-weight;
-			color: $brand-black;
-			padding-top: 32rpx;
-			padding-left: 0;
-		}
-
-		.item-list {
-			padding: 20rpx 0 0;
-			display: flex;
-			flex-wrap: wrap;
-
-			text {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background: $brand-bg;
-				border: none;
-				margin-right: 16rpx;
-				margin-bottom: 16rpx;
-				border-radius: 32rpx;
-				min-width: 60rpx;
-				height: 60rpx;
-				padding: 0 32rpx;
-				font-size: $font-body;
-				color: $brand-text;
-			}
-
-			.selected {
-				background: rgba($brand-primary, 0.08);
-				color: $brand-primary;
-				border: 1rpx solid $brand-primary;
-			}
-		}
-	}
-
 	/* 底部操作栏 */
 	.footer {
 		position: fixed;
@@ -1307,20 +1069,6 @@
 		&.active .iconfont {
 			color: $brand-primary;
 		}
-	}
-
-	/* 规格弹窗确认按钮 */
-	.makesure {
-		width: 100%;
-		background-color: $brand-primary;
-		border-radius: 0;
-		font-size: $font-product-title;
-		font-weight: $font-product-title-weight;
-		color: $brand-surface;
-		text-align: center;
-		margin-top: 40rpx;
-		padding: 28rpx 0;
-		box-sizing: border-box;
 	}
 
 	/* 优惠券弹窗 */

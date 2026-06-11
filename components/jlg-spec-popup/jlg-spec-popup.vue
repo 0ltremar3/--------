@@ -48,7 +48,7 @@
 			</scroll-view>
 
 			<!-- 底部确认按钮 -->
-			<view class="spec-popup__footer" @click="confirm">加入购物袋</view>
+			<view class="spec-popup__footer" @click="confirm">{{confirmText}}</view>
 		</view>
 	</uv-popup>
 </template>
@@ -59,7 +59,10 @@
 	export default {
 		name: 'jlg-spec-popup',
 		props: {
-			userId: { type: String, default: '' }
+			userId: { type: String, default: '' },
+			action: { type: String, default: 'cart' },
+			confirmText: { type: String, default: '加入购物袋' },
+			seckill: { type: Boolean, default: false }
 		},
 		data() {
 			return {
@@ -72,6 +75,7 @@
 				suks_inventory: 0,
 				suks_img: '',
 				numberl: 1,
+				initialSpecSelected: [],
 			};
 		},
 		methods: {
@@ -82,8 +86,8 @@
 			 *   - 传入时直接使用，无需再次请求（product.vue 场景）
 			 *   - 不传时自动从 DB 拉取（category.vue 场景）
 			 */
-			open(item, goodsData) {
-				this._reset(item);
+			open(item, goodsData, options = {}) {
+				this._reset(item, options);
 				if (goodsData) {
 					this._buildSpec(goodsData);
 				} else {
@@ -110,13 +114,26 @@
 					return;
 				}
 				this.$refs.popup.close();
+				const payload = {
+					item: this.item,
+					goods: this.goods,
+					specSelected: this.specSelected,
+					suks_price: this.suks_price,
+					suks_inventory: this.suks_inventory,
+					suks_img: this.suks_img,
+					numberl: this.numberl
+				};
+				if (this.action === 'select') {
+					this.$emit('confirm', payload);
+					return;
+				}
 				const uid = this.userId || uniCloud.getCurrentUserInfo().uid;
 				this.$func.myFunction('jlg-cart', {
 					functionName: 'addToCart',
 					data: {
 						user_id: uid,
 						goods_id: this.item._id,
-						control: false,
+						control: this.seckill,
 						specSelected: this.specSelected,
 						suks_price: this.suks_price,
 						numberl: this.numberl
@@ -124,7 +141,7 @@
 				}).then(res => {
 					const msg = res.result.message === '加购成功' ? '已加入购物袋' : (res.result.message || '加购失败');
 					uni.showToast({ title: msg, icon: 'none', duration: 1600 });
-					this.$emit('success', msg);
+					this.$emit('success', msg, payload);
 				}).catch(err => {
 					uni.showToast({ title: '加购失败', icon: 'none' });
 					console.error(err);
@@ -143,8 +160,14 @@
 				});
 				this.$set(list[index], 'selected', true);
 				this.specSelected = list.filter(item => item.selected === true);
-				// 匹配 SKU 组合，更新价格与库存
-				const suks = this.goods.suks || [];
+				this._syncSelectedSku();
+			},
+			// 匹配 SKU 组合，更新价格与库存
+			_syncSelectedSku() {
+				this.suks_price = null;
+				this.suks_inventory = 0;
+				this.suks_img = '';
+				const suks = this._getSuks();
 				for (let i = 0; i < suks.length; i++) {
 					const specs = suks[i].specs;
 					if (specs.length === this.specSelected.length &&
@@ -156,7 +179,7 @@
 					}
 				}
 			},
-			_reset(item) {
+			_reset(item, options = {}) {
 				this.item = item;
 				this.goods = null;
 				this.specList = [];
@@ -165,18 +188,37 @@
 				this.suks_price = null;
 				this.suks_inventory = 0;
 				this.suks_img = '';
-				this.numberl = 1;
+				this.numberl = options.numberl || 1;
+				this.initialSpecSelected = options.specSelected || [];
 			},
 			_buildSpec(goods) {
 				this.goods = goods;
-				const origSuks = goods.orig_suks || [];
+				const origSuks = this._getOrigSuks();
 				for (let i = 0; i < origSuks.length; i++) {
 					this.specList.push({ id: i, name: origSuks[i].name });
 					for (let ii = 0; ii < origSuks[i].values.length; ii++) {
 						this.specChildList.push({ id: ii, pid: i, name: origSuks[i].values[ii].name });
 					}
 				}
+				this._restoreInitialSelection();
 				this.$refs.popup.open();
+			},
+			_restoreInitialSelection() {
+				if (!this.initialSpecSelected.length) return;
+				this.specChildList.forEach(child => {
+					const selected = this.initialSpecSelected.some(item => item.pid === child.pid && item.name === child.name);
+					this.$set(child, 'selected', selected);
+				});
+				this.specSelected = this.specChildList.filter(item => item.selected === true);
+				this._syncSelectedSku();
+			},
+			_getOrigSuks() {
+				if (this.seckill) return this.goods.orig_fs_suks || [];
+				return this.goods.orig_suks || [];
+			},
+			_getSuks() {
+				if (this.seckill) return this.goods.fs_suks || [];
+				return this.goods.suks || [];
 			}
 		}
 	}
