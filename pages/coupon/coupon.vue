@@ -2,22 +2,22 @@
 	<view class="center">
 		<view class="">
 			<uv-sticky bgColor="#fff" :custom-nav-height="0">
-				<uv-tabs :list="list" @click="tabClick" lineColor="#61A189" :scrollable="false"
+				<uv-tabs :list="tabList" @click="tabClick" lineColor="#61A189" :scrollable="false"
 					:activeStyle="{color: '#61A189'}"></uv-tabs>
 			</uv-sticky>
-			<uv-empty v-if="couponList.length ==0" mode="data" icon="/static/temp/shwk.png" text="暂无优惠"></uv-empty>
+			<uv-empty v-if="couponList.length ==0" mode="data" icon="/static/temp/shwk.png" :text="$t('couponCenter.empty')"></uv-empty>
 			<view v-else class="coupon-cen">
 				<view v-for="(item,index) in couponList" :key="index" class="coupon-van">
 					<view class="coupon-letf">
 						<view class="flex-dir-row">
 							<view class="coupon-icqc">
-								{{item.user_type == '会员权益'?'会员权益':(item.allow_type == '所有商品' && item.user_type == '所有人'?'全场通用':(item .allow_type == '指定商品' && item .user_type == '所有人'?'特定商品':(item .user_type == '指定用户' && item .allow_type == '所有商品'?'特定用户':'其他')))}}
+								{{ couponScopeLabel(item) }}
 							</view>
-							<text class="coupon-name">{{item.name}}</text>
+							<text class="coupon-name">{{displayLangText(item, 'name')}}</text>
 						</view>
 						<view class="ml-20 mt-30">
 							<view class="f-26 col-9">
-								有效期为：
+								{{ $t('productDetail.validPeriod') }}
 							</view>
 							<view class="f-26 col-9" style="line-height: 40rpx;">
 								{{formatDate(item.start_time)+ '-' +formatDate(item.end_time)}}
@@ -25,21 +25,20 @@
 						</view>
 					</view>
 					<view v-if="item.is_share" class="coupon-diej">
-						可叠加</view>
+						{{ $t('productDetail.stackable') }}</view>
 					<view class="coupon-righ">
 						<view class="mt-10">
-							<text v-if="item.type == '满减'" class="f-40">￥</text>
-							<text v-if="item.type == '满减'" class="coupon-qian">{{item.price/100}}</text>
-							<text v-else class="coupon-qian">{{(item.price/10).toFixed(1)}}<text
-									class="coupon-z">折</text></text>
+							<text v-if="couponValuePrefix(item)" class="f-40">{{ couponValuePrefix(item) }}</text>
+							<text class="coupon-qian">{{ couponValueText(item) }}<text v-if="couponValueSuffix(item)"
+									class="coupon-z">{{ couponValueSuffix(item) }}</text></text>
 						</view>
-						<view style="font-size: 30rpx;">满{{item.order_amount/100}}可用</view>
+						<view style="font-size: 30rpx;">{{ couponThresholdText(item) }}</view>
 						<view v-if="item.states"
 							@click="addCoupon(item._id,item.max_number,item.received_number,item.number,item.user_type,item.user_arr)"
 							class="coupon-lqsy">
-							立即领取</view>
-						<view v-else class="coupon-lqsy" @click="navigator(item.allow_type,item.goods_arr,item.name)">
-							立即使用</view>
+							{{ $t('productDetail.claimNow') }}</view>
+						<view v-else class="coupon-lqsy" @click="navigator(item.allow_type,item.goods_arr,displayLangText(item, 'name'))">
+							{{ $t('productDetail.useNow') }}</view>
 					</view>
 				</view>
 			</view>
@@ -47,7 +46,7 @@
 		<!-- 底部 -->
 		<view class="footer">
 			<view class="but" @click="naTov('./mycoupon')">
-				我的优惠券
+				{{ $t('couponCenter.myCoupons') }}
 			</view>
 		</view>
 	</view>
@@ -60,33 +59,86 @@
 			return {
 				couponList: [],
 				user_id: uniCloud.getCurrentUserInfo().uid,
-				list: [{
-						name: '全部',
-					},
-					{
-						name: '通用券',
-					},
-					{
-						name: '商品券',
-					},
-					{
-						name: '专享券',
-					}
-				],
 				where: {},
 				receiveId: [],
+			}
+		},
+		computed: {
+			tabList() {
+				return [{
+						name: this.$t('couponCenter.all'),
+					},
+					{
+						name: this.$t('couponCenter.universal'),
+					},
+					{
+						name: this.$t('couponCenter.product'),
+					},
+					{
+						name: this.$t('couponCenter.exclusive'),
+					}
+				]
 			}
 		},
 		onLoad() {
 			this.receiveData(0);
 		},
 		methods: {
+			getCurrentLang() {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
+			},
+			couponScopeLabel(item) {
+				if (item.user_type === '会员权益') {
+					return this.$t('couponCenter.memberBenefit');
+				}
+				if (item.allow_type === '所有商品' && item.user_type === '所有人') {
+					return this.$t('productDetail.couponFullStore');
+				}
+				if (item.allow_type === '指定商品' && item.user_type === '所有人') {
+					return this.$t('productDetail.couponSpecificGoods');
+				}
+				if (item.user_type === '指定用户' && item.allow_type === '所有商品') {
+					return this.$t('productDetail.couponSpecificUser');
+				}
+				return this.$t('couponCenter.other');
+			},
+			couponValuePrefix(item) {
+				return item.type === '满减' ? '￥' : '';
+			},
+			couponValueText(item) {
+				if (item.type === '满减') {
+					return item.price / 100;
+				}
+				if (this.getCurrentLang() === 'en') {
+					return Math.max(0, Math.round(100 - Number(item.price || 0)));
+				}
+				return (item.price / 10).toFixed(1);
+			},
+			couponValueSuffix(item) {
+				if (item.type === '满减') return '';
+				return this.getCurrentLang() === 'en' ? '% off' : this.$t('productDetail.discountSuffix');
+			},
+			couponThresholdText(item) {
+				return `${this.$t('productDetail.couponThresholdPrefix')}${item.order_amount / 100}${this.$t('productDetail.couponThresholdSuffix')}`;
+			},
+			couponMessage(message) {
+				const messageMap = {
+					'领取成功': this.$t('productDetail.claimSuccess')
+				};
+				return messageMap[message] || message;
+			},
 			tabClick(e) {
 				this.couponData(e.index);
 			},
 			couponData(e) {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('couponCenter.loading')
 				})
 				this.$func.myFunction('jlg-cart', {
 						functionName: 'coupondata',
@@ -111,7 +163,7 @@
 			},
 			receiveData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('couponCenter.loading')
 				})
 				db.collection("jlg-goods-coupon").where({
 					"user_id": this.user_id,
@@ -141,7 +193,7 @@
 							setTimeout(() => this.receiveData(), 1600)
 						}
 						uni.showToast({
-							title: res.result.message,
+							title: this.couponMessage(res.result.message),
 							icon: "none",
 							duration: 1600
 						});
@@ -154,11 +206,11 @@
 			navigator(type, goodsArr, name) {
 				if (type == "所有商品") {
 					uni.navigateTo({
-						url: `/pages/coupon/prefeList?goodsArr=${null}&&name=${name}`
+						url: `/pages/coupon/prefeList?goodsArr=${null}&&name=${encodeURIComponent(name)}`
 					})
 				} else {
 					uni.navigateTo({
-						url: `/pages/coupon/prefeList?goodsArr=${JSON.stringify(goodsArr)}&&name=${name}`
+						url: `/pages/coupon/prefeList?goodsArr=${JSON.stringify(goodsArr)}&&name=${encodeURIComponent(name)}`
 					})
 				}
 			},

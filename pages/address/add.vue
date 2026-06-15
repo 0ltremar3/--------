@@ -4,22 +4,22 @@
 		<view class="wxress_van">
 			<image class="wxress_img" src="../../static/temp/share_wechat.png"></image>
 			<view class="wxress_text" @click="wxaddress">
-				获取微信地址</view>
+				{{ $t('address.wechatAddress') }}</view>
 		</view>
 		<!-- #endif -->
 		<uv-form labelPosition="left" :model="model" :rules="rules" ref="uvFormRef" :errorType="errorType">
-			<uv-form-item label="收货人" prop="ressData.name" borderBottom labelWidth="80">
-				<uv-input v-model="model.ressData.name" placeholder="请输入收货人姓名(最多5字)" border="none">
+			<uv-form-item :label="$t('address.consignee')" prop="ressData.name" borderBottom labelWidth="80">
+				<uv-input v-model="model.ressData.name" :placeholder="$t('address.consigneePlaceholder')" border="none">
 				</uv-input>
 			</uv-form-item>
-			<uv-form-item label="联系电话" prop="ressData.mobile" borderBottom labelWidth="80">
-				<uv-input type="number" v-model="model.ressData.mobile" placeholder="请输入联系电话" border="none">
+			<uv-form-item :label="$t('address.phone')" prop="ressData.mobile" borderBottom labelWidth="80">
+				<uv-input type="number" v-model="model.ressData.mobile" :placeholder="$t('address.phonePlaceholder')" border="none">
 				</uv-input>
 			</uv-form-item>
-			<uv-form-item label="所在地区" prop="ressData.area" borderBottom labelWidth="80">
+			<uv-form-item :label="$t('address.region')" prop="ressData.area" borderBottom labelWidth="80">
 				<view style="display: flex;flex-direction: row;">
 					<uni-data-picker style="width: 100%;" :clear-icon="false" :border="false" :placeholder="icontext"
-						popup-title="请选择城市" collection="opendb-city-china" field="code as value, name as text"
+						:popup-title="$t('address.cityTitle')" collection="opendb-city-china" field="code as value, name as text"
 						orderby="value asc" :step-searh="true" self-field="code" parent-field="parent_code"
 						@change="onchange" v-model="model.ressData.area" />
 					<!-- #ifdef MP-WEIXIN -->
@@ -29,12 +29,12 @@
 					<!-- #endif -->
 				</view>
 			</uv-form-item>
-			<uv-form-item labelPosition="top" label="详细地址" prop="ressData.addRess" borderBottom labelWidth="80">
+			<uv-form-item labelPosition="top" :label="$t('address.detail')" prop="ressData.addRess" borderBottom labelWidth="80">
 				<uni-easyinput @input="ressstrclick" :placeholderStyle="derStyle" :inputBorder="false" type="textarea"
-					placeholder="复制地址自动识别填入,如:姓名,电话,地址" v-model="model.ressData.addRess"></uni-easyinput>
+					:placeholder="$t('address.detailPlaceholder')" v-model="model.ressData.addRess"></uni-easyinput>
 			</uv-form-item>
 		</uv-form>
-		<button class="but" @click="submit">提交</button>
+		<button class="but" @click="submit">{{ $t('address.submit') }}</button>
 	</view>
 </template>
 
@@ -85,13 +85,14 @@
 				derStyle: "color:#b1babd;font-size:15px",
 				ressarr: '',
 				ressstr: '',
-				icontext: '点击定位图标,快速选择地址',
+				icontext: '',
 			}
 		},
 		onLoad() {
+			this.icontext = this.$t('address.locationPlaceholder');
 			this.dentifyText()
 			// #ifndef MP-WEIXIN
-			this.icontext = '选择地址'
+			this.icontext = this.$t('address.selectAddress')
 			// #endif
 		},
 		mounted() {
@@ -112,19 +113,19 @@
 					}).then(() => {
 						uni.showToast({
 							icon: 'none',
-							title: '新增成功'
+							title: this.$t('address.addSuccess')
 						})
 						setTimeout(() => uni.navigateBack(), 500)
 					}).catch((err) => {
 						uni.showModal({
-							content: err.message || '请求服务失败',
+							content: err.message || this.$t('address.requestFailed'),
 							showCancel: false
 						})
 					})
 				}).catch(errors => {
 					uni.showToast({
 						icon: 'none',
-						title: '校验失败,检查手机号码格式'
+						title: this.$t('address.validateFailed')
 					})
 				})
 			},
@@ -140,8 +141,8 @@
 						// 自动填写收货地址字段
 						if (addressInfo) {
 							uni.showModal({
-								content: "检测到收货信息，是否填写",
-								confirmText: "填入",
+								content: that.$t('address.clipboardDetected'),
+								confirmText: that.$t('address.fillIn'),
 								cancelColor: "#7f7f7f",
 								success: function(res) {
 									if (res.confirm) {
@@ -223,7 +224,7 @@
 								let address = res.address.match(reg);
 								if (!address) {
 									uni.showToast({
-										title: "请选择位置",
+										title: that.$t('address.selectLocation'),
 										icon: "none",
 										duration: 1600
 									})
@@ -231,7 +232,7 @@
 								}
 								if (address[2] == null) {
 									uni.showToast({
-										title: "获取失败，请重新获取",
+										title: that.$t('address.locationFailed'),
 										icon: "none",
 										duration: 1600
 									})
@@ -274,7 +275,7 @@
 						that.model.ressData.area = res.result.data[0].code
 					} else {
 						uni.showToast({
-							title: "出错了，请手动选择位置",
+							title: this.$t('address.manualLocation'),
 							icon: "none",
 							duration: 1600
 						})

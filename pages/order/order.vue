@@ -1,26 +1,26 @@
 <template>
 	<view class="content">
 		<view style="background: #fff;padding:10rpx 20rpx;">
-			<uv-search placeholder="商品名称(模糊)/订单号(精确)" v-model="keyword" shape="round" :showAction="false"
+			<uv-search :placeholder="$t('orders.searchPlaceholder')" v-model="keyword" shape="round" :showAction="false"
 				@search="searchClick" @clear="clearClick"></uv-search>
 		</view>
 		<uv-sticky bgColor="#fff" :custom-nav-height="navTop">
-			<uv-tabs :list="list" @click="tabClick" lineColor="#61A189" :current="labelIndex" :scrollable="false"
+			<uv-tabs :list="tabList" @click="tabClick" lineColor="#61A189" :current="labelIndex" :scrollable="false"
 				:activeStyle="{color: '#61A189'}"></uv-tabs>
 		</uv-sticky>
 		<view class="list">
 			<!-- 空白页 -->
-			<uv-empty v-if="ordersList.length === 0" mode="data" icon="/static/temp/shwk.png" text="订单为空"></uv-empty>
+			<uv-empty v-if="ordersList.length === 0" mode="data" icon="/static/temp/shwk.png" :text="$t('orders.empty')"></uv-empty>
 
 			<!-- 订单列表 -->
 			<!-- 只展示真实支付的订单 -->
 			<view v-else v-for="(item,index) in ordersList" v-if="item.status > 0?item.transaction_id:true" :key="index"
 				class="list-item flex-dir-column ">
 				<view class=" flex-dir-row  flex-y-center pb-30 flex-x-between b-b">
-					<text @click="copy(item.order_no)" class="col-9 f-26">{{'订单号：' + item.order_no}}
+					<text @click="copy(item.order_no)" class="col-9 f-26">{{$t('orders.orderNo') + item.order_no}}
 						<text class="iconfont f-40 ml-20 icon-uniE036"></text></text>
 					<text :style="{color: item.stateTipColor}"
-						class="col-9 f-28">{{item.status == -1?'已关闭':(item.status == 0?'待付款':(item.status == 1?'待发货':(item.status == 2?'已部分退款':(item.status == 3?'已全额退款':(item.status == 4?'待收货':(item.status == 5?'待评价':(item.status == 6?'退款中...':'已完成')))))))}}</text>
+						class="col-9 f-28">{{orderStatusText(item.status)}}</text>
 				</view>
 				<view @click="navigator(item._id)" class=" mt-30 flex-dir-row flex-y-center flex-x-between w-100"
 					style="position: relative;" v-for="(goodsItem, goodsIndex) in item.goods_arr" :key="goodsIndex">
@@ -29,7 +29,7 @@
 					</view> -->
 					<image class="goods-img" :src="goodsItem.goods_img" mode="aspectFill"></image>
 					<view class="flex-dir-column  ml-20 flex-1">
-						<text class="f-29 col-0 goods-name">{{goodsItem.goods_name}}</text>
+						<text class="f-29 col-0 goods-name">{{displayGoodsName(goodsItem)}}</text>
 						<view class="flex-dir-row flex-y-center">
 							<text class="spec" v-for="(goodsSuk,sukIndex) in goodsItem.goods_suk">{{goodsSuk}}</text>
 						</view>
@@ -43,13 +43,13 @@
 				</view>
 
 				<view @click="navigator(item._id)" class="mt-10 flex-dir-row flex-x-end flex-y-center">
-					<text class="f-26">合计：</text>
+					<text class="f-26">{{ $t('orders.total') }}</text>
 					<jlg-minPrice :min-price="item.total_fee" maxSize="32rpx"></jlg-minPrice>
 				</view>
 				<view class="flex-dir-row b-t   pt-30 mt-30 flex-y-center flex-x-between">
 					<view class="flex-dir-row flex-y-center">
 						<view class="flex-dir-row" v-if="item.status == 0 && !item.custom">
-							<text class="col-9 f-26 mr-10" style="line-height: 42rpx;">支付剩余</text>
+							<text class="col-9 f-26 mr-10" style="line-height: 42rpx;">{{ $t('orders.payRemaining') }}</text>
 							<view v-if="item.a">
 								<uv-count-down :time="time" format="HH:mm:ss" @finish="cloudFunc"></uv-count-down>
 							</view>
@@ -59,31 +59,31 @@
 						</view>
 					</view>
 					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="item.status == 0">
-						<view class="btn-1" @click="cancelOrder(item)">取消订单</view>
-						<view v-if="!item.custom" class="btn-2" @click="open(item)">立即支付</view>
+						<view class="btn-1" @click="cancelOrder(item)">{{ $t('orders.cancelOrder') }}</view>
+						<view v-if="!item.custom" class="btn-2" @click="open(item)">{{ $t('orders.payNow') }}</view>
 					</view>
 
 					<view class=" flex-dir-row flex-x-end flex-y-center"
 						v-if="[1].includes(item.status) && !item.custom">
-						<view class="btn-1" @click="refundClick(item)">申请退款</view>
+						<view class="btn-1" @click="refundClick(item)">{{ $t('orders.requestRefund') }}</view>
 					</view>
 					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[6].includes(item.status)">
-						<view class="btn-1" @click="canceClick(item)">取消退款</view>
+						<view class="btn-1" @click="canceClick(item)">{{ $t('orders.cancelRefund') }}</view>
 					</view>
 					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[5].includes(item.status)">
-						<view class="btn-2" @click="naTvo(item)">立即评价</view>
+						<view class="btn-2" @click="naTvo(item)">{{ $t('orders.reviewNow') }}</view>
 					</view>
 					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[4].includes(item.status)">
-						<view class="btn-2" @click="confirmReceipt(item)">确认收货</view>
+						<view class="btn-2" @click="confirmReceipt(item)">{{ $t('orders.confirmReceipt') }}</view>
 					</view>
 					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="item.status===-1">
-						<view class="btn-1" @click="deleteOrder(index)">删除订单</view>
+						<view class="btn-1" @click="deleteOrder(index)">{{ $t('orders.deleteOrder') }}</view>
 					</view>
 				</view>
 
 				<uni-popup ref="popup" type="dialog">
-					<uni-popup-dialog type="warn" cancelText="取消" confirmText="确定" title="删除提示"
-						content="此操作不可恢复,是否删除此订单？" @confirm="dialogConfirm(item._id)"
+					<uni-popup-dialog type="warn" :cancelText="$t('orders.cancel')" :confirmText="$t('orders.confirm')" :title="$t('orders.deleteTitle')"
+						:content="$t('orders.deleteContent')" @confirm="dialogConfirm(item._id)"
 						@close="dialogClose(index)"></uni-popup-dialog>
 				</uni-popup>
 			</view>
@@ -103,27 +103,6 @@
 				tabIndex: 0,
 				labelIndex: 0,
 				keyword: '',
-				list: [{
-						state: 99,
-						name: '全部',
-					},
-					{
-						state: 0,
-						name: '待付款',
-					},
-					{
-						state: 1,
-						name: '待收货',
-					},
-					{
-						state: 5,
-						name: '待评价',
-					},
-					{
-						state: 6,
-						name: '售后',
-					}
-				],
 				user_id: uniCloud.getCurrentUserInfo().uid,
 				ordersList: [],
 				currentPage: 1, // 当前页码
@@ -134,6 +113,31 @@
 				times: 30 * 60 * 60 * 1000,
 				navTop: 0
 			};
+		},
+		computed: {
+			tabList() {
+				return [{
+						state: 99,
+						name: this.$t('orders.all'),
+					},
+					{
+						state: 0,
+						name: this.$t('orders.pendingPay'),
+					},
+					{
+						state: 1,
+						name: this.$t('orders.pendingReceive'),
+					},
+					{
+						state: 5,
+						name: this.$t('orders.pendingReview'),
+					},
+					{
+						state: 6,
+						name: this.$t('orders.afterSales'),
+					}
+				]
+			}
 		},
 		onLoad(e) {
 			// 获取当前时间
@@ -166,6 +170,26 @@
 			this.loadData(this.tabIndex); // 加载下一页商品数据
 		},
 		methods: {
+			getCurrentLang() {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
+			},
+			displayGoodsName(item) {
+				return this.getCurrentLang() === 'en' ? (item.goods_name_en || item.goods_name) : item.goods_name;
+			},
+			orderStatusText(status) {
+				const statusMap = {
+					'-1': this.$t('orders.statusClosed'),
+					'0': this.$t('orders.statusPendingPay'),
+					'1': this.$t('orders.statusPendingShip'),
+					'2': this.$t('orders.statusPartialRefund'),
+					'3': this.$t('orders.statusRefunded'),
+					'4': this.$t('orders.statusPendingReceive'),
+					'5': this.$t('orders.statusPendingReview'),
+					'6': this.$t('orders.statusRefunding')
+				};
+				return statusMap[String(status)] || this.$t('orders.statusCompleted');
+			},
 			//搜索
 			searchClick(e) {
 				this.loadData(e, 1);
@@ -182,7 +206,7 @@
 			loadData(e, a) {
 				if (this.currentPage == 1) {
 					uni.showLoading({
-						title: '加载中'
+						title: this.$t('orders.loading')
 					})
 				}
 				let newWhere = {};
@@ -273,15 +297,15 @@
 			confirmReceipt(item) {
 				let that = this;
 				uni.showModal({
-					title: '收货提示',
-					content: "是否确认已收到商品",
+					title: this.$t('orders.receiptTitle'),
+					content: this.$t('orders.receiptContent'),
 					success: function(res) {
 						if (res.confirm) {
 							db.collection("uni-pay-orders").doc(item._id).update({
 								"status": 5
 							}).then(() => {
 								uni.showToast({
-									title: "收货成功",
+									title: that.$t('orders.receiptSuccess'),
 									icon: "none",
 									duration: 1600
 								});
@@ -306,7 +330,7 @@
 			dialogConfirm(id) {
 				db.collection("uni-pay-orders").doc(id).remove().then(() => {
 					uni.showToast({
-						title: "删除成功",
+						title: this.$t('orders.deleteSuccess'),
 						icon: "none",
 						duration: 1600
 					})
@@ -326,7 +350,7 @@
 			async cancelOrder(item) {
 				try {
 					uni.showLoading({
-						title: '请稍后...'
+						title: this.$t('orders.waiting')
 					});
 					// 还原优惠卷使用状态
 					for (const items of item.preferential) {
@@ -350,7 +374,7 @@
 					});
 
 					uni.showToast({
-						title: "取消成功",
+						title: this.$t('orders.cancelSuccess'),
 						icon: "none",
 						duration: 1600
 					});
@@ -411,7 +435,7 @@
 					"refund_list": []
 				}).then(() => {
 					uni.showToast({
-						title: "取消成功",
+						title: this.$t('orders.cancelSuccess'),
 						icon: "none",
 						duration: 1600
 					})
@@ -440,7 +464,7 @@
 				console.log('success: ', res);
 				if (res.user_order_success) {
 					uni.showToast({
-						title: "支付成功",
+						title: this.$t('orders.paymentSuccess'),
 						icon: "none",
 						duration: 1600
 					}).then(() => {
@@ -450,7 +474,7 @@
 					// 代表用户已付款，且你自己写的回调成功并正确执行了
 				} else {
 					uni.showToast({
-						title: "支付成功",
+						title: this.$t('orders.paymentSuccess'),
 						icon: "none",
 						duration: 1600
 					}).then(() => {
@@ -475,18 +499,19 @@
 					});
 			},
 			copy(item) {
+				const that = this;
 				uni.setClipboardData({
 					data: item,
 					success() {
 						uni.showToast({
-							title: "复制成功",
+							title: that.$t('orders.copySuccess'),
 							icon: "icon",
 							duration: 1500,
 						});
 					},
 					fail() {
 						uni.showToast({
-							title: "复制失败",
+							title: that.$t('orders.copyFailed'),
 							icon: "none",
 							duration: 1500,
 						});

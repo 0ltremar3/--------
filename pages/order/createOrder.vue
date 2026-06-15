@@ -15,20 +15,20 @@
 				<view v-else class="flex-dir-row w-100">
 					<text class="iconfont icon-uniE03d col-61A189"
 						style="font-size: 40rpx;height: 20rpx;line-height: 48rpx;"></text>
-					<text class="ml-10 f-28" style="line-height: 46rpx;height: 30rpx;">请选择收货地址</text>
+					<text class="ml-10 f-28" style="line-height: 46rpx;height: 30rpx;">{{ $t('createOrder.selectAddress') }}</text>
 				</view>
 				<text class="iconfont f-34 icon-uniE003"></text>
 			</view>
 			<view class="flex-dir-row mt-20  flex-y-center flex-x-between">
-				<text class="f-28 col-3">配送方式</text>
-				<text class="f-28 col-0 f-w">快递运输</text>
+				<text class="f-28 col-3">{{ $t('createOrder.deliveryMethod') }}</text>
+				<text class="f-28 col-0 f-w">{{ $t('createOrder.express') }}</text>
 			</view>
 		</view>
 		<view class="list-item flex-dir-column" style="padding: 20rpx 25rpx 30rpx 25rpx;">
 			<view class="flex-dir-row b-b pb-20 flex-y-center">
 				<text class="iconfont  f-32 icon-uniE01f col-61A189"
 					style="line-height: 20rpx;font-size: 60rpx;"></text>
-				<text class="col-3 f-29 ml-10">山前食养商城</text>
+				<text class="col-3 f-29 ml-10">{{ $t('createOrder.storeName') }}</text>
 			</view>
 			<view class="goods mt-20 flex-dir-column w-100">
 				<view class="goods-item mb-20 flex-dir-row flex-y-center flex-x-between"
@@ -37,7 +37,7 @@
 					<image class="goods-litpic" :src="item.goods_thumb">
 					</image>
 					<view class="flex-dir-column flex-1 ml-20">
-						<text class="f-28 col-0 goods-name ">{{item.name}}</text>
+						<text class="f-28 col-0 goods-name ">{{displayLangText(item, 'name')}}</text>
 						<view class="f-24  col-9">
 							<text style="margin-right: 15rpx;"
 								v-for="goods_suk in item.goodssuk.suk.specs">{{goods_suk}}</text>
@@ -53,21 +53,21 @@
 
 				</view>
 				<view class="flex-dir-row mt-20  flex-y-center flex-x-between">
-					<view class="col-3 f-28">运费</view>
-					<text class="f-w f-28 col-0">{{freight == 0?'免运费':'￥' + (freight/100).toFixed(2) }}</text>
+					<view class="col-3 f-28">{{ $t('createOrder.freight') }}</view>
+					<text class="f-w f-28 col-0">{{freightText}}</text>
 				</view>
 				<view class="flex-dir-row mt-20  flex-y-center flex-x-end">
-					<text class="f-28 col-3">商品小计：</text>
+					<text class="f-28 col-3">{{ $t('createOrder.subtotal') }}</text>
 					<jlg-minPrice :min-price="payments" maxSize="32rpx"></jlg-minPrice>
 				</view>
 			</view>
 		</view>
 		<view class="list-item flex-dir-column">
 			<view class="flex-dir-row b-b pb-20 flex-y-center flex-x-between">
-				<view class="col-3 f-28">优惠券</view>
+				<view class="col-3 f-28">{{ $t('createOrder.coupon') }}</view>
 				<view @click="openpop()" v-if="coupomFalse && !control" class="flex-dir-row flex-y-center">
 					<view v-if="couponname.length == 0" class="f-26 col-61A189">
-						选择优惠券
+						{{ $t('createOrder.selectCoupon') }}
 					</view>
 					<view v-else class="col-61A189 f-28">
 						<text style="margin-right: 15rpx;" v-for="c_name in couponname">{{c_name.name}}</text>
@@ -76,7 +76,7 @@
 				</view>
 				<view v-else class="flex-dir-row flex-y-center">
 					<view v-if="couponname.length == 0" class="f-26 col-9">
-						{{control?'秒杀不可用':'暂无优惠'}}
+						{{control?$t('createOrder.seckillUnavailable'):$t('createOrder.noCoupon')}}
 					</view>
 					<view v-else class="col-61A189 f-28">
 						<text style="margin-right: 15rpx;" v-for="c_name in couponname">{{c_name.name}}</text>
@@ -86,18 +86,18 @@
 
 			</view>
 			<view class="flex-dir-row b-b pb-20 mt-20 flex-y-center flex-x-between">
-				<view class="col-3 f-28">商家促销</view>
+				<view class="col-3 f-28">{{ $t('createOrder.promotion') }}</view>
 				<text class="f-28 col-61A189">-￥{{(crossed_total/100).toFixed(2)}}</text>
 			</view>
 			<view class="flex-dir-row b-b pb-20 mt-20 flex-y-center flex-x-between">
-				<view class="col-3 f-28">优惠金额</view>
+				<view class="col-3 f-28">{{ $t('createOrder.discountAmount') }}</view>
 				<text v-if="payments - payment > 0"
 					class="f-28 col-61A189">-￥{{((payments - payment)/100).toFixed(2)}}</text>
-				<text v-else class="f-26 col-9">未使用优惠</text>
+				<text v-else class="f-26 col-9">{{ $t('createOrder.noDiscount') }}</text>
 			</view>
 			<view class="flex-dir-row   mt-20 flex-y-center flex-x-between">
-				<view class="col-3 f-28">备注</view>
-				<input class="desc f-28" type="text" v-model="desc" placeholder="请填写备注信息"
+				<view class="col-3 f-28">{{ $t('createOrder.note') }}</view>
+				<input class="desc f-28" type="text" v-model="desc" :placeholder="$t('createOrder.notePlaceholder')"
 					placeholder-class="placeholder" />
 			</view>
 		</view>
@@ -108,31 +108,31 @@
 		<!-- 底部 -->
 		<view class="footer">
 			<view class="pl-30 col-61A189  flex-dir-row flex-y-baseline">
-				<text class="col-0 f-26">实付款:</text>
+				<text class="col-0 f-26">{{ $t('createOrder.actualPay') }}</text>
 				<jlg-minPrice :min-price="(payment) + (freight)" maxSize="40rpx" minSize="27rpx"></jlg-minPrice>
 			</view>
-			<text class="submit" @click="submit">提交订单</text>
+			<text class="submit" @click="submit">{{ $t('createOrder.submitOrder') }}</text>
 		</view>
 		<!-- 优惠卷 -->
 		<view>
 			<uv-popup bgColor="#eaeaea" ref="popup" :round="10" mode="bottom">
-				<view style="font-size: 22rpx;color: #61A189;padding: 11px 0px 0px 12px;">提示：秒杀商品不计优惠</view>
+				<view style="font-size: 22rpx;color: #61A189;padding: 11px 0px 0px 12px;">{{ $t('createOrder.seckillCouponTip') }}</view>
 				<!-- <scroll-view></scroll-view> -->
 				<scroll-view scroll-y class="coupon-cen">
 					<view v-if="item.allowType[0] !== '指定商品' || goods_id.some(id=> item.goodsArr[0].includes(id))"
 						v-for="(item,index) in couponList" :key="index"
-						@click="selectCoupon(item._id,item.couponType[0],item.Price[0],item.orderAmount[0],item.endTime[0],item.couponstate,item.isShare[0],item.couponName[0],item.goodsArr[0],item.allowType[0])"
+						@click="selectCoupon(item._id,item.couponType[0],item.Price[0],item.orderAmount[0],item.endTime[0],item.couponstate,item.isShare[0],couponNameText(item),item.goodsArr[0],item.allowType[0])"
 						class="coupon-van">
 						<view class="coupon-letf">
 							<view class="flex-dir-row">
 								<view class="coupon-icqc">
-									{{item.allowType[0] == '所有商品' && item.userType[0] == '所有人'?'全场通用':(item.allowType[0] == '指定商品' && item.userType[0] == '所有人'?'特定商品':(item.allowType[0] == '指定用户' && item.userType[0] == '所有商品'?'特定用户':'特定用户'))}}
+									{{ couponScopeLabel(item) }}
 								</view>
-								<text class="coupon-name">{{item.couponName[0]}}</text>
+								<text class="coupon-name">{{ couponNameText(item) }}</text>
 							</view>
 							<view class="ml-20 mt-30">
 								<view class="f-26 col-9">
-									有效期为：
+									{{ $t('productDetail.validPeriod') }}
 								</view>
 								<view class="f-26 col-9" style="line-height: 40rpx;">
 									{{formatDate(item.startTime[0])+ '-' +formatDate(item.endTime[0])}}
@@ -140,24 +140,23 @@
 							</view>
 						</view>
 						<view v-if="item.isShare[0]" class="coupon-diej">
-							可叠加</view>
+							{{ $t('productDetail.stackable') }}</view>
 						<view class="coupon-righ">
 							<view class="mt-10">
-								<text v-if="item.couponType[0] == '满减'" class="f-40">￥</text>
-								<text v-if="item.couponType[0] == '满减'" class="coupon-qian">{{item.Price[0]/100}}</text>
-								<text v-else class="coupon-qian">{{(item.Price[0]/10).toFixed(1)}}<text
-										class="coupon-z">折</text></text>
+								<text v-if="couponValuePrefix(item)" class="f-40">{{ couponValuePrefix(item) }}</text>
+								<text class="coupon-qian">{{ couponValueText(item) }}<text v-if="couponValueSuffix(item)"
+										class="coupon-z">{{ couponValueSuffix(item) }}</text></text>
 							</view>
-							<view style="font-size: 30rpx;">满{{item.orderAmount[0]/100}}可用</view>
-							<view class="coupon-lqsy">{{item.couponstate === false?'已抵扣':'立即使用'}}</view>
+							<view style="font-size: 30rpx;">{{ couponThresholdText(item) }}</view>
+							<view class="coupon-lqsy">{{item.couponstate === false?$t('createOrder.couponUsed'):$t('productDetail.useNow')}}</view>
 						</view>
 					</view>
 				</scroll-view>
 			</uv-popup>
 		</view>
 		<uni-popup ref="messpopup" type="dialog">
-			<uni-popup-dialog mode="base" title="支付提示" content="订单已创建,超时未支付将自动取消" :duration="0" confirmText="去支付"
-				cancelText="返回" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+			<uni-popup-dialog mode="base" :title="$t('createOrder.paymentTitle')" :content="$t('createOrder.paymentContent')" :duration="0" :confirmText="$t('createOrder.payNow')"
+				:cancelText="$t('createOrder.back')" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
 		</uni-popup>
 		<view><uni-pay ref="uniPay" @success="onSuccess" @create="onCreate" @cancel="onCancel"></uni-pay></view>
 	</view>
@@ -184,7 +183,7 @@
 				goods_arr: [], //商品信息组
 				order_no: "", // 业务系统订单号（即你自己业务系统的订单表的订单号）
 				out_trade_no: "", // 插件支付单号
-				description: "山前食养商城消费", // 支付描述
+				description: "", // 支付描述
 				type: "goods", // 支付回调类型 如 recharge 代表余额充值 goods 代表商品订单（可自定义，任意英文单词都可以，只要你在 uni-pay-co/notify/目录下创建对应的 xxx.js文件进行编写对应的回调逻辑即可）
 				openstate: true,
 				coupomFalse: false, //当前拥有优惠卷在当前商品是否可用
@@ -194,6 +193,7 @@
 			}
 		},
 		onLoad(e) {
+			this.description = this.$t('createOrder.storeName');
 			let goodsData = JSON.parse(e.suk);
 			this.crossed_total = Number(e.motion);
 			this.distributionData();
@@ -204,7 +204,65 @@
 				this.control = true;
 			}
 		},
+		computed: {
+			freightText() {
+				if (this.freight == 0) return this.$t('createOrder.freeShipping');
+				const amount = (this.freight / 100).toFixed(2);
+				return this.getCurrentLang() === 'en' ? `CNY ${amount}` : `￥${amount}`;
+			}
+		},
 		methods: {
+			getCurrentLang() {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
+			},
+			memberDiscountText(level, discount) {
+				if (this.getCurrentLang() === 'en') {
+					const percentOff = Math.max(0, Math.round(100 - Number(discount || 0)));
+					return `${level} ${percentOff}% ${this.$t('productDetail.discountSuffix')}`;
+				}
+				return `${level}享${Number(discount || 0) / 10}${this.$t('productDetail.discountSuffix')}`;
+			},
+			couponScopeLabel(item) {
+				if (item.userType && item.userType[0] === '会员权益') {
+					return this.$t('couponCenter.memberBenefit');
+				}
+				if (item.allowType[0] === '所有商品' && item.userType[0] === '所有人') {
+					return this.$t('productDetail.couponFullStore');
+				}
+				if (item.allowType[0] === '指定商品' && item.userType[0] === '所有人') {
+					return this.$t('productDetail.couponSpecificGoods');
+				}
+				return this.$t('productDetail.couponSpecificUser');
+			},
+			couponNameText(item) {
+				const enName = item.couponName_en && item.couponName_en[0];
+				return this.getCurrentLang() === 'en' ? (enName || item.couponName[0]) : item.couponName[0];
+			},
+			couponValuePrefix(item) {
+				return item.couponType[0] === '满减' ? '￥' : '';
+			},
+			couponValueText(item) {
+				if (item.couponType[0] === '满减') {
+					return item.Price[0] / 100;
+				}
+				if (this.getCurrentLang() === 'en') {
+					return Math.max(0, Math.round(100 - Number(item.Price[0] || 0)));
+				}
+				return (item.Price[0] / 10).toFixed(1);
+			},
+			couponValueSuffix(item) {
+				if (item.couponType[0] === '满减') return '';
+				return this.getCurrentLang() === 'en' ? '% off' : this.$t('productDetail.discountSuffix');
+			},
+			couponThresholdText(item) {
+				return `${this.$t('productDetail.couponThresholdPrefix')}${item.orderAmount[0] / 100}${this.$t('productDetail.couponThresholdSuffix')}`;
+			},
 			ressDate() {
 				db.collection("jlg-goods-address").where({
 					"user_id": this.user_id
@@ -214,7 +272,7 @@
 			},
 			async loadData(data) {
 				uni.showToast({
-					title: "加载中",
+					title: this.$t('createOrder.loading'),
 					icon: 'loading',
 					duration: 2000000
 				})
@@ -255,13 +313,13 @@
 							this.payment = Math.round(this.payments * (vipdata.result.data[0].svip_price / 100));
 							this.couponname.push({
 								id: 'svip',
-								name: 'SVIP享' + (vipdata.result.data[0].svip_price / 10) + '折'
+								name: this.memberDiscountText('SVIP', vipdata.result.data[0].svip_price)
 							})
 						} else {
 							this.payment = Math.round(this.payments * (vipdata.result.data[0].vip_price / 100))
 							this.couponname.push({
 								id: 'vip',
-								name: 'VIP享' + (vipdata.result.data[0].svip_price / 10) + '折'
+								name: this.memberDiscountText('VIP', vipdata.result.data[0].vip_price)
 							})
 						}
 					}
@@ -298,7 +356,7 @@
 				let time = Date.now();
 				if (endTime <= time) {
 					uni.showToast({
-						title: "此券已过期",
+						title: this.$t('createOrder.expiredCoupon'),
 						icon: "none",
 						duration: 1600
 					});
@@ -307,7 +365,7 @@
 
 				if (couponstate === false) {
 					uni.showToast({
-						title: "已使用",
+						title: this.$t('createOrder.used'),
 						icon: "none",
 						duration: 1600
 					});
@@ -324,7 +382,7 @@
 					if (num <= orderAmount) {
 
 						uni.showToast({
-							title: "未达使用门槛",
+							title: this.$t('createOrder.thresholdNotMet'),
 							icon: "none",
 							duration: 1600
 						});
@@ -338,7 +396,7 @@
 					})
 					if (this.payments - num <= orderAmount) {
 						uni.showToast({
-							title: "未达使用门槛",
+							title: this.$t('createOrder.thresholdNotMet'),
 							icon: "none",
 							duration: 1600
 						});
@@ -349,7 +407,7 @@
 
 				if (!isShare && !this.is_shares()) {
 					uni.showToast({
-						title: "此券不可与其他券叠加",
+						title: this.$t('createOrder.noStack'),
 						icon: "none",
 						duration: 1600
 					});
@@ -377,7 +435,7 @@
 				});
 
 				uni.showToast({
-					title: "使用成功",
+					title: this.$t('createOrder.useSuccess'),
 					icon: "none",
 					duration: 1600
 				});
@@ -434,7 +492,7 @@
 					if (this.openstate) {
 						this.openstate = false;
 						uni.showLoading({
-							title: '加载中...'
+							title: this.$t('createOrder.loadingEllipsis')
 						});
 						this.order_no = `${Math.floor(10000 + Math.random() * 90000)}${Date.now()}`;
 						this.out_trade_no = `${this.order_no}-1`;
@@ -443,7 +501,7 @@
 						let remain_count_state = await this.InventoryValidation(this.goodsList);
 						if (!remain_count_state) {
 							return uni.showToast({
-								title: "商品库存不足",
+								title: this.$t('createOrder.stockInsufficient'),
 								icon: "none",
 								duration: 2000
 							})
@@ -455,14 +513,14 @@
 
 					} else {
 						uni.showToast({
-							title: "请返回重新提交",
+							title: this.$t('createOrder.resubmit'),
 							icon: "none",
 							duration: 1600
 						})
 					}
 				} else {
 					uni.showToast({
-						title: "未选择收货地址",
+						title: this.$t('createOrder.noAddress'),
 						icon: "none",
 						duration: 1600
 					})
@@ -470,7 +528,7 @@
 				// #endif
 				// #ifdef APP
 				uni.showToast({
-					title: "APP暂未开通支付功能,请前往山前食养公众号提交订单",
+					title: this.$t('createOrder.appPayUnavailable'),
 					icon: "none",
 					duration: 1600
 				})
@@ -544,6 +602,7 @@
 				const goodsItem = {
 					goods_id: item._id,
 					goods_name: item.name,
+					goods_name_en: item.name_en || item.name,
 					goods_img: item.goods_thumb,
 					goods_suk: item.goodssuk.suk.specs,
 					goods_price: item.goodssuk.suk.price,
@@ -577,7 +636,7 @@
 					description: this.description, // 支付描述
 					type: this.type, // 支付回调类型
 					goods_arr: this.goods_arr, //商品信息组
-					address: '姓名：' + this.ressList.name + '；电话：' + this.ressList.mobile + '；地址：' + this.ressList
+					address: this.$t('createOrder.addressName') + this.ressList.name + '；' + this.$t('createOrder.addressPhone') + this.ressList.mobile + '；' + this.$t('createOrder.addressText') + this.ressList
 						.formatted_address, //收货地址
 					preferential: this.couponname, //使用的优惠卷
 					notes: this.desc, //购买备注
@@ -585,7 +644,7 @@
 					deduprice: this.payments - this.payment, //优惠卷抵扣的金额
 					freight: this.freight, //运费金额
 					is_distr: this.is_distr, //是否为分销订单
-					audit_status: '审核中',
+					audit_status: this.$t('createOrder.auditPending'),
 					openid: this.openid,
 				});
 			},
@@ -593,7 +652,7 @@
 				console.log('success: ', res);
 				if (res.user_order_success) {
 					uni.showToast({
-						title: "支付成功",
+						title: this.$t('createOrder.paymentSuccess'),
 						icon: "none",
 						duration: 1600
 					}).then(() => {
@@ -604,7 +663,7 @@
 					// 代表用户已付款，且你自己写的回调成功并正确执行了
 				} else {
 					uni.showToast({
-						title: "支付成功",
+						title: this.$t('createOrder.paymentSuccess'),
 						icon: "none",
 						duration: 1600
 					}).then(() => {

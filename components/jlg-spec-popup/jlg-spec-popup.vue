@@ -9,10 +9,12 @@
 				<view class="spec-popup__top-info">
 					<jlg-minPrice v-if="suks_price" :min-price="suks_price * numberl"
 						maxSize="36rpx" min-size="24rpx" :Weight="500" />
-					<text v-else class="spec-popup__prompt">选择规格</text>
-					<text class="spec-popup__stock" v-if="suks_inventory > 0">库存：{{suks_inventory}} 件</text>
+					<text v-else class="spec-popup__prompt">{{ $t('specPopup.selectSpec') }}</text>
+					<text class="spec-popup__stock" v-if="suks_inventory > 0">
+						{{ $t('specPopup.stockPrefix') }}{{suks_inventory}} {{ $t('specPopup.stockUnit') }}
+					</text>
 					<view class="spec-popup__selected" v-if="specSelected.length">
-						已选：<text v-for="(s, si) in specSelected" :key="si">{{s.name}} </text>
+						{{ $t('specPopup.selectedPrefix') }}<text v-for="(s, si) in specSelected" :key="si">{{displaySpecText(s)}} </text>
 					</view>
 				</view>
 				<view class="spec-popup__close-btn" @click="close">✕</view>
@@ -21,20 +23,20 @@
 			<!-- 规格组 -->
 			<scroll-view scroll-y class="spec-popup__body">
 				<view v-for="(group, gi) in specList" :key="gi" class="spec-group">
-					<text class="spec-group__name">{{group.name}}</text>
+					<text class="spec-group__name">{{displaySpecText(group)}}</text>
 					<view class="spec-group__items">
 						<text v-for="child in getSpecChildren(group.id)"
 							:key="child.globalIndex"
 							:class="['spec-tag', child.selected ? 'spec-tag--active' : '']"
 							@click="selectSpec(child.globalIndex, child.pid)">
-							{{child.name}}
+							{{displaySpecText(child)}}
 						</text>
 					</view>
 				</view>
 
 				<!-- 数量 -->
 				<view class="spec-popup__qty">
-					<text class="spec-popup__qty-label">数量</text>
+					<text class="spec-popup__qty-label">{{ $t('specPopup.quantity') }}</text>
 					<view class="qty-counter">
 						<view class="qty-counter__btn"
 							:class="numberl <= 1 ? 'qty-counter__btn--disabled' : ''"
@@ -48,7 +50,7 @@
 			</scroll-view>
 
 			<!-- 底部确认按钮 -->
-			<view class="spec-popup__footer" @click="confirm">{{confirmText}}</view>
+			<view class="spec-popup__footer" @click="confirm">{{resolvedConfirmText}}</view>
 		</view>
 	</uv-popup>
 </template>
@@ -61,7 +63,7 @@
 		props: {
 			userId: { type: String, default: '' },
 			action: { type: String, default: 'cart' },
-			confirmText: { type: String, default: '加入购物袋' },
+			confirmText: { type: String, default: '' },
 			seckill: { type: Boolean, default: false }
 		},
 		data() {
@@ -78,6 +80,11 @@
 				initialSpecSelected: [],
 			};
 		},
+		computed: {
+			resolvedConfirmText() {
+				return this.confirmText || this.$t('specPopup.addToBag');
+			}
+		},
 		methods: {
 			/**
 			 * 打开规格弹窗
@@ -91,7 +98,7 @@
 				if (goodsData) {
 					this._buildSpec(goodsData);
 				} else {
-					uni.showLoading({ title: '加载中' });
+					uni.showLoading({ title: this.$t('specPopup.loading') });
 					db.collection('opendb-mall-goods').doc(item._id).get()
 						.then(res => {
 							uni.hideLoading();
@@ -100,7 +107,7 @@
 						.catch(err => {
 							uni.hideLoading();
 							console.error(err);
-							uni.showToast({ title: '加载失败', icon: 'none' });
+							uni.showToast({ title: this.$t('specPopup.loadFailed'), icon: 'none' });
 						});
 				}
 			},
@@ -110,7 +117,7 @@
 			},
 			confirm() {
 				if (!this.suks_price) {
-					uni.showToast({ title: '请先选择规格', icon: 'none' });
+					uni.showToast({ title: this.$t('specPopup.selectSpecFirst'), icon: 'none' });
 					return;
 				}
 				this.$refs.popup.close();
@@ -139,13 +146,21 @@
 						numberl: this.numberl
 					}
 				}).then(res => {
-					const msg = res.result.message === '加购成功' ? '已加入购物袋' : (res.result.message || '加购失败');
+					const msg = res.result.message === '加购成功' ? this.$t('specPopup.addedToBag') : (res.result.message || this.$t('specPopup.addFailed'));
 					uni.showToast({ title: msg, icon: 'none', duration: 1600 });
 					this.$emit('success', msg, payload);
 				}).catch(err => {
-					uni.showToast({ title: '加购失败', icon: 'none' });
+					uni.showToast({ title: this.$t('specPopup.addFailed'), icon: 'none' });
 					console.error(err);
 				});
+			},
+			getCurrentLang() {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
+			},
+			displaySpecText(item) {
+				if (!item) return '';
+				return this.getCurrentLang() === 'en' ? (item.name_en || item.name) : item.name;
 			},
 			// 按父规格 id 过滤子项，并附加全局索引供 selectSpec 使用
 			getSpecChildren(pid) {
@@ -195,9 +210,14 @@
 				this.goods = goods;
 				const origSuks = this._getOrigSuks();
 				for (let i = 0; i < origSuks.length; i++) {
-					this.specList.push({ id: i, name: origSuks[i].name });
+					this.specList.push({ id: i, name: origSuks[i].name, name_en: origSuks[i].name_en });
 					for (let ii = 0; ii < origSuks[i].values.length; ii++) {
-						this.specChildList.push({ id: ii, pid: i, name: origSuks[i].values[ii].name });
+						this.specChildList.push({
+							id: ii,
+							pid: i,
+							name: origSuks[i].values[ii].name,
+							name_en: origSuks[i].values[ii].name_en
+						});
 					}
 				}
 				this._restoreInitialSelection();

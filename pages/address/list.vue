@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<uv-empty v-if="ressList.length == 0" mode="data" icon="/static/temp/shwk.png" text="地址为空"></uv-empty>
+		<uv-empty v-if="ressList.length == 0" mode="data" icon="/static/temp/shwk.png" :text="$t('address.empty')"></uv-empty>
 		<view v-else class="ress_van" v-for="(item,index) in ressList" :key="index">
 			<view class="ress_top">
 
@@ -24,11 +24,11 @@
 				<!-- <image @click="defaultress(item._id)" class="ress_mrt"
 					:src="item.is_default?`../../static/selected.png`:`../../static/select.png`">
 				</image> -->
-				<view class="ress_mrtext">默认地址</view>
-				<button class="ress_scbut" @click="deleteress(item._id)">删除</button>
+				<view class="ress_mrtext">{{ $t('address.defaultAddress') }}</view>
+				<button class="ress_scbut" @click="deleteress(item._id)">{{ $t('address.delete') }}</button>
 			</view>
 		</view>
-		<button @click="novTo" class="but">新增地址</button>
+		<button @click="novTo" class="but">{{ $t('address.addAddress') }}</button>
 	</view>
 </template>
 
@@ -53,7 +53,7 @@
 		methods: {
 			ressData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('address.loading')
 				})
 				db.collection("jlg-goods-address").where({
 					"user_id": this.user_id
@@ -84,13 +84,13 @@
 			deleteress(id) {
 				let that = this
 				uni.showModal({
-					title: "删除提示",
-					content: "确认删除此地址？",
+					title: this.$t('address.deleteTitle'),
+					content: this.$t('address.deleteContent'),
 					success: function(res) {
 						if (res.confirm) {
 							db.collection("jlg-goods-address").doc(id).remove().then(() => {
 								uni.showToast({
-									title: "删除成功",
+									title: that.$t('address.deleteSuccess'),
 									icon: "none",
 									duration: 1000
 								})
@@ -104,7 +104,7 @@
 			},
 			defaultress(id) {
 				uni.showToast({
-					title: "修改中",
+					title: this.$t('address.updating'),
 					icon: "loading",
 					duration: 200000
 				})
@@ -120,7 +120,7 @@
 						this.ressData()
 						uni.hideToast()
 						uni.showToast({
-							title: "修改成功",
+							title: this.$t('address.updateSuccess'),
 							icon: "none",
 							duration: 1600
 						})
