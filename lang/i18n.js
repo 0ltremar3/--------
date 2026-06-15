@@ -6,9 +6,19 @@ const messages = {
 	'en': langEn,
 	'zh-Hans': zhHans
 }
+
+function normalizeLanguage(language) {
+	if (!language) return ''
+	if (messages[language]) return language
+	const lang = String(language).toLowerCase()
+	if (lang.indexOf('en') === 0) return 'en'
+	if (lang.indexOf('zh') === 0) return 'zh-Hans'
+	return 'zh-Hans'
+}
+
 let currentLang
 if(i18nEnable){
-	currentLang = uni.getStorageSync('CURRENT_LANG')
+	currentLang = normalizeLanguage(uni.getStorageSync('CURRENT_LANG'))
 }else{
 	currentLang = "zh-Hans"
 }
@@ -16,22 +26,13 @@ if(i18nEnable){
 if (!currentLang) {
 	if (uni.getLocale) {
 		console.log('获取应用语言:', uni.getLocale());
-		let language = 'en'
-		if (uni.getLocale() != 'en') {
-			language = 'zh-Hans'
-		}
-		uni.setStorageSync('CURRENT_LANG', language)
-		currentLang = language
+		currentLang = normalizeLanguage(uni.getLocale())
 	} else {
+		currentLang = 'zh-Hans'
 		uni.getSystemInfo({
 			success: function(res) {
 				console.log('获取设备信息:', res);
-				let language = 'zh-Hans'
-				if (res.language == 'en') {
-					language = 'en'
-				}
-				uni.setStorageSync('CURRENT_LANG', language)
-				currentLang = language
+				uni.setStorageSync('CURRENT_LANG', normalizeLanguage(res.language))
 			},
 			fail: (err) => {
 				console.error(err)
@@ -39,6 +40,7 @@ if (!currentLang) {
 		})
 	}
 }
+uni.setStorageSync('CURRENT_LANG', currentLang)
 let i18nConfig = {
 	locale: currentLang, // set locale
 	messages // set locale messages
@@ -72,11 +74,13 @@ console.log(`
 			// #ifdef VUE3
 			return i18n.global.messages[i18n.global.locale][e]
 			// #endif
-			return i18n.messages[i18n.locale][e]
+			return i18n.messages[i18n.locale] && i18n.messages[i18n.locale][e]
 		}
 		setTimeout(function(){
 			//底部tabbar更新
-			$i18n('tabbar').split(',').forEach((text, index) => {
+			const tabbar = $i18n('tabbar')
+			if (!tabbar) return
+			tabbar.split(',').forEach((text, index) => {
 				// console.log(text);
 				uni.setTabBarItem({
 					index,

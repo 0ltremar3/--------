@@ -3,7 +3,7 @@
 	<view class="container">
 		<view v-if="goodsdata.name">
 			<!-- #ifdef MP-WEIXIN -->
-			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="goodsdata.name"
+			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="displayLangText(goodsdata, 'name')"
 				:headerImg="goodsdata.goods_banner_imgs[0].fileType == 'image'?goodsdata.goods_banner_imgs[0].url:goodsdata.goods_banner_imgs[1].url"
 				:price="minPrice / 100" :username="usname" :avcimgs="usimg" :origprice="goodsdata.crossed_price/100"
 				@showClick="showClick"></qrcode-poster>
@@ -17,7 +17,7 @@
 			</view>
 			<!-- #endif -->
 			<!-- #ifndef MP-WEIXIN -->
-			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="goodsdata.name"
+			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="displayLangText(goodsdata, 'name')"
 				:price="minPrice / 100" :username="usname" :origprice="goodsdata.crossed_price/100"
 				@showClick="showClick"></qrcode-poster>
 			<view style="position: fixed;left: 900000rpx;">
@@ -52,13 +52,13 @@
 						<view class="flex-x-baseline dis-flex">
 							<jlg-minPrice :min-price="minPrice" col="#fff" :Weight="600" maxSize="48rpx" minSize="32rpx"></jlg-minPrice>
 						</view>
-						<text class="seckill-tag ml-10">限时精选</text>
+						<text class="seckill-tag ml-10">{{ $t('productDetail.limitedPick') }}</text>
 					</view>
-					<text class="f-24 w-nowrap" style="color: #B8BBB6;">距离结束还剩</text>
+					<text class="f-24 w-nowrap" style="color: #B8BBB6;">{{ $t('productDetail.endsIn') }}</text>
 				</view>
 				<view class="flex-dir-row flex-y-center flex-x-between" style="position: relative; margin-top: 12rpx;">
 					<view class="flex-dir-row flex-y-center">
-						<text class="f-24" style="color: #8E918D; line-height: 48rpx;">原价</text>
+						<text class="f-24" style="color: #8E918D; line-height: 48rpx;">{{ $t('productDetail.originalPrice') }}</text>
 					<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
 					</view>
 					<uni-countdown @timeup="delayed" font-size="12" ref="coun" :hour="hours" :minute="minutes"
@@ -67,8 +67,8 @@
 			</view>
 			<view class="list-item flex-dir-column">
 				<!-- 商品名称 + 分享按钮 -->
-				<view class="flex-dir-row flex-y-center flex-x-between">
-					<view class="product-name">{{goodsdata.name}}</view>
+					<view class="flex-dir-row flex-y-center flex-x-between">
+						<view class="product-name">{{ displayLangText(goodsdata, 'name') }}</view>
 					<!-- #ifndef APP -->
 					<button @click="shareClick" class="share-btn">
 						<text class="iconfont icon-uniE044" style="font-size: 40rpx; color: #8E918D;"></text>
@@ -82,11 +82,11 @@
 							<jlg-minPrice :min-price="minPrice" maxSize="48rpx" minSize="32rpx" :Weight="500"></jlg-minPrice>
 							<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
 						</view>
-						<text class="deal-tips ml-10">{{(Math.round((minPrice / goodsdata.crossed_price) * 100)/10)}}折</text>
-					</view>
-					<text v-if="goodsdata.total_sell_count < 9999" class="text-meta w-nowrap">
-						{{'销量: ' + goodsdata.total_sell_count}}</text>
-					<text v-else class="text-meta w-nowrap">销量: 9999+</text>
+							<text class="deal-tips ml-10">{{ discountText }}</text>
+						</view>
+						<text v-if="goodsdata.total_sell_count < 9999" class="text-meta w-nowrap">
+							{{ $t('productDetail.salesPrefix') }} {{goodsdata.total_sell_count}}</text>
+						<text v-else class="text-meta w-nowrap">{{ $t('productDetail.salesPrefix') }} 9999+</text>
 				</view>
 				<!-- 优惠券标签 + 查看优惠：有可用优惠或秒杀模式时才显示 -->
 				<view v-if="control || couponList.length > 0"
@@ -95,50 +95,50 @@
 						<view class="coupon-btn"
 							v-if="(item.user_type === '所有人' || item.user_arr.includes(user_id)) && (item.allow_type !== '指定商品' || item.goods_arr.includes(goods_id))"
 							v-for="(item, index) in couponList" :key="index">
-							{{item.name}}
+								{{ displayLangText(item, 'name') }}
 						</view>
 					</view>
 					<view class="flex-dir-row flex-y-center" @click="popup">
-						<text class="f-26 text-primary">{{control?'秒杀商品不可用':'查看优惠'}}</text>
+							<text class="f-26 text-primary">{{control ? $t('productDetail.seckillCouponUnavailable') : $t('productDetail.viewCoupons')}}</text>
 						<text class="iconfont ml-10 f-24 icon-uniE003 text-primary"></text>
 					</view>
 				</view>
 			</view>
 			<view class="list-item" style="margin-top: 2rpx;">
 				<view class="flex-dir-row flex-y-center  pb-25 b-b" @click="toggleSpec">
-					<text class="list-title-left col-9 f-28 w-nowrap">规格</text>
+						<text class="list-title-left col-9 f-28 w-nowrap">{{ $t('productDetail.specs') }}</text>
 					<view class="flex-x-betweenflex-y-center flex-dir-row w-100">
 						<view class="flex-dir-row flex-y-center flex-1">
 							<view class="f-29 col-0" v-if="specSelected.length>0">
 								<text class="f-27 col-0 mr-10" v-for="(sItem, sIndex) in specSelected" :key="sIndex">
-									{{sItem.name}}
+										{{ displayLangText(sItem, 'name') }}
 								</text>
 								<text v-if="numberl > 1">×{{numberl}}</text>
 							</view>
 							<view class="f-27 col-0" v-else>
-								请选择
+									{{ $t('productDetail.pleaseSelect') }}
 							</view>
 						</view>
 						<text class="iconfont icon-uniE003"></text>
 					</view>
 				</view>
 				<view class="flex-dir-row mt-25 flex-y-center pb-25 b-b w-100">
-					<text class="list-title-left col-9 f-28 w-nowrap" style="width: 96rpx;">运费</text>
+						<text class="list-title-left col-9 f-28 w-nowrap" style="width: 96rpx;">{{ $t('productDetail.freight') }}</text>
 					<view class="flex-x-between flex-y-center flex-dir-row flex-1">
 						<view class="flex-dir-row flex-y-center">
 							<view class="bz-list con f-27">
-								<text>{{!goodsdata.freight && goodsdata.freight_amount>0?'￥' + (goodsdata.freight_amount /100).toFixed(2):'免运费'}}</text>
+									<text>{{ freightText }}</text>
 							</view>
 						</view>
 					</view>
 				</view>
 				<view class="flex-dir-row mt-25 flex-y-center  ">
-					<text class="list-title-left col-9 f-28 w-nowrap">服务</text>
+						<text class="list-title-left col-9 f-28 w-nowrap">{{ $t('productDetail.service') }}</text>
 					<view class="flex-x-between flex-y-center flex-dir-row w-100">
 						<view class="flex-dir-row flex-y-center  flex-1">
 							<view class="bz-list con f-27" v-for="(item,index) in goodsdata.goods_services"
 								:key="index">
-								<text>{{item}}</text>
+									<text>{{ displayGoodsService(item, index) }}</text>
 								<text style="margin: 0rpx 8rpx;" v-if="servNum-1 != index">·</text>
 							</view>
 						</view>
@@ -149,9 +149,9 @@
 			<!-- 评价 -->
 			<view class="eva-section" @click="naTov(goods_id)">
 				<view class="e-header">
-					<text class="tit">评价</text>
+					<text class="tit">{{ $t('productDetail.reviews') }}</text>
 					<text>({{evaluateNum}})</text>
-					<text class="tip">好评率 {{goodrate > 0?goodrate:100}}%</text>
+					<text class="tip">{{ $t('productDetail.favorableRate') }} {{goodrate > 0?goodrate:100}}%</text>
 					<text class="iconfont icon-uniE003"></text>
 				</view>
 				<view v-if="evaluateList.length > 0" class="eva-box">
@@ -159,11 +159,11 @@
 						:src="evaluateList[0].usimage[0].url?evaluateList[0].usimage[0].url:`../../static/logo.png`"
 						mode="aspectFill"></image>
 					<view class="right">
-						<text class="name">{{evaluateList[0].usname[0]?evaluateList[0].usname[0]:"匿名用户"}}</text>
+						<text class="name">{{evaluateList[0].usname[0]?evaluateList[0].usname[0]:$t('productDetail.anonymousUser')}}</text>
 						<uni-rate :readonly="true" activeColor="#61A189" size="17" v-model="evaluateList[0].grade" />
 						<text class="con">{{evaluateList[0].content.text}}</text>
 						<view class="bot">
-							<text class="attr">购买类型：<text style="margin-right: 10rpx;"
+							<text class="attr">{{ $t('productDetail.purchaseType') }}<text style="margin-right: 10rpx;"
 									v-for="suk in evaluateList[0].goods_suk">{{suk}}</text></text>
 							<text class="time">{{formatDate(evaluateList[0].create_date)}}</text>
 						</view>
@@ -173,13 +173,13 @@
 
 			<view class="detail-desc">
 				<view class="d-header">
-					<text>图文详情</text>
+					<text>{{ $t('productDetail.details') }}</text>
 				</view>
-				<mp-html ref="mpAll" :content="goodsdata.goods_desc" />
+				<mp-html ref="mpAll" :content="displayLangText(goodsdata, 'goods_desc')" />
 			</view>
 			<!-- 分享弹窗 -->
 			<uni-popup ref="sharepopup" type="share">
-				<uni-popup-share title="分享到" @select="select"></uni-popup-share>
+				<uni-popup-share :title="$t('productDetail.shareTo')" @select="select"></uni-popup-share>
 			</uni-popup>
 			<!-- 底部操作菜单 -->
 			<view class="footer">
@@ -187,27 +187,27 @@
 				<view class="flex-dir-row flex-y-center">
 					<navigator url="/pages/index/index" open-type="switchTab" class="footer-btn">
 						<image src="@/static/tabbar/home.svg" style="width: 40rpx; height: 40rpx; display: block; margin: 0 auto;" mode="aspectFit"></image>
-						<text>首页</text>
+						<text>{{ $t('productDetail.home') }}</text>
 					</navigator>
 					<navigator url="/pages/cart/cart" open-type="switchTab" class="footer-btn">
 						<image src="@/static/tabbar/cart.svg" style="width: 40rpx; height: 40rpx; display: block; margin: 0 auto;" mode="aspectFit"></image>
-						<text>购物袋</text>
+						<text>{{ $t('productDetail.bag') }}</text>
 					</navigator>
 					<view class="footer-btn" :class="{active: favorite}" @click="toFavorite('add')">
 						<text :class="favorite?'iconfont icon-uniE023':'iconfont icon-shoucang'"></text>
-						<text>收藏</text>
+						<text>{{ $t('productDetail.favorite') }}</text>
 					</view>
 				</view>
 					<view class="flex-dir-row flex-y-center">
-						<button v-if="!control" class="footer-left" @click="openCartSpec">加入购物袋</button>
+							<button v-if="!control" class="footer-left" @click="openCartSpec">{{ $t('productDetail.addToBag') }}</button>
 
-						<button :class="control?'footer-rights':'footer-right'" @click="toggleSpec(0)">立即购买</button>
+							<button :class="control?'footer-rights':'footer-right'" @click="toggleSpec(0)">{{ $t('productDetail.buyNow') }}</button>
 					</view>
 				</view>
 			</view>
 
 			<!-- 规格弹窗（统一品牌风格组件） -->
-			<jlg-spec-popup ref="buySpecPopup" :userId="user_id" action="select" confirm-text="完成"
+			<jlg-spec-popup ref="buySpecPopup" :userId="user_id" action="select" :confirm-text="$t('common.complete')"
 				:seckill="control" @confirm="handleSpecConfirm" />
 			<jlg-spec-popup ref="cartSpecPopup" :userId="user_id" />
 
@@ -220,14 +220,14 @@
 							class="coupon-van">
 							<view class="coupon-letf">
 								<view class="flex-dir-row">
-									<view class="coupon-icqc">
-										{{item.allow_type == '所有商品' && item.user_type == '所有人'?'全场通用':(item.allow_type == '指定商品' && item.user_type == '所有人'?'特定商品':(item.allow_type == '指定用户' && item.user_type == '所有商品'?'特定用户':'特定用户'))}}
-									</view>
-									<text class="coupon-name">{{item.name}}</text>
+										<view class="coupon-icqc">
+											{{ couponScopeLabel(item) }}
+										</view>
+										<text class="coupon-name">{{ displayLangText(item, 'name') }}</text>
 								</view>
 								<view class="ml-20 mt-30">
 									<view class="f-26 col-9">
-										有效期为：
+											{{ $t('productDetail.validPeriod') }}
 									</view>
 									<view class="f-26 col-9" style="line-height: 40rpx;">
 										{{formatDate(item.start_time)+ '-' +formatDate(item.end_time)}}
@@ -235,22 +235,21 @@
 								</view>
 							</view>
 							<view v-if="item.is_share" class="coupon-diej">
-								可叠加</view>
+									{{ $t('productDetail.stackable') }}</view>
 							<view class="coupon-righ">
 								<view class="mt-10">
-									<text v-if="item.type == '满减'" class="f-40">￥</text>
-									<text v-if="item.type == '满减'" class="coupon-qian">{{item.price/100}}</text>
-									<text v-else class="coupon-qian">{{(item.price/10).toFixed(1)}}<text
-											class="coupon-z">折</text></text>
-								</view>
-								<view style="font-size: 30rpx;">满{{item.order_amount/100}}可用</view>
-								<view v-if="item.states"
-									@click="addCoupon(item._id,item.max_number,item.received_number,item.number,item.user_type,item.user_arr)"
-									class="coupon-lqsy">
-									立即领取</view>
-								<view v-else class="coupon-lqsy"
-									@click="navigator(item.allow_type,item.goods_arr,item.name)">
-									立即使用</view>
+										<text v-if="couponValuePrefix(item)" class="f-40">{{ couponValuePrefix(item) }}</text>
+										<text class="coupon-qian">{{ couponValueText(item) }}<text v-if="couponValueSuffix(item)"
+												class="coupon-z">{{ couponValueSuffix(item) }}</text></text>
+									</view>
+									<view style="font-size: 30rpx;">{{ couponThresholdText(item) }}</view>
+									<view v-if="item.states"
+										@click="addCoupon(item._id,item.max_number,item.received_number,item.number,item.user_type,item.user_arr)"
+										class="coupon-lqsy">
+										{{ $t('productDetail.claimNow') }}</view>
+									<view v-else class="coupon-lqsy"
+										@click="navigator(item.allow_type,item.goods_arr,displayLangText(item, 'name'))">
+										{{ $t('productDetail.useNow') }}</view>
 							</view>
 						</view>
 					</scroll-view>
@@ -294,14 +293,14 @@
 				where: {},
 				receiveId: [],
 				uqrcodeurl: '', //二维码临时路径
-				usname: '匿名用户',
+				usname: '',
 				usimg: 'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png',
 				show: false,
 			};
 		},
 		onShareTimeline(res) {
 			return {
-				title: "山前食养商城,优惠多多！",
+				title: this.$t('home.shareTitle'),
 				imageUrl: '../../static/logo.png',
 			}
 		},
@@ -309,19 +308,24 @@
 			this.show = true;
 			if (res.from) {
 				return {
-					title: this.goodsdata.name,
+					title: this.displayLangText(this.goodsdata, 'name'),
 					imageUrl: this.goodsdata.goods_thumb,
 					path: '/pages/product/product?id=' + this.goodsdata._id,
 					success: () => {
-						console.log('分享成功');
+						console.log(this.$t('productDetail.shareSuccess'));
 					},
 					fail: (err) => {
 						console.error(err);
 					}
 				}
 			}
+			return {
+				title: this.$t('home.shareTitle'),
+				imageUrl: '../../static/logo.png',
+			}
 		},
 		onLoad(e) {
+			this.usname = this.$t('productDetail.anonymousUser');
 			if (e.q) {
 				const q = decodeURIComponent(e.q) // 获取到二维码原始链接内容
 				const goodsIdPattern = /id=([^&]+)/;
@@ -372,20 +376,99 @@
 			//获取用户头像、昵称用于分享海报
 			if (this.user_id) {
 				db.collection("uni-id-users").doc(this.user_id).field("nickname,avatar_file").get().then((res) => {
-			const userInfo = res.result.data[0];
-				this.usname = userInfo?.nickname || '匿名用户';
-				this.usimg = userInfo?.avatar_file?.url ||
-					'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
+					const userInfo = res.result.data[0];
+					this.usname = userInfo?.nickname || this.$t('productDetail.anonymousUser');
+					this.usimg = userInfo?.avatar_file?.url ||
+						'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
 				})
+			}
+		},
+		computed: {
+			discountText() {
+				const crossedPrice = Number(this.goodsdata.crossed_price || 0);
+				if (!crossedPrice || !this.minPrice) return '';
+				const discount = Math.round((this.minPrice / crossedPrice) * 100) / 10;
+				if (this.getCurrentLang() === 'en') {
+					const percentOff = Math.max(0, Math.round((1 - this.minPrice / crossedPrice) * 100));
+					return `${percentOff}% ${this.$t('productDetail.discountSuffix')}`;
+				}
+				return `${discount}${this.$t('productDetail.discountSuffix')}`;
+			},
+			freightText() {
+				if (!this.goodsdata.freight && this.goodsdata.freight_amount > 0) {
+					const amount = (this.goodsdata.freight_amount / 100).toFixed(2);
+					return this.getCurrentLang() === 'en' ? `CNY ${amount}` : `￥${amount}`;
+				}
+				return this.$t('productDetail.freeShipping');
 			}
 		},
 		methods: {
 			changeNav(e) {
 				this.currentIndex = e.target.current
 			},
+			getCurrentLang() {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				if (typeof item === 'string') return item;
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
+			},
+			displayGoodsService(service, index) {
+				const services = this.goodsdata.goods_services_en || [];
+				return this.getCurrentLang() === 'en' ? (services[index] || service) : service;
+			},
+			couponScopeLabel(item) {
+				if (item.allow_type === '所有商品' && item.user_type === '所有人') {
+					return this.$t('productDetail.couponFullStore');
+				}
+				if (item.allow_type === '指定商品' && item.user_type === '所有人') {
+					return this.$t('productDetail.couponSpecificGoods');
+				}
+				return this.$t('productDetail.couponSpecificUser');
+			},
+			couponValuePrefix(item) {
+				return item.type === '满减' ? '￥' : '';
+			},
+			couponValueText(item) {
+				if (item.type === '满减') {
+					return item.price / 100;
+				}
+				if (this.getCurrentLang() === 'en') {
+					return Math.max(0, Math.round(100 - Number(item.price || 0)));
+				}
+				return (item.price / 10).toFixed(1);
+			},
+			couponValueSuffix(item) {
+				if (item.type === '满减') return '';
+				return this.getCurrentLang() === 'en' ? '% off' : this.$t('productDetail.discountSuffix');
+			},
+			couponThresholdText(item) {
+				return `${this.$t('productDetail.couponThresholdPrefix')}${item.order_amount / 100}${this.$t('productDetail.couponThresholdSuffix')}`;
+			},
+			couponMessage(message) {
+				const messageMap = {
+					'领取成功': this.$t('productDetail.claimSuccess')
+				};
+				return messageMap[message] || message;
+			},
+			showLoginExpired() {
+				uni.showToast({
+					title: this.$t('productDetail.loginExpired'),
+					icon: 'none',
+					duration: 1000
+				});
+				setTimeout(() => {
+					uni.navigateTo({
+						url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd'
+					});
+				}, 1000);
+			},
 			goodsList(id) {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				db.collection("opendb-mall-goods").doc(id).get().then((res) => {
 					this.goodsdata = res.result.data[0]
@@ -435,10 +518,7 @@
 			// 加入购物车 —— 使用统一规格弹窗组件
 			openCartSpec() {
 				if (this.tokenData()) {
-					uni.showToast({ title: '未登录或登录状态过期', icon: 'none', duration: 1000 });
-					setTimeout(() => {
-						uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd' });
-					}, 1000);
+					this.showLoginExpired();
 					return;
 				}
 				this.$refs.cartSpecPopup.open(this.goodsdata, this.goodsdata);
@@ -446,16 +526,7 @@
 			//规格弹窗开关（立即购买/规格选择）
 			toggleSpec(e) {
 				if (this.tokenData()) {
-					uni.showToast({
-						title: "未登录或登录状态过期",
-						icon: "none",
-						duration: 1000
-					})
-					setTimeout(() => {
-						uni.navigateTo({
-							url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-						})
-					}, 1000)
+					this.showLoginExpired();
 				} else {
 					this.createOrder = e == 0;
 					this.$refs.buySpecPopup.open(this.goodsdata, this.goodsdata, {
@@ -485,16 +556,7 @@
 			},
 			popup() {
 				if (this.tokenData()) {
-					uni.showToast({
-						title: "未登录或登录状态过期",
-						icon: "none",
-						duration: 1000
-					})
-					setTimeout(() => {
-						uni.navigateTo({
-							url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-						})
-					}, 1000)
+					this.showLoginExpired();
 				} else {
 					this.$refs.popup.open();
 				}
@@ -502,7 +564,7 @@
 			// 优惠卷
 			couponData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				this.$func.myFunction('jlg-cart', {
 						functionName: 'coupondata',
@@ -527,7 +589,7 @@
 			},
 			receiveData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				db.collection("jlg-goods-coupon").where({
 					"user_id": this.user_id,
@@ -542,16 +604,7 @@
 			},
 			async addCoupon(id, maxnum, yl_num, fx_num, usertype, usarr) {
 				if (this.tokenData()) {
-					uni.showToast({
-						title: "未登录或登录状态过期",
-						icon: "none",
-						duration: 1000
-					})
-					setTimeout(() => {
-						uni.navigateTo({
-							url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-						})
-					}, 1000)
+					this.showLoginExpired();
 				} else {
 					this.$func.myFunction('jlg-cart', {
 							functionName: 'addCoupon',
@@ -568,10 +621,10 @@
 							if (res.result.message == '领取成功') {
 								setTimeout(() => this.receiveData(), 1600)
 							}
-							uni.showToast({
-								title: res.result.message,
-								icon: "none",
-								duration: 1600
+								uni.showToast({
+									title: this.couponMessage(res.result.message),
+									icon: "none",
+									duration: 1600
 							});
 							return;
 						})
@@ -593,62 +646,37 @@
 					"user_id": this.user_id,
 					"article_id": this.goods_id
 				}).get().then((res) => {
-					if (res.result.data.length == 0) {
-						this.favorite = false
-						if (add) {
-							if (this.tokenData()) {
-								uni.showToast({
-									title: "未登录或登录状态过期",
-									icon: "none",
-									duration: 1000
-								})
-								setTimeout(() => {
-									uni.navigateTo({
-										url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-									})
-								}, 1000)
-							} else {
-								db.collection("jlg-goods-collect").add({
-									"article_id": this.goods_id
-								}).then(() => {
-									uni.showToast({
-										title: "收藏成功",
-										icon: "none",
-										duration: 1600
-									})
-									this.favorite = true
-								})
-							}
-						}
-					} else {
-						this.favorite = true
-						if (add) {
-							if (this.tokenData()) {
-								uni.showToast({
-									title: "未登录或登录状态过期",
-									icon: "none",
-									duration: 1000
-								})
-								setTimeout(() => {
-									uni.navigateTo({
-										url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-									})
-								}, 1000)
-							} else {
-								db.collection("jlg-goods-collect").where({
-									"user_id": this.user_id,
-									"article_id": this.goods_id
-								}).remove().then(() => {
-									uni.showToast({
-										title: "取消收藏",
-										icon: "none",
-										duration: 1600
-									})
-									this.favorite = false
-								})
-							}
-						}
+					const hasFavorite = res.result.data.length > 0;
+					this.favorite = hasFavorite;
+					if (!add) return;
+					if (this.tokenData()) {
+						this.showLoginExpired();
+						return;
 					}
+					if (!hasFavorite) {
+						db.collection("jlg-goods-collect").add({
+							"article_id": this.goods_id
+						}).then(() => {
+							uni.showToast({
+								title: this.$t('productDetail.favoriteAdded'),
+								icon: "none",
+								duration: 1600
+							})
+							this.favorite = true
+						})
+						return;
+					}
+					db.collection("jlg-goods-collect").where({
+						"user_id": this.user_id,
+						"article_id": this.goods_id
+					}).remove().then(() => {
+						uni.showToast({
+							title: this.$t('productDetail.favoriteRemoved'),
+							icon: "none",
+							duration: 1600
+						})
+						this.favorite = false
+					})
 				})
 			},
 			//分享
@@ -656,35 +684,24 @@
 				this.$refs.sharepopup.open()
 			},
 			select(e) {
-				let that = this;
 				if (e.index == 0) {
-
-				} else {
-					if (this.tokenData()) {
-						uni.showToast({
-							title: "未登录或登录状态过期",
-							icon: "none",
-							duration: 1000
-						})
-						setTimeout(() => {
-							uni.navigateTo({
-								url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-							})
-						}, 1000)
-					} else {
-						that.$refs.uqrcode.toTempFilePath({
-							success: res => {
-								this.show = true;
-								that.$refs.poster.showCanvas(res.tempFilePath);
-								that.uqrcodeurl = res.tempFilePath;
-							}
-						});
-					}
+					return;
 				}
+				if (this.tokenData()) {
+					this.showLoginExpired();
+					return;
+				}
+				this.$refs.uqrcode.toTempFilePath({
+					success: res => {
+						this.show = true;
+						this.$refs.poster.showCanvas(res.tempFilePath);
+						this.uqrcodeurl = res.tempFilePath;
+					}
+				});
 			},
 			delayed() {
 				uni.showToast({
-					title: "秒杀结束",
+					title: this.$t('productDetail.seckillEnded'),
 					icon: "none",
 					duration: 2000
 				})
@@ -709,24 +726,16 @@
 			},
 			navigator(type, goodsArr, name) {
 				if (this.tokenData()) {
-					uni.showToast({
-						title: "未登录或登录状态过期",
-						icon: "none",
-						duration: 1000
-					})
-					setTimeout(() => {
-						uni.navigateTo({
-							url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
-						})
-					}, 1000)
+					this.showLoginExpired();
 				} else {
+					const couponName = encodeURIComponent(name);
 					if (type == "所有商品") {
 						uni.navigateTo({
-							url: `/pages/coupon/prefeList?goodsArr=${null}&&name=${name}`
+							url: `/pages/coupon/prefeList?goodsArr=${null}&&name=${couponName}`
 						})
 					} else {
 						uni.navigateTo({
-							url: `/pages/coupon/prefeList?goodsArr=${JSON.stringify(goodsArr)}&&name=${name}`
+							url: `/pages/coupon/prefeList?goodsArr=${JSON.stringify(goodsArr)}&&name=${couponName}`
 						})
 					}
 				}
