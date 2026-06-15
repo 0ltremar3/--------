@@ -1,5 +1,5 @@
 export default {
-	tabbar:'列表,宫格,通讯录,我的',
+	tabbar:'首页,分类,购物袋,我的',
 	agreementsTitle:'用户服务协议,隐私政策',
 	common:{
 		wechatFriends: "微信好友",
@@ -188,5 +188,23 @@ export default {
 	},
 	bindMobile:{
 		navigationBarTitle:"绑定手机号码"
+	},
+	home:{
+		brandName: "山前食养",
+		searchPlaceholder: "搜索商品",
+		announce: "公告",
+		limitedTime: "限时精选",
+		endsIn: "距结束",
+		nextIn: "距下场",
+		weeklyPick: "本周精选",
+		viewMore: "查看更多",
+		wellnessPick: "食养精选",
+		shareTitle: "山前食养商城,优惠多多！",
+		switchToEnglish: "English",
+		switchToChinese: "简体中文",
+		languageChanged: "已切换语言",
+		loading: "加载中",
+		recordUpdateFailed: "浏览记录未成功更新",
+		seckillNotStarted: "秒杀未开始"
 	}
 }

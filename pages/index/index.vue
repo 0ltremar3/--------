@@ -19,7 +19,7 @@
 						<image src="/static/icons/search.svg" class="brand-nav__icon-img" mode="aspectFit" />
 					</view>
 				</view>
-				<text class="brand-nav__title">山前食养</text>
+				<text class="brand-nav__title">{{ $t('home.brandName') }}</text>
 				<!-- 右侧占位，保持标题居中 -->
 				<view class="brand-nav__right"></view>
 			</view>
@@ -28,8 +28,8 @@
 
 		<!-- #ifndef MP-WEIXIN -->
 		<view class="brand-searchbar">
-			<text class="brand-searchbar__logo">山前食养</text>
-			<uv-search placeholder="搜索商品" v-model="searchData" shape="square" bgColor="#F7F8F5"
+			<text class="brand-searchbar__logo">{{ $t('home.brandName') }}</text>
+			<uv-search :placeholder="$t('home.searchPlaceholder')" v-model="searchData" shape="square" bgColor="#F7F8F5"
 				:showAction="false" @search="searchClick" style="flex:1; min-width: 0;"></uv-search>
 		</view>
 		<!-- #endif -->
@@ -53,7 +53,7 @@
 
 		<!-- 公告 -->
 		<view v-if="announce.length > 0" class="announce-bar">
-			<text class="announce-bar__label">· 公告 ·</text>
+			<text class="announce-bar__label">· {{ $t('home.announce') }} ·</text>
 			<view class="announce-bar__track">
 				<text class="announce-bar__text">{{announce}}</text>
 			</view>
@@ -65,7 +65,7 @@
 				<view @click="navToDetailPage(item.description,0)" class="cat-tabs__item"
 					v-for="(item,index) in cetagoriesList" :key="index">
 					<image mode="aspectFill" class="cat-tabs__icon" :src="item.icon"></image>
-					<text class="cat-tabs__label">{{item.name}}</text>
+					<text class="cat-tabs__label">{{ displayLangText(item, 'name') }}</text>
 				</view>
 			</view>
 		</view>
@@ -86,10 +86,10 @@
 		<!-- 限时精选（秒杀）-->
 		<view v-if="filteredData[0] != null" class="section">
 			<view class="section__hd">
-				<text class="text-section-title">限时精选</text>
+				<text class="text-section-title">{{ $t('home.limitedTime') }}</text>
 				<view class="flex-dir-row flex-y-center">
-					<text v-if="control" class="text-meta">距结束</text>
-					<text v-else class="text-meta">距下场</text>
+					<text v-if="control" class="text-meta">{{ $t('home.endsIn') }}</text>
+					<text v-else class="text-meta">{{ $t('home.nextIn') }}</text>
 					<uni-countdown @timeup="delayed" ref="coun" class="ml-10" :hour="hours" :minute="minutes"
 						:second="seconds" color="#61A189" background-color="transparent" />
 				</view>
@@ -98,7 +98,7 @@
 				<view v-if="isSeckillGoods(item)" v-for="(item, index) in msgoodsList"
 					:key="index" class="goods-row__item" @click="navToDetailPage(item._id,1,hours,minutes,seconds)">
 					<image :src="item.goods_thumb" class="goods-row__img" mode="aspectFill"></image>
-					<view class="goods-row__name ellipsis">{{item.name}}</view>
+					<view class="goods-row__name ellipsis">{{ displayLangText(item, 'name') }}</view>
 					<view class="goods-row__price">
 						<jlg-minPrice
 							:min-price="item.fs_suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
@@ -112,9 +112,9 @@
 		<view class="section">
 			<view class="section__hd section__hd--3col">
 				<view class="flex-1"></view>
-				<text class="text-section-title">本周精选</text>
+				<text class="text-section-title">{{ $t('home.weeklyPick') }}</text>
 				<view class="flex-1 flex-dir-row flex-y-center flex-x-end" @click="allClick">
-					<text class="text-meta">查看更多</text>
+					<text class="text-meta">{{ $t('home.viewMore') }}</text>
 					<text class="iconfont ml-10 icon-uniE003 text-meta"></text>
 				</view>
 			</view>
@@ -122,7 +122,7 @@
 				<view v-for="(item, index) in rxgoodsList" :key="index" class="goods-row__item"
 					@click="navToDetailPage(item._id)">
 					<image :src="item.goods_thumb" class="goods-row__img" mode="aspectFill"></image>
-					<view class="goods-row__name ellipsis">{{item.name}}</view>
+					<view class="goods-row__name ellipsis">{{ displayLangText(item, 'name') }}</view>
 					<view class="goods-row__price">
 						<jlg-minPrice
 							:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
@@ -135,7 +135,7 @@
 		<!-- 食养精选（推荐双列）-->
 		<view class="section section--grid">
 			<view class="section__hd section__hd--center">
-				<text class="text-section-title">食养精选</text>
+				<text class="text-section-title">{{ $t('home.wellnessPick') }}</text>
 			</view>
 			<view class="allLike">
 				<uv-waterfall ref="waterfall" left-gap="0" right-gap="0" column-gap="8" @changeList="changeList">
@@ -147,11 +147,11 @@
 								@click="navToDetailPage(item._id)" class="grid-item">
 								<image :src="item.goods_thumb" mode="aspectFill" class="grid-item__img"></image>
 								<view class="grid-item__ft">
-									<view class="grid-item__name ellipsis">{{item.name}}</view>
+									<view class="grid-item__name ellipsis">{{ displayLangText(item, 'name') }}</view>
 									<view class="flex-dir-row flex-y-center f-wrap" :class="control?'':'margin-top-xs'">
 										<view class="coupon-tag" v-for="(ius, idx) in couponList" :key="idx"
 											v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
-											{{ius.name}}
+											{{ displayLangText(ius, 'name') }}
 										</view>
 									</view>
 									<view class="grid-item__price margin-top-xs uv-line-2">
@@ -171,11 +171,11 @@
 								:key="index" class="grid-item">
 								<image :src="item.goods_thumb" mode="aspectFill" class="grid-item__img"></image>
 								<view class="grid-item__ft">
-									<view class="grid-item__name ellipsis">{{item.name}}</view>
+									<view class="grid-item__name ellipsis">{{ displayLangText(item, 'name') }}</view>
 									<view class="flex-dir-row flex-y-center f-wrap" :class="control?'':'margin-top-xs'">
 										<view class="coupon-tag" v-for="(ius, idx) in couponList" :key="idx"
 											v-if="(ius.user_type === '所有人' || ius.user_arr.includes(user_id)) && (ius.allow_type !== '指定商品' || ius.goods_arr.includes(item._id))">
-											{{ius.name}}
+											{{ displayLangText(ius, 'name') }}
 										</view>
 									</view>
 									<view class="grid-item__price margin-top-xs uv-line-2">
@@ -245,13 +245,13 @@
 		},
 		onShareTimeline(res) {
 			return {
-				title: "山前食养商城,优惠多多！",
+				title: this.$t('home.shareTitle'),
 				imageUrl: '../../static/logo.png',
 			}
 		},
 		onShareAppMessage(res) {
 			return {
-				title: "山前食养商城,优惠多多！"
+				title: this.$t('home.shareTitle')
 			}
 		},
 		onPageScroll(e) {
@@ -344,9 +344,42 @@
 					uni.setStorageSync("uni-pay-weixin-h5-code", data.code);
 				}
 			},
-			// 语言切换（占位，后续接入 i18n）
+			// 语言切换
 			switchLang() {
-				uni.showToast({ title: '语言切换', icon: 'none', duration: 800 });
+				let language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				language = language === 'en' ? 'zh-Hans' : 'en';
+				uni.setStorageSync('CURRENT_LANG', language);
+
+				const globalData = getApp().globalData;
+				globalData.locale = language;
+				if (globalData.$i18n) {
+					globalData.$i18n.locale = language;
+				}
+				this.$i18n.locale = language;
+
+				if (uni.setLocale) {
+					uni.setLocale(language);
+				}
+
+				uni.showToast({
+					title: this.$t('home.languageChanged'),
+					icon: 'none',
+					duration: 800
+				});
+				uni.$emit('changeLanguage', language);
+				setTimeout(() => {
+					uni.reLaunch({
+						url: '/pages/index/index'
+					});
+				}, 300);
+			},
+			getCurrentLang() {
+				return uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
 			},
 			//搜索
 			searchClick() {
@@ -485,7 +518,7 @@
 			// 优惠卷
 			couponData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				this.$func.myFunction('jlg-cart', {
 						functionName: 'coupondata',
@@ -510,7 +543,7 @@
 			},
 			receiveData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				db.collection("jlg-goods-coupon").where({
 					"user_id": this.user_id,
@@ -536,7 +569,7 @@
 					}).then((res) => {}).catch((err) => {
 						self.navigateToPage(id, e);
 						uni.showToast({
-							title: "浏览记录未成功更新",
+							title: this.$t('home.recordUpdateFailed'),
 							icon: "none",
 							duration: 600
 						});
@@ -557,7 +590,7 @@
 						});
 					} else {
 						uni.showToast({
-							title: "秒杀未开始",
+							title: this.$t('home.seckillNotStarted'),
 							icon: "none",
 							duration: 2000
 						});
@@ -584,7 +617,7 @@
 			},
 			announceData() {
 				db.collection("jlg-announce").get().then((res) => {
-					this.announce = res.result.data[0].content;
+					this.announce = this.displayLangText(res.result.data[0], 'content');
 				})
 			},
 			UpdateColor(value) {

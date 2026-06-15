@@ -1,5 +1,5 @@
 export default {
-	tabbar:'List,Grid,contacts,Mine',
+	tabbar:'Home,Categories,Bag,Mine',
 	agreementsTitle:'User service agreement,Privacy policy',
 	common: {
 		wechatFriends: "friends",
@@ -187,5 +187,23 @@ export default {
 	},
 	bindMobile:{
 		navigationBarTitle:"Bind Mobile"
+	},
+	home:{
+		brandName: "Shanqian Wellness",
+		searchPlaceholder: "Search products",
+		announce: "Notice",
+		limitedTime: "Limited Picks",
+		endsIn: "Ends in",
+		nextIn: "Next in",
+		weeklyPick: "Weekly Picks",
+		viewMore: "View more",
+		wellnessPick: "Wellness Picks",
+		shareTitle: "Shanqian Wellness Store, more deals!",
+		switchToEnglish: "English",
+		switchToChinese: "简体中文",
+		languageChanged: "Language changed",
+		loading: "Loading",
+		recordUpdateFailed: "Browsing history was not updated",
+		seckillNotStarted: "Flash sale has not started"
 	}
 }
