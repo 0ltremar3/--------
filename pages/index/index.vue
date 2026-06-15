@@ -6,7 +6,8 @@
 
 		<!-- #ifdef MP-WEIXIN -->
 		<!-- 品牌导航（小程序） -->
-		<view class="brand-nav" :style="{height:(navHeight + 8) + 'px', backgroundColor: navbarbackground}">
+		<view class="brand-nav" :class="{'brand-nav--scrolled': navbarScrolled}"
+			:style="{height:(navHeight + 8) + 'px'}">
 			<view class="brand-nav__bar" :style="{top: navTop + 'px'}">
 				<!-- 左侧图标容器 -->
 				<view class="brand-nav__left">
@@ -69,13 +70,15 @@
 			</view>
 		</view>
 
-		<!-- 广告横滑轮播（统一大小，无缩放） -->
+		<!-- 广告横滑轮播（竖版手机海报） -->
 		<view class="ad-swiper">
-			<swiper previous-margin="60rpx" next-margin="60rpx" :duration="500" class="ad-swiper__list" circular
+			<swiper previous-margin="128rpx" next-margin="128rpx" :duration="500" class="ad-swiper__list" circular
 				@change="handleSwiperChange">
 				<swiper-item v-for="(item, index) in carousetowList" :key="index" class="ad-swiper__item"
 					@click="navToDetailPage(item.open_url,0)">
-					<image mode="aspectFill" :src="item.bannerfile.url" class="ad-swiper__img" />
+					<view class="ad-swiper__poster">
+						<image mode="aspectFill" :src="item.bannerfile.url" class="ad-swiper__img" />
+					</view>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -231,7 +234,7 @@
 				navTop: null,
 				navHeight: null,
 				scrollTop: 0, // 页面滚动位置
-				navbarbackground: '', // 搜索栏背景色
+				navbarScrolled: false, // 搜索栏是否滚动吸顶
 				announce: '', //消息通告
 				loadingType: 'noMore', //加载更多状态
 				couponList: [],
@@ -253,11 +256,10 @@
 		},
 		onPageScroll(e) {
 			const scrollTop = e.scrollTop; // 获取当前滚动位置
-			const backgroundColor = scrollTop > 0 ? '#ffffff' : ''; // 根据滚动位置设置背景色
-			this.navbarbackground = backgroundColor;
+			this.navbarScrolled = scrollTop > 0;
 		},
 		onLoad(options = {}) {
-			this.titleBackground = "rgb(221, 221, 221)";
+			this.titleBackground = "";
 			this.bannerdata();
 			this.cetagories();
 			this.goodsdata();
@@ -635,7 +637,7 @@
 
 	page {
 		// background-color: #FFFFFF;
-		background-color: #F7F8F5;
+		background-color: $brand-bg;
 		box-sizing: border-box;
 	}
 
@@ -656,6 +658,10 @@
 		left: 0;
 		z-index: 10;
 		transition: background-color 0.3s ease;
+
+		&--scrolled {
+			background: $brand-bg;
+		}
 
 		&__bar {
 			position: fixed;
@@ -695,7 +701,7 @@
 		&__divider {
 			width: 1rpx;
 			height: 28rpx;
-			background: #C8CCC9;
+			background: #202321;
 			margin: 0 8rpx;
 		}
 
@@ -711,7 +717,7 @@
 		align-items: center;
 		padding: 16rpx 32rpx;
 		// background: #FFFFFF;
-		background: #F7F8F5;
+		background: $brand-bg;
 		border-bottom: 1rpx solid #E5E6E2;
 
 		&__logo {
@@ -737,6 +743,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
+		background-color: $brand-bg;
 		transition: background-color 0.8s ease;
 	}
 
@@ -831,13 +838,16 @@
 		}
 	}
 
-	/* ── 广告横滑轮播（统一大小，无缩放） ── */
+	/* ── 广告横滑轮播（竖版手机海报） ── */
 	.ad-swiper {
 		width: 100%;
-		margin: 24rpx 0;
+		margin: 0;
+		padding: 32rpx 0 40rpx;
+		background: #F7F8F5;
+		overflow: hidden;
 
 		&__list {
-			height: 300rpx;
+			height: 600rpx;
 		}
 
 		&__item {
@@ -845,10 +855,19 @@
 			box-sizing: border-box;
 		}
 
-		&__img {
+		&__poster {
 			width: 100%;
-			height: 300rpx;
+			height: 600rpx;
+			overflow: hidden;
 			border-radius: 8rpx;
+			background: #ECEDE8;
+			box-shadow: 0 16rpx 40rpx rgba(32, 35, 33, 0.08);
+		}
+
+		&__img {
+			display: block;
+			width: 100%;
+			height: 100%;
 		}
 	}
 

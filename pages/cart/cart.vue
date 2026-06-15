@@ -376,7 +376,7 @@
 		justify-content: space-between;
 		padding: 0 32rpx;
 		background: #FFFFFF;
-		border-bottom: 1rpx solid #E5E6E2;
+		border-bottom: 0.5rpx solid $brand-border;
 
 		&__title {
 			font-size: 34rpx;
@@ -415,7 +415,7 @@
 	/* ── 商品行 ── */
 	.cart-item {
 		background: #FFFFFF;
-		border-bottom: 1rpx solid #E5E6E2;
+		border-bottom: 0.5rpx solid $brand-border;
 
 		&--expired {
 			background: #FFFFFF;
@@ -510,6 +510,7 @@
 
 		&__service-tag {
 			border: 1rpx solid #E5E6E2;
+			border-radius: 4rpx;
 			height: 36rpx;
 			margin-right: 10rpx;
 			margin-bottom: 8rpx;
@@ -564,7 +565,7 @@
 		right: 0;
 		z-index: 99;
 		background: #FFFFFF;
-		border-top: 1rpx solid #E5E6E2;
+		border-top: 0.5rpx solid $brand-border;
 		box-shadow: 0 -6rpx 20rpx rgba(32, 35, 33, 0.025);
 
 		&__inner {

@@ -314,7 +314,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 32rpx 32rpx 24rpx;
-		border-bottom: 1rpx solid $brand-border;
+		border-bottom: 0.5rpx solid $brand-border;
 	}
 	.uc-header-right {
 		display: flex;
@@ -359,7 +359,7 @@
 		align-items: center;
 		gap: 14rpx;
 		padding: 28rpx 32rpx 20rpx;
-		border-bottom: 1rpx solid $brand-border;
+		border-bottom: 0.5rpx solid $brand-border;
 	}
 	.uc-history-title {
 		font-size: 28rpx;
