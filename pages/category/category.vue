@@ -2,7 +2,7 @@
 	<view class="cate-page">
 		<!-- 搜索框 -->
 		<view class="search-wrap">
-			<uv-search placeholder="搜索商品名称" shape="round" :showAction="false"
+			<uv-search :placeholder="$t('category.searchPlaceholder')" shape="round" :showAction="false"
 				@search="doSearch" @clear="clearSearch" />
 		</view>
 
@@ -11,12 +11,12 @@
 			<!-- 左侧父类侧边栏 -->
 			<scroll-view class="sidebar" scroll-y :style="{ height: mainHeight + 'px' }">
 				<view v-if="flist.length === 0 && !catLoading" class="sidebar-empty">
-					<text class="sidebar-empty__text">暂无分类</text>
+					<text class="sidebar-empty__text">{{ $t('category.emptyCategory') }}</text>
 				</view>
 				<view v-for="(item, idx) in flist" :key="idx"
 					:class="['sidebar-item', activeParentIndex === idx ? 'sidebar-item--active' : '']"
 					@click="selectParent(idx)">
-					<text class="sidebar-item__name">{{item.name}}</text>
+					<text class="sidebar-item__name">{{ displayLangText(item, 'name') }}</text>
 				</view>
 			</scroll-view>
 
@@ -29,10 +29,10 @@
 					<scroll-view scroll-x class="subcate-scroll">
 						<view class="subcate-tabs">
 							<view :class="['subcate-tab', activeSubCateId === null ? 'subcate-tab--active' : '']"
-								@click="selectSubCate(null)">全部</view>
+								@click="selectSubCate(null)">{{ $t('category.all') }}</view>
 							<view v-for="sub in currentSubCates" :key="sub._id"
 								:class="['subcate-tab', activeSubCateId === sub._id ? 'subcate-tab--active' : '']"
-								@click="selectSubCate(sub._id)">{{sub.name}}</view>
+								@click="selectSubCate(sub._id)">{{ displayLangText(sub, 'name') }}</view>
 						</view>
 					</scroll-view>
 					<view class="sort-entry" @click="openSortPanel">
@@ -58,7 +58,7 @@
 						@click="navToDetail(item._id)">
 						<image :src="item.goods_thumb" mode="aspectFill" class="goods-img" />
 						<view class="goods-info">
-							<text class="goods-name">{{item.name}}</text>
+							<text class="goods-name">{{ displayLangText(item, 'name') }}</text>
 							<view class="goods-meta">
 								<jlg-minPrice v-if="item.suks && item.suks.length"
 									:min-price="getMinPrice(item)"
@@ -75,7 +75,7 @@
 				<!-- 优雅空状态 -->
 				<view v-else-if="!loading" class="goods-empty">
 					<view class="goods-empty__divider"></view>
-					<text class="goods-empty__text">暂无商品</text>
+					<text class="goods-empty__text">{{ $t('category.emptyGoods') }}</text>
 					<view class="goods-empty__divider"></view>
 				</view>
 
@@ -87,7 +87,7 @@
 		<uni-popup ref="sortPopup" background-color="#fff">
 			<view class="sort-panel">
 				<view class="sort-panel__header">
-					<text class="sort-panel__title">排序方式</text>
+					<text class="sort-panel__title">{{ $t('category.sortTitle') }}</text>
 					<view class="sort-panel__close" @click="closeSortPanel">
 						<text>✕</text>
 					</view>
@@ -123,7 +123,6 @@
 				pageSize: 8,
 				loading: false,
 				sortType: 0,
-				sortLabels: ['默认排序', '新品排序', '价格从低到高', '价格从高到低'],
 				sortOrders: ['add_date asc', 'add_date desc', 'crossed_price asc', 'crossed_price desc'],
 				searchKeyword: '',
 				windowWidth: sysInfo.windowWidth,
@@ -142,16 +141,24 @@
 			},
 			currentSubCateIds() {
 				return this.currentSubCates.map(s => s._id);
+			},
+			sortLabels() {
+				return [
+					this.$t('category.defaultSort'),
+					this.$t('category.newestSort'),
+					this.$t('category.priceAsc'),
+					this.$t('category.priceDesc')
+				];
 			}
 		},
 		onShareTimeline() {
 			return {
-				title: "山前食养商城,优惠多多！",
+				title: this.$t('home.shareTitle'),
 				imageUrl: '../../static/logo.png',
 			};
 		},
 		onShareAppMessage() {
-			return { title: "山前食养商城,优惠多多！" };
+			return { title: this.$t('home.shareTitle') };
 		},
 		onLoad() {
 			try {
@@ -162,7 +169,7 @@
 		methods: {
 			loadCategories() {
 				this.catLoading = true;
-				uni.showLoading({ title: '加载中' });
+				uni.showLoading({ title: this.$t('home.loading') });
 				this.$func.myFunction('jlg-home', {
 					functionName: 'catedata',
 					data: {}
@@ -219,7 +226,7 @@
 				}
 				this.loading = true;
 				if (showToast) {
-					uni.showLoading({ title: '加载中' });
+					uni.showLoading({ title: this.$t('home.loading') });
 				}
 				const skip = (this.currentPage - 1) * this.pageSize;
 				db.collection('opendb-mall-goods')
@@ -275,9 +282,17 @@
 					parseInt(suk.price) < parseInt(min.price) ? suk : min
 				).price;
 			},
+			getCurrentLang() {
+				return uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
+			},
 			quickAddToCart(item) {
 				if (!this.user_id) {
-					uni.showToast({ title: '请先登录', icon: 'none', duration: 1000 });
+					uni.showToast({ title: this.$t('category.loginRequired'), icon: 'none', duration: 1000 });
 					setTimeout(() => {
 						uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd' });
 					}, 1000);

@@ -1,12 +1,12 @@
 <template>
 	<view class="content">
 		<view style="background: #fff;padding:10rpx 20rpx;">
-			<uv-search placeholder="请输入商品名称搜索" shape="round" :showAction="false" @search="searchClick"
+			<uv-search :placeholder="$t('productList.searchPlaceholder')" shape="round" :showAction="false" @search="searchClick"
 				@clear="clearClick"></uv-search>
 		</view>
 		<view :style="{display: sticky?'':'none'}">
 			<uv-sticky bgColor="#fff" :custom-nav-height="0">
-				<uv-tabs :list="list" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
+				<uv-tabs :list="sortTabs" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
 					:scrollable="false">
 					<template v-slot:right>
 						<view style="padding-left: 4px;" @tap="toast('show')">
@@ -17,7 +17,7 @@
 				</uv-tabs>
 			</uv-sticky>
 		</view>
-		<uv-empty v-if="evengoodsList.length == 0" mode="data" icon="/static/temp/shwk.png" text="暂无商品"></uv-empty>
+		<uv-empty v-if="evengoodsList.length == 0" mode="data" icon="/static/temp/shwk.png" :text="$t('productList.emptyGoods')"></uv-empty>
 		<view v-else class="allLike mb-30">
 			<uv-waterfall class="dis-flex flex-x-around" ref="waterfall" left-gap="0" right-gap="0" column-gap="8"
 				@changeList="changeList">
@@ -33,14 +33,14 @@
 							</view>
 							<view class="waterfall-item__ft">
 								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
+									{{ displayLangText(item, 'name') }}
 								</view>
 								<view class="waterfall-item__ft__desc mt-20 uv-line-2 price-nav"
 									style="display: flex !important; flex-direction: row ; align-items: baseline;justify-content: space-between;">
 									<jlg-minPrice
 										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
 										maxSize="32rpx" min-size="26rpx"></jlg-minPrice>
-									<text style="float: right;" class="mr-10">已售 {{item.total_sell_count}}</text>
+									<text style="float: right;" class="mr-10">{{ $t('productList.sold') }} {{item.total_sell_count}}</text>
 								</view>
 							</view>
 						</view>
@@ -58,14 +58,14 @@
 							</view>
 							<view class="waterfall-item__ft">
 								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
+									{{ displayLangText(item, 'name') }}
 								</view>
 								<view class="waterfall-item__ft__desc mt-20 uv-line-2 price-nav"
 									style="display: flex !important; flex-direction: row ; align-items: baseline;justify-content: space-between;">
 									<jlg-minPrice
 										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
 										maxSize="32rpx" min-size="26rpx"></jlg-minPrice>
-									<text style="float: right;" class="mr-10">已售 {{item.total_sell_count}}</text>
+									<text style="float: right;" class="mr-10">{{ $t('productList.sold') }} {{item.total_sell_count}}</text>
 								</view>
 							</view>
 						</view>
@@ -77,10 +77,10 @@
 		<uni-popup ref="popup" background-color="#fff" @change="change">
 			<view class="pop-van">
 				<scroll-view scroll-y>
-					<view class="pop-fathname">{{fatherName}}</view>
+					<view class="pop-fathname">{{ displayLangText(fatherCate, 'name') }}</view>
 					<view :class="item._id==goods_id?'pop-list col-61A189':'pop-list col-505050'"
 						v-for="item in cateList" :key="item._id" @click="changeCate(item._id)">
-						{{item.name}}
+						{{ displayLangText(item, 'name') }}
 					</view>
 				</scroll-view>
 			</view>
@@ -93,17 +93,7 @@
 	export default {
 		data() {
 			return {
-				list: [{
-					name: '综合排序',
-				}, {
-					name: '销量优先',
-				}, {
-					name: '价格',
-					badge: {
-						isDot: true,
-						value: 0,
-					}
-				}],
+				priceSortBadgeValue: 0,
 				loadingType: 'more', //加载更多状态
 				cateList: [],
 				goodsList: [],
@@ -114,20 +104,36 @@
 				currentPage: 1, // 当前页码
 				pageSize: 8, // 每页数据条数
 				fatherName: "",
+				fatherCate: null,
 				user_id: uniCloud.getCurrentUserInfo().uid,
 				sticky: true,
 				where: {}
 			};
 		},
+		computed: {
+			sortTabs() {
+				return [{
+					name: this.$t('productList.comprehensiveSort'),
+				}, {
+					name: this.$t('productList.salesFirst'),
+				}, {
+					name: this.$t('productList.price'),
+					badge: {
+						isDot: true,
+						value: this.priceSortBadgeValue,
+					}
+				}];
+			}
+		},
 		onShareTimeline(res) {
 			return {
-				title: "山前食养商城,优惠多多！",
+				title: this.$t('home.shareTitle'),
 				imageUrl: '../../static/logo.png',
 			}
 		},
 		onShareAppMessage(res) {
 			return {
-				title: "山前食养商城,优惠多多！"
+				title: this.$t('home.shareTitle')
 			}
 		},
 		onLoad(e) {
@@ -176,6 +182,7 @@
 							newData.forEach((items) => {
 								if (items._id == item.parent_id) {
 									this.fatherName = items.name
+									this.fatherCate = items
 								}
 								if (items.parent_id == item
 									.parent_id) {
@@ -190,13 +197,13 @@
 			loadData(num) {
 				if (num) {
 					uni.showToast({
-						title: '加载中',
+						title: this.$t('home.loading'),
 						icon: 'loading',
 						duration: 20000
 					});
 					let e = num.index;
 					if (e != 2) {
-						this.list[2].badge.value = 0;
+						this.priceSortBadgeValue = 0;
 					}
 					if (e == 0) {
 						this.orderBy = "add_date asc";
@@ -207,7 +214,7 @@
 					} else if (e == 2) {
 						this.currentPage = 1;
 						this.orderBy = this.orderBy === "crossed_price asc" ? "crossed_price desc" : "crossed_price asc";
-						this.list[e].badge.value = this.list[e].badge.value === 1 ? 2 : 1;
+						this.priceSortBadgeValue = this.priceSortBadgeValue === 1 ? 2 : 1;
 					}
 				}
 				const skip = (this.currentPage - 1) * this.pageSize;
@@ -268,7 +275,7 @@
 						url: `/pages/product/product?id=${id}`
 					})
 					uni.showToast({
-						title: "浏览记录未成功更新",
+						title: this.$t('home.recordUpdateFailed'),
 						icon: "none",
 						duration: 600
 					});
@@ -276,6 +283,14 @@
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
 				})
+			},
+			getCurrentLang() {
+				return uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
 			}
 		}
 	}

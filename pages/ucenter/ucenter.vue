@@ -10,11 +10,11 @@
 				<view class="uc-name-row">
 					<text class="uc-name">
 						<!-- #ifdef MP-WEIXIN -->
-						<block v-if="hasLogin">{{userInfo.nickname || userInfo.username || userInfo.mobile || '尊敬的顾客'}}</block>
-						<block v-else>用户登录</block>
+						<block v-if="hasLogin">{{ userDisplayName }}</block>
+						<block v-else>{{ $t('ucenter.login') }}</block>
 						<!-- #endif -->
 						<!-- #ifndef MP-WEIXIN -->
-						{{hasLogin ? (userInfo.nickname || userInfo.username || userInfo.mobile || '尊敬的顾客') : '用户登录'}}
+						{{ hasLogin ? userDisplayName : $t('ucenter.login') }}
 						<!-- #endif -->
 					</text>
 					<image class="uc-edit-icon" src="/static/icons/edit.svg" mode="aspectFit"/>
@@ -27,9 +27,9 @@
 			<!-- ── 我的订单 ── -->
 			<view class="uc-card">
 				<view class="uc-card-header" @click="navTo('/pages/order/order?state=99')">
-					<text class="text-section-title">我的订单</text>
+					<text class="text-section-title">{{ $t('ucenter.myOrders') }}</text>
 					<view class="uc-header-right">
-						<text class="text-meta">全部</text>
+						<text class="text-meta">{{ $t('ucenter.all') }}</text>
 						<image class="uc-chevron" src="/static/icons/chevron.svg" mode="aspectFit"/>
 					</view>
 				</view>
@@ -39,28 +39,28 @@
 							<uv-badge type="error" max="99" :value="items[0]"/>
 						</view>
 						<image class="ds-icon-lg" src="/static/icons/payment.svg" mode="aspectFit"/>
-						<text class="uc-order-label">待支付</text>
+						<text class="uc-order-label">{{ $t('ucenter.pendingPay') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=1')" hover-class="uc-hover" :hover-stay-time="50">
 						<view class="uc-badge-wrap">
 							<uv-badge type="error" max="99" :value="items[1]"/>
 						</view>
 						<image class="ds-icon-lg" src="/static/icons/delivery.svg" mode="aspectFit"/>
-						<text class="uc-order-label">待收货</text>
+						<text class="uc-order-label">{{ $t('ucenter.pendingReceive') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=5')" hover-class="uc-hover" :hover-stay-time="50">
 						<view class="uc-badge-wrap">
 							<uv-badge type="error" max="99" :value="items[2]"/>
 						</view>
 						<image class="ds-icon-lg" src="/static/icons/review.svg" mode="aspectFit"/>
-						<text class="uc-order-label">待评价</text>
+						<text class="uc-order-label">{{ $t('ucenter.pendingReview') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=6')" hover-class="uc-hover" :hover-stay-time="50">
 						<view class="uc-badge-wrap">
 							<uv-badge type="error" max="99" :value="items[3]"/>
 						</view>
 						<image class="ds-icon-lg" src="/static/icons/refund.svg" mode="aspectFit"/>
-						<text class="uc-order-label">退款售后</text>
+						<text class="uc-order-label">{{ $t('ucenter.refund') }}</text>
 					</view>
 				</view>
 			</view>
@@ -69,7 +69,7 @@
 			<view class="uc-card" v-if="recordList.length > 0">
 				<view class="uc-history-header">
 					<image class="ds-icon-sm" src="/static/icons/history.svg" mode="aspectFit"/>
-					<text class="uc-history-title">浏览历史</text>
+					<text class="uc-history-title">{{ $t('ucenter.browsingHistory') }}</text>
 				</view>
 				<scroll-view class="uc-history-scroll" scroll-x>
 					<image
@@ -95,18 +95,18 @@
 
 					<view class="uc-grid-item" @tap="jumpToUrl" data-url="/pages/coupon/coupon" hover-class="uc-hover" :hover-stay-time="50">
 						<image class="ds-icon-md" src="/static/icons/coupon.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">领券中心</text>
+						<text class="uc-grid-label">{{ $t('ucenter.couponCenter') }}</text>
 					</view>
 
 					<view class="uc-grid-item" @tap="jumpToUrl" data-url="/pages/address/list" hover-class="uc-hover" :hover-stay-time="50">
 						<image class="ds-icon-md" src="/static/icons/address.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">地址管理</text>
+						<text class="uc-grid-label">{{ $t('ucenter.addressManage') }}</text>
 					</view>
 
 					<!-- #ifndef APP -->
 					<view class="uc-grid-item" @tap="jumpToUrl" data-url="/jlg-use/distribution/list" hover-class="uc-hover" :hover-stay-time="50">
 						<image class="ds-icon-md" src="/static/icons/distribution.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">分销中心</text>
+						<text class="uc-grid-label">{{ $t('ucenter.distributionCenter') }}</text>
 					</view>
 					<!-- #endif -->
 
@@ -114,7 +114,7 @@
 				<view class="uc-grid-item" hover-class="uc-hover" :hover-stay-time="50">
 					<button class="uc-btn-reset" open-type="contact" @contact="contactClick">
 						<image class="ds-icon-md" src="/static/icons/service.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">联系客服</text>
+						<text class="uc-grid-label">{{ $t('ucenter.contactService') }}</text>
 					</button>
 				</view>
 				<!-- #endif -->
@@ -122,29 +122,29 @@
 				<view class="uc-grid-item" hover-class="uc-hover" :hover-stay-time="50">
 					<button class="uc-btn-reset" @click="gzhClick">
 						<image class="ds-icon-md" src="/static/icons/service.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">联系客服</text>
+						<text class="uc-grid-label">{{ $t('ucenter.contactService') }}</text>
 					</button>
 				</view>
 				<!-- #endif -->
 
 					<view class="uc-grid-item" @tap="jumpToUrl" data-url="/pages/collect/collect" hover-class="uc-hover" :hover-stay-time="50">
 						<image class="ds-icon-md" src="/static/icons/favorites.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">我的收藏</text>
+						<text class="uc-grid-label">{{ $t('ucenter.myFavorites') }}</text>
 					</view>
 
 					<view class="uc-grid-item" @tap="jumpToUrl" data-url="/jlg-use/problem/problem" hover-class="uc-hover" :hover-stay-time="50">
 						<image class="ds-icon-md" src="/static/icons/faq.svg" mode="aspectFit"/>
-						<text class="uc-grid-label">常见问题</text>
+						<text class="uc-grid-label">{{ $t('ucenter.faq') }}</text>
 					</view>
 
 				<view class="uc-grid-item" @tap="jumpToUrl" data-url="/pages/ucenter/settings/settings" hover-class="uc-hover" :hover-stay-time="50">
 					<image class="ds-icon-md" src="/static/icons/settings.svg" mode="aspectFit"/>
-					<text class="uc-grid-label">设置</text>
+					<text class="uc-grid-label">{{ $t('ucenter.settings') }}</text>
 				</view>
 
 				<view class="uc-grid-item" @tap="jumpToUrl" data-url="/pages/ucenter/about/about" hover-class="uc-hover" :hover-stay-time="50">
 					<image class="ds-icon-md" src="/static/icons/about.svg" mode="aspectFit"/>
-					<text class="uc-grid-label">关于我们</text>
+					<text class="uc-grid-label">{{ $t('ucenter.aboutUs') }}</text>
 				</view>
 
 			</view>
@@ -177,7 +177,11 @@
 		},
 		computed: {
 			userInfo() { return store.userInfo },
-			hasLogin()  { return store.hasLogin }
+			hasLogin()  { return store.hasLogin },
+			userDisplayName() {
+				const userInfo = this.userInfo || {};
+				return userInfo.nickname || userInfo.username || userInfo.mobile || this.$t('ucenter.guestName');
+			}
 		},
 		methods: {
 			loadOrderBadges() {
@@ -229,8 +233,8 @@
 			},
 			gzhClick() {
 				uni.showModal({
-					title: '跳转提示',
-					content: '即将跳转至微信公众号，点击头像关注后输入您的问题！',
+					title: this.$t('ucenter.jumpTitle'),
+					content: this.$t('ucenter.jumpContent'),
 					success(res) {
 						if (res.confirm) {
 							window.location.href = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzkwNzUyMjMxOQ==#wechat_redirect';

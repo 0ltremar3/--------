@@ -1,16 +1,16 @@
 <template>
 	<view class="content">
 		<view style="background: #fff;padding:10rpx 20rpx;">
-			<uv-search placeholder="请输入商品名称搜索" shape="round" :showAction="false" @search="searchClick"
+			<uv-search :placeholder="$t('productList.searchPlaceholder')" shape="round" :showAction="false" @search="searchClick"
 				@clear="clearClick"></uv-search>
 		</view>
 		<uv-sticky bgColor="#fff" :custom-nav-height="0">
-			<uv-tabs :list="list" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
+			<uv-tabs :list="sortTabs" lineColor="#61A189" @click="loadData" :activeStyle="{color: '#61A189'}"
 				:scrollable="false">
 			</uv-tabs>
 		</uv-sticky>
 		<view v-if="name.length > 0" class="coupon-name">{{name}}</view>
-		<uv-empty v-if="evengoodsList.length == 0" mode="data" icon="/static/temp/shwk.png" text="暂无商品"></uv-empty>
+		<uv-empty v-if="evengoodsList.length == 0" mode="data" icon="/static/temp/shwk.png" :text="$t('productList.emptyGoods')"></uv-empty>
 		<view v-else class="allLike mb-30">
 			<uv-waterfall class="dis-flex flex-x-around" ref="waterfall" left-gap="0" right-gap="0" column-gap="8"
 				@changeList="changeList">
@@ -26,7 +26,7 @@
 							</view>
 							<view class="waterfall-item__ft">
 								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
+									{{ displayLangText(item, 'name') }}
 								</view>
 								<view
 									style="display: flex !important; flex-direction: row ; align-items: baseline;justify-content: space-between;"
@@ -34,7 +34,7 @@
 									<jlg-minPrice
 										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
 										maxSize="32rpx" min-size="26rpx"></jlg-minPrice>
-									<text style="float: right;" class="mr-10">已售 {{item.total_sell_count}}</text>
+									<text style="float: right;" class="mr-10">{{ $t('productList.sold') }} {{item.total_sell_count}}</text>
 								</view>
 							</view>
 						</view>
@@ -52,7 +52,7 @@
 							</view>
 							<view class="waterfall-item__ft">
 								<view class="mb-10 f-28 ellipsis">
-									{{item.name}}
+									{{ displayLangText(item, 'name') }}
 								</view>
 								<view
 									style="display: flex !important; flex-direction: row ; align-items: baseline;justify-content: space-between;"
@@ -60,7 +60,7 @@
 									<jlg-minPrice
 										:min-price="item.suks.reduce((min, suk) => parseInt(suk.price) < parseInt(min.price) ? suk : min).price"
 										maxSize="32rpx" min-size="26rpx"></jlg-minPrice>
-									<text style="float: right;" class="mr-10">已售 {{item.total_sell_count}}</text>
+									<text style="float: right;" class="mr-10">{{ $t('productList.sold') }} {{item.total_sell_count}}</text>
 								</view>
 							</view>
 						</view>
@@ -90,24 +90,29 @@
 				user_id: uniCloud.getCurrentUserInfo().uid,
 				where: '',
 				sticky: true,
-				list: [{
-					name: '综合排序',
-				}, {
-					name: '销量优先',
-				}, {
-					name: '价格',
-					badge: {
-						isDot: true,
-						value: 0,
-					}
-				}],
+				priceSortBadgeValue: 0,
 				state: '',
 			};
+		},
+		computed: {
+			sortTabs() {
+				return [{
+					name: this.$t('productList.comprehensiveSort'),
+				}, {
+					name: this.$t('productList.salesFirst'),
+				}, {
+					name: this.$t('productList.price'),
+					badge: {
+						isDot: true,
+						value: this.priceSortBadgeValue,
+					}
+				}];
+			}
 		},
 		onLoad(e) {
 			//根据上页传来的数据定义搜索条件
 			if (e.search) {
-				this.state = '搜索列表';
+				this.state = 'search';
 				let keyword = e.search;
 				let regExp = new RegExp(keyword);
 				this.where = {
@@ -115,17 +120,17 @@
 					"name": regExp
 				}
 				uni.setNavigationBarTitle({
-					title: "搜索列表"
+					title: this.$t('productList.searchTitle')
 				})
 			} else if (e.goodsArr) {
 				this.name = e.name;
 				if (e.goodsArr == "null") {
-					this.state = '优惠列表1';
+					this.state = 'couponAll';
 					this.where = {
 						"is_on_sale": true
 					}
 				} else {
-					this.state = '优惠列表2';
+					this.state = 'couponGoods';
 					this.goodsArr = JSON.parse(e.goodsArr);
 					this.where = {
 						"is_on_sale": true,
@@ -133,22 +138,22 @@
 					}
 				}
 		} else if (e.hot) {
-			this.state = '商城热销';
+			this.state = 'hot';
 			this.where = {
 				"is_on_sale": true,
 				"is_hot": true
 			}
 			uni.setNavigationBarTitle({
-				title: "商城热销"
+				title: this.$t('productList.hotTitle')
 			})
 		} else {
 			// 无关键词进入（如点击搜索图标），展示全部在售商品
-			this.state = '搜索列表';
+			this.state = 'search';
 			this.where = {
 				"is_on_sale": true
 			}
 			uni.setNavigationBarTitle({
-				title: "全部商品"
+				title: this.$t('productList.allGoodsTitle')
 			})
 		}
 
@@ -164,18 +169,18 @@
 		methods: {
 			searchClick(e) {
 				const regExp = new RegExp(e, 'i');
-				if (this.state == "搜索列表" || this.state == "优惠列表1") {
+				if (this.state == "search" || this.state == "couponAll") {
 					this.where = {
 						"is_on_sale": true,
 						"name": regExp
 					}
-				} else if (this.state == "优惠列表2") {
+				} else if (this.state == "couponGoods") {
 					this.where = {
 						"is_on_sale": true,
 						"_id": db.command.in(this.goodsArr),
 						"name": regExp
 					}
-				} else if (this.state == "商城热销") {
+				} else if (this.state == "hot") {
 					this.where = {
 						"is_on_sale": true,
 						"is_hot": true,
@@ -186,16 +191,16 @@
 				this.loadData(99);
 			},
 			clearClick() {
-				if (this.state == "搜索列表" || this.state == "优惠列表1") {
+				if (this.state == "search" || this.state == "couponAll") {
 					this.where = {
 						"is_on_sale": true
 					}
-				} else if (this.state == "优惠列表2") {
+				} else if (this.state == "couponGoods") {
 					this.where = {
 						"is_on_sale": true,
 						"_id": db.command.in(this.goodsArr)
 					}
-				} else if (this.state == "商城热销") {
+				} else if (this.state == "hot") {
 					this.where = {
 						"is_on_sale": true,
 						"is_hot": true
@@ -208,13 +213,13 @@
 			loadData(num) {
 				if (num) {
 					uni.showToast({
-						title: '加载中',
+						title: this.$t('home.loading'),
 						icon: 'loading',
 						duration: 20000
 					});
 					let e = num.index;
 					if (e != 2) {
-						this.list[2].badge.value = 0;
+						this.priceSortBadgeValue = 0;
 					}
 					if (e == 0) {
 						this.orderBy = "add_date asc";
@@ -225,7 +230,7 @@
 					} else if (e == 2) {
 						this.currentPage = 1;
 						this.orderBy = this.orderBy === "crossed_price asc" ? "crossed_price desc" : "crossed_price asc";
-						this.list[e].badge.value = this.list[e].badge.value === 1 ? 2 : 1;
+						this.priceSortBadgeValue = this.priceSortBadgeValue === 1 ? 2 : 1;
 					}
 				}
 				const skip = (this.currentPage - 1) * this.pageSize;
@@ -265,7 +270,7 @@
 						url: `/pages/product/product?id=${id}`
 					})
 					uni.showToast({
-						title: "浏览记录未成功更新",
+						title: this.$t('home.recordUpdateFailed'),
 						icon: "none",
 						duration: 600
 					});
@@ -273,6 +278,14 @@
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
 				})
+			},
+			getCurrentLang() {
+				return uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+			},
+			displayLangText(item, key) {
+				if (!item) return '';
+				const langKey = this.getCurrentLang() === 'en' ? `${key}_en` : key;
+				return item[langKey] || item[key] || '';
 			}
 		}
 	}

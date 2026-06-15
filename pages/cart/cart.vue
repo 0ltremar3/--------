@@ -3,16 +3,16 @@
 
 		<!-- 顶部导航 -->
 		<view class="cart-nav">
-			<text class="cart-nav__title">山前食养</text>
+			<text class="cart-nav__title">{{ $t('cart.brandName') }}</text>
 			<text class="cart-nav__action" :class="manage ? 'cart-nav__action--active' : ''" @click="manageClick">
-				{{ manage ? '完成' : '管理' }}
+				{{ manage ? $t('cart.done') : $t('cart.manage') }}
 			</text>
 		</view>
 
 		<!-- 空状态 -->
 		<view v-if="empty" class="cart-empty">
-			<uv-empty marginTop="150" mode="data" icon="/static/temp/shwk.png" text="购物袋为空">
-				<view @click="naTov" class="cart-empty__btn">去逛逛</view>
+			<uv-empty marginTop="150" mode="data" icon="/static/temp/shwk.png" :text="$t('cart.empty')">
+				<view @click="naTov" class="cart-empty__btn">{{ $t('cart.goShopping') }}</view>
 			</uv-empty>
 		</view>
 
@@ -26,7 +26,7 @@
 						<view class="cart-item__img-wrap">
 							<image class="cart-item__img" @click="navigator(item.id[0], item.goods_seckill)"
 								:src="item.image[0]" mode="aspectFill" style="opacity: 0.4;"></image>
-							<view class="cart-item__expired-badge">已失效</view>
+							<view class="cart-item__expired-badge">{{ $t('cart.expired') }}</view>
 						</view>
 						<view class="cart-item__body">
 							<text class="cart-item__name cart-item__name--expired"
@@ -77,7 +77,7 @@
 							</scroll-view>
 							<view v-if="item.goods_seckill" class="cart-item__seckill-tip"
 								@click="navigator(item.id[0], item.goods_seckill)">
-								<text>秒杀结束后商品将被删除</text>
+								<text>{{ $t('cart.seckillTip') }}</text>
 							</view>
 							<view class="cart-item__bottom">
 								<jlg-minPrice @click="navigator(item.id[0], item.goods_seckill)"
@@ -99,23 +99,23 @@
 						<view class="cart-footer__all-check">
 							<view class="cart-checkbox iconfont icon-uniE00d"
 								:class="{ checked: allChecked }" @click="check('all')"></view>
-							<text class="cart-footer__all-label">全选</text>
+							<text class="cart-footer__all-label">{{ $t('cart.selectAll') }}</text>
 						</view>
 						<view v-if="!manage" class="cart-footer__total">
 							<view class="cart-footer__total-row">
-								<text class="cart-footer__total-label">合计：</text>
+								<text class="cart-footer__total-label">{{ $t('cart.total') }}</text>
 								<jlg-minPrice :min-price="total" maxSize="32rpx" minSize="24rpx"></jlg-minPrice>
 							</view>
-							<text class="cart-footer__discount">已优惠 {{ crossed_total / 100 }} 元</text>
+							<text class="cart-footer__discount">{{ $t('cart.discountPrefix') }} {{ crossed_total / 100 }} {{ $t('cart.yuan') }}</text>
 						</view>
 					</view>
 					<button v-if="!manage"
 					class="no-border cart-footer__btn"
 					:class="{ 'cart-footer__btn--disabled': total <= 0 }"
 					:disabled="total <= 0"
-					@click="createOrder">结算商品</button>
+					@click="createOrder">{{ $t('cart.checkout') }}</button>
 					<button v-else class="no-border cart-footer__btn cart-footer__btn--ghost"
-						@click="deleteCartItem()">移除商品</button>
+						@click="deleteCartItem()">{{ $t('cart.remove') }}</button>
 				</view>
 			</view>
 		</view>
@@ -153,7 +153,7 @@
 			let uid = uniCloud.getCurrentUserInfo().uid;
 			if (xtime > ttime || uid == null) {
 				uni.showToast({
-					title: "未登录或登录状态过期",
+					title: this.$t('cart.loginExpired'),
 					icon: "none",
 					duration: 1000
 				})
@@ -172,7 +172,7 @@
 			//请求数据
 			loadData() {
 				uni.showLoading({
-					title: "加载中"
+					title: this.$t('home.loading')
 				})
 				this.$func.myFunction('jlg-cart', {
 						functionName: 'cartdata',
@@ -210,7 +210,7 @@
 			//删除
 			async deleteCartItem() {
 				uni.showLoading({
-					title: "删除中..."
+					title: this.$t('cart.deleting')
 				})
 				let that = this;
 				let a = 0;
@@ -223,7 +223,7 @@
 				if (a > 0) {
 					uni.hideLoading()
 					uni.showToast({
-						title: "删除成功",
+						title: this.$t('cart.deleteSuccess'),
 						icon: "none",
 						duration: 1600
 					});
@@ -233,7 +233,7 @@
 				} else {
 					uni.hideLoading()
 					uni.showToast({
-						title: "请选择删除的商品",
+						title: this.$t('cart.selectDeleteGoods'),
 						icon: "none",
 						duration: 1600
 					});
@@ -242,14 +242,14 @@
 			//清空
 			clearCart() {
 				uni.showModal({
-					content: '清空购物车？',
+					content: this.$t('cart.clearConfirm'),
 					success: (e) => {
 						if (e.confirm) {
 							db.collection("jlg-goods-cart").where({
 								"user_id": this.user_id
 							}).remove().then(() => {
 								uni.showToast({
-									title: "删除成功",
+									title: this.$t('cart.deleteSuccess'),
 									icon: "none",
 									duration: 1600
 								})
@@ -301,7 +301,7 @@
 						url: `/pages/product/product?id=${id}&&control=${seckill}`
 					})
 					uni.showToast({
-						title: "浏览记录未成功更新",
+						title: this.$t('home.recordUpdateFailed'),
 						icon: "none",
 						duration: 600
 					});
@@ -330,7 +330,7 @@
 					})
 				} else {
 					uni.showToast({
-						title: "未选中任何商品",
+						title: this.$t('cart.noSelectedGoods'),
 						icon: "none",
 						duration: 1600
 					})
