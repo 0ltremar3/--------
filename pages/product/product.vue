@@ -1,29 +1,16 @@
 <template>
 	<page-meta :page-style="'overflow:'+(show?'hidden':'visible')"></page-meta>
 	<view class="container">
+		<view v-if="entryError" style="padding:80rpx 30rpx">{{ entryError }}<button @click="goBack">返回</button></view>
 		<view v-if="goodsdata.name">
+			<qrcode-poster style="position:absolute;z-index:9999" ref="poster" :title="displayLangText(goodsdata, 'name')"
+				:goods-id="goods_id" :identity="user_id || ''" :header-img="posterImage" :price="minPrice / 100"
+				:username="usname" :origprice="Number(goodsdata.crossed_price || 0) / 100" @showClick="showClick" />
 			<!-- #ifdef MP-WEIXIN -->
-			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="displayLangText(goodsdata, 'name')"
-				:headerImg="goodsdata.goods_banner_imgs[0].fileType == 'image'?goodsdata.goods_banner_imgs[0].url:goodsdata.goods_banner_imgs[1].url"
-				:price="minPrice / 100" :username="usname" :avcimgs="usimg" :origprice="goodsdata.crossed_price/100"
-				@showClick="showClick"></qrcode-poster>
-
-			<uqrcode :hide="true" ref="uqrcode" canvas-id="qrcode"
-				:value="`http://test.slwjd.com?id=${goods_id}&fxsid=${user_id}`" :options="{ margin: 10 }"></uqrcode>
 			<view class="flex-left navbar" :style="{height:(navHeight + 8) + 'px'}">
 				<view class="navbar-title" @click="goBack" :style="{top:navTop + 'px'}">
 					<uni-icons type="back" size="27" color="#242424"></uni-icons>
 				</view>
-			</view>
-			<!-- #endif -->
-			<!-- #ifndef MP-WEIXIN -->
-			<qrcode-poster style="position: absolute;z-index: 9999999999;" ref="poster" :title="displayLangText(goodsdata, 'name')"
-				:price="minPrice / 100" :username="usname" :origprice="goodsdata.crossed_price/100"
-				@showClick="showClick"></qrcode-poster>
-			<view style="position: fixed;left: 900000rpx;">
-				<uqrcode :hide="true" ref="uqrcode" canvas-id="qrcode"
-					:value="`http://test.slwjd.com/pages/product/product?id=${goods_id}&fxsid=${user_id}`"
-					:options="{ margin: 10 }"></uqrcode>
 			</view>
 			<!-- #endif -->
 			<!-- 二维码组件 -->
@@ -80,9 +67,9 @@
 					<view class="flex-dir-row flex-y-center">
 						<view class="product-price-pair dis-flex">
 							<jlg-minPrice :min-price="minPrice" maxSize="48rpx" minSize="32rpx" :Weight="500"></jlg-minPrice>
-							<text class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
+							<text v-if="goodsdata.crossed_price > 0" class="price-original ml-10">{{(goodsdata.crossed_price/100).toFixed(0)}}</text>
 						</view>
-							<text class="deal-tips ml-10">{{ discountText }}</text>
+							<text v-if="discountText" class="deal-tips ml-10">{{ discountText }}</text>
 						</view>
 						<text v-if="goodsdata.total_sell_count < 9999" class="text-meta w-nowrap">
 							{{ $t('productDetail.salesPrefix') }} {{goodsdata.total_sell_count}}</text>
@@ -122,24 +109,23 @@
 						<text class="iconfont icon-uniE003"></text>
 					</view>
 				</view>
-				<view class="flex-dir-row mt-25 flex-y-center pb-25 b-b w-100">
-						<text class="list-title-left col-9 f-28 w-nowrap" style="width: 96rpx;">{{ $t('productDetail.freight') }}</text>
-					<view class="flex-x-between flex-y-center flex-dir-row flex-1">
-						<view class="flex-dir-row flex-y-center">
-							<view class="bz-list con f-27">
-									<text>{{ freightText }}</text>
-							</view>
-						</view>
+				<view class="delivery-row" role="button" @click="$refs.deliveryPicker.open()"><text>{{$t('shipping.to')}}</text><text class="delivery-region-name">{{delivery ? delivery.region_name : $t('shipping.choose')}}</text><text>›</text></view>
+				<view class="freight-row" :class="{ 'freight-row--border': visibleServices.length > 0 }" role="button" :aria-label="$t('productDetail.freight') + '，' + freightText + '，' + freightHint" :aria-disabled="freightLoading" tabindex="0" @click="openFreightInfo" @keydown.enter.prevent="openFreightInfo" @keydown.space.prevent="openFreightInfo">
+					<text class="freight-label">{{$t('productDetail.freight')}}</text>
+					<view class="freight-content">
+						<text class="freight-price">{{freightText}}</text>
+						<text v-if="freightHint" class="freight-hint">{{freightHint}}</text>
 					</view>
+					<text v-if="!freightLoading" class="freight-arrow" aria-hidden="true">›</text>
 				</view>
-				<view class="flex-dir-row mt-25 flex-y-center  ">
+				<view v-if="visibleServices.length" class="flex-dir-row mt-25 flex-y-center">
 						<text class="list-title-left col-9 f-28 w-nowrap">{{ $t('productDetail.service') }}</text>
 					<view class="flex-x-between flex-y-center flex-dir-row w-100">
 						<view class="flex-dir-row flex-y-center  flex-1">
-							<view class="bz-list con f-27" v-for="(item,index) in goodsdata.goods_services"
+							<view class="bz-list con f-27" v-for="(item,index) in visibleServices"
 								:key="index">
-									<text>{{ displayGoodsService(item, index) }}</text>
-								<text style="margin: 0rpx 8rpx;" v-if="servNum-1 != index">·</text>
+									<text>{{ item }}</text>
+								<text style="margin: 0rpx 8rpx;" v-if="index < visibleServices.length - 1">·</text>
 							</view>
 						</view>
 					</view>
@@ -183,8 +169,8 @@
 			</uni-popup>
 			<!-- 底部操作菜单 -->
 			<view class="footer">
-				<view class="flex-dir-row flex-y-center flex-x-between" style="width: 95%;">
-				<view class="flex-dir-row flex-y-center">
+				<view class="footer-content">
+				<view class="footer-shortcuts">
 					<navigator url="/pages/index/index" open-type="switchTab" class="footer-btn">
 						<image src="@/static/tabbar/home.svg" style="width: 40rpx; height: 40rpx; display: block; margin: 0 auto;" mode="aspectFit"></image>
 						<text>{{ $t('productDetail.home') }}</text>
@@ -198,10 +184,10 @@
 						<text>{{ $t('productDetail.favorite') }}</text>
 					</view>
 				</view>
-					<view class="flex-dir-row flex-y-center">
+					<view class="footer-actions">
 							<button v-if="!control" class="footer-left" @click="openCartSpec">{{ $t('productDetail.addToBag') }}</button>
 
-							<button :class="control?'footer-rights':'footer-right'" @click="toggleSpec(0)">{{ $t('productDetail.buyNow') }}</button>
+							<button :class="control?'footer-rights':'footer-right'" :disabled="freightLoading || !!(freightPreview && !freightPreview.deliverable)" @click="toggleSpec(0)">{{ $t('productDetail.buyNow') }}</button>
 					</view>
 				</view>
 			</view>
@@ -256,10 +242,35 @@
 				</uv-popup>
 			</view>
 		</view>
+		<uni-popup ref="freightInfo" type="bottom" background-color="#fff" border-radius="16px 16px 0 0">
+			<view class="freight-sheet">
+				<view class="freight-sheet-heading"><text class="freight-sheet-title">{{$t('shipping.rulesTitle')}}</text><button class="freight-close" size="mini" @click="$refs.freightInfo.close()">{{$t('shipping.close')}}</button></view>
+				<scroll-view scroll-y class="freight-sheet-body">
+					<view class="freight-rule"><text class="freight-rule-label">{{$t('shipping.destination')}}</text><text>{{delivery ? delivery.region_name : $t('shipping.choose')}}</text><button class="freight-change-address" size="mini" @click="changeFreightAddress">{{$t('shipping.changeAddress')}}</button></view>
+					<template v-if="freightPreview && freightPreview.deliverable">
+						<view v-if="freightPreview.threshold" class="freight-rule">
+							<text class="freight-rule-label">{{$t('shipping.freeCondition')}}</text>
+							<text>{{$t('shipping.threshold', { amount: formatFreightAmount(freightPreview.threshold) })}}</text>
+							<text class="freight-rule-note">{{$t('shipping.currentRegion')}}</text>
+						</view>
+						<view v-if="freightPreview.threshold" class="freight-rule"><text class="freight-rule-label">{{$t('shipping.eligibleGoods')}}</text><text>{{$t('shipping.eligibleGoodsNote')}}</text></view>
+						<view v-if="freightPreview.threshold" class="freight-rule"><text class="freight-rule-label">{{$t('shipping.amountBasis')}}</text><text>{{$t('shipping.amountBasisNote')}}</text></view>
+						<view v-else class="freight-rule"><text class="freight-rule-label">{{$t('productDetail.freight')}}</text><text>{{freightPreview.base_fee === 0 ? $t('shipping.regionFree') : $t('shipping.regionFixed')}}</text></view>
+						<text class="freight-rule-note">{{$t('shipping.checkoutNote')}}</text>
+					</template>
+					<text v-else class="freight-rule-note">{{freightText}}</text>
+				</scroll-view>
+				<button v-if="freightPreview && !freightPreview.exact" class="freight-confirm" @click="chooseFreightSpecs">{{$t('shipping.chooseSpecs')}}</button>
+				<button v-else class="freight-confirm" @click="$refs.freightInfo.close()">{{$t('shipping.gotIt')}}</button>
+			</view>
+		</uni-popup>
+		<jlg-delivery-picker ref="deliveryPicker" @change="chooseDelivery" />
 	</view>
 </template>
 
 <script>
+	import { mainImage, resolveProductEntry, bindPendingReferral } from '@/common/product-share.js';
+	import { getDelivery, defaultDelivery, checkoutApi, shippingText, shippingHint, checkoutError } from '@/common/delivery.js';
 	const db = uniCloud.database();
 	import QrcodePoster from '@/components/zhangyu-qrcode-poster/zhangyu-qrcode-poster.vue';
 	export default {
@@ -269,6 +280,8 @@
 		data() {
 			return {
 				goodsdata: [],
+				entryError: '',
+				delivery: null, freightPreview: null, freightLoading: false, freightError: '', freightRequest: 0, selectedSkuId: '',
 				minPrice: null,
 				specSelected: [],
 				numberl: 1,
@@ -279,7 +292,6 @@
 				createOrder: false,
 				couponList: [],
 				user_id: uniCloud.getCurrentUserInfo().uid,
-				servNum: null,
 				navTop: null,
 				navHeight: null,
 				borderColor: '',
@@ -305,7 +317,6 @@
 			}
 		},
 		onShareAppMessage(res) {
-			this.show = true;
 			if (res.from) {
 				return {
 					title: this.displayLangText(this.goodsdata, 'name'),
@@ -324,26 +335,23 @@
 				imageUrl: '../../static/logo.png',
 			}
 		},
+		onShow() { this.refreshShareIdentity(); this.delivery = getDelivery(); this.initDelivery(); },
+		onUnload() { this.freightRequest++; this._entryClosed = true; if (this.$refs.poster) this.$refs.poster.invalidate(); },
 		onLoad(e) {
 			this.usname = this.$t('productDetail.anonymousUser');
-			if (e.q) {
-				const q = decodeURIComponent(e.q) // 获取到二维码原始链接内容
-				const goodsIdPattern = /id=([^&]+)/;
-				const userIdPattern = /fxsid=([^&]+)/;
-				const goodsIdMatch = goodsIdPattern.exec(q);
-				const userIdMatch = userIdPattern.exec(q);
-				let goods_id = goodsIdMatch ? goodsIdMatch[1] : null;
-				let user_id = userIdMatch ? userIdMatch[1] : null;
-				wx.setStorageSync('dicrID', String(user_id))
-				this.goodsList(goods_id);
-				this.goods_id = goods_id;
+			this._entryTask = resolveProductEntry(e).then(async ({ goodsId, sharerId }) => {
+				if (this._entryClosed) return;
+				this.goods_id = goodsId;
+				await this.goodsList(goodsId);
+				if (this._entryClosed) return;
+				if (sharerId) uni.setStorageSync('dicrID', sharerId);
+				bindPendingReferral();
 				this.receiveData();
 				this.toFavorite();
-				this.evaluateData(goods_id);
-			}
-			if (e.fxsid) {
-				wx.setStorageSync('dicrID', e.fxsid)
-			}
+				this.evaluateData(goodsId);
+			}).catch(error => {
+				if (!this._entryClosed) this.entryError = error.message || '商品码解析失败，请重试';
+			});
 			if (e.control == "true") {
 				this.control = true;
 				this.hours = Number(e.hours)
@@ -352,13 +360,7 @@
 			} else {
 				this.control = false;
 			}
-			if (e.id) {
-				this.goodsList(e.id);
-				this.goods_id = e.id;
-				this.receiveData();
-				this.toFavorite();
-				this.evaluateData(e.id);
-			}
+			// #ifdef MP-WEIXIN
 			//获取搜索栏高度
 			let menuButtonObject = wx.getMenuButtonBoundingClientRect();
 			wx.getSystemInfo({
@@ -373,20 +375,22 @@
 					console.log(err);
 				}
 			})
-			//获取用户头像、昵称用于分享海报
-			if (this.user_id) {
-				db.collection("uni-id-users").doc(this.user_id).field("nickname,avatar_file").get().then((res) => {
-					const userInfo = res.result.data[0];
-					this.usname = userInfo?.nickname || this.$t('productDetail.anonymousUser');
-					this.usimg = userInfo?.avatar_file?.url ||
-						'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
-				})
-			}
+			// #endif
+
 		},
 		computed: {
+			posterImage() { return mainImage(this.goodsdata); },
+			visibleServices() {
+				const services = this.goodsdata.goods_services;
+				if (!Array.isArray(services)) return [];
+				return services.map((service, index) => this.displayGoodsService(service, index))
+					.filter(service => typeof service === 'string' && service.trim())
+					.map(service => service.trim());
+			},
 			discountText() {
 				const crossedPrice = Number(this.goodsdata.crossed_price || 0);
-				if (!crossedPrice || !this.minPrice) return '';
+				const price = Number(this.minPrice);
+				if (!Number.isFinite(crossedPrice) || !Number.isFinite(price) || price <= 0 || crossedPrice <= price) return '';
 				const discount = Math.round((this.minPrice / crossedPrice) * 100) / 10;
 				if (this.getCurrentLang() === 'en') {
 					const percentOff = Math.max(0, Math.round((1 - this.minPrice / crossedPrice) * 100));
@@ -395,14 +399,54 @@
 				return `${discount}${this.$t('productDetail.discountSuffix')}`;
 			},
 			freightText() {
-				if (!this.goodsdata.freight && this.goodsdata.freight_amount > 0) {
-					const amount = (this.goodsdata.freight_amount / 100).toFixed(2);
-					return this.getCurrentLang() === 'en' ? `CNY ${amount}` : `￥${amount}`;
-				}
-				return this.$t('productDetail.freeShipping');
+				if (this.freightLoading) return this.$t('shipping.loading');
+				if (this.freightError) return this.freightError;
+				if (!this.delivery) return this.$t('shipping.selectRegion');
+				if (!this.freightPreview) return this.$t('shipping.selectSku');
+				return shippingText(this.freightPreview, (key, args) => this.$t(key, args));
+			},
+			freightHint() {
+				if (!this.delivery || this.freightLoading || this.freightError) return '';
+				return shippingHint(this.freightPreview, (key, args) => this.$t(key, args));
 			}
 		},
 		methods: {
+			openFreightInfo() {
+				if (this.freightLoading) return;
+				if (!this.delivery || this.freightPreview && !this.freightPreview.deliverable) { this.$refs.deliveryPicker.open(); return; }
+				if (this.freightError) { this.refreshFreight(); return; }
+				if (!this.freightPreview) { this.toggleSpec(1); return; }
+				this.$refs.freightInfo.open();
+			},
+			changeFreightAddress() { this.$refs.freightInfo.close(); this.$refs.deliveryPicker.open(); },
+			chooseFreightSpecs() { this.$refs.freightInfo.close(); this.toggleSpec(1); },
+			formatFreightAmount(cents) { return (cents / 100).toFixed(2).replace(/\.00$/, ''); },
+			refreshShareIdentity() {
+				const uid = uniCloud.getCurrentUserInfo().uid || '';
+				if (this.user_id !== uid && this.$refs.poster) this.$refs.poster.invalidate();
+				this.user_id = uid;
+				this.usname = this.$t('productDetail.anonymousUser');
+				if (!uid) return;
+				db.collection('uni-id-users').doc(uid).field('nickname').get().then(res => {
+					if (this.user_id === uid) this.usname = (res.result.data[0] || {}).nickname || this.$t('productDetail.anonymousUser');
+				}).catch(() => {});
+			},
+			async initDelivery() { try { this.delivery = await defaultDelivery(); await this.refreshFreight(); } catch(e) { this.freightError = this.$t('shipping.addressInvalid'); } },
+			chooseDelivery(value) { this.delivery = value; this.refreshFreight(); },
+			async refreshFreight() {
+				const request = ++this.freightRequest;
+				this.freightPreview = null; this.freightError = ''; this.freightLoading = false;
+				if (!this.goodsdata._id || !this.delivery) return true;
+				this.freightLoading = true;
+				const uid = uniCloud.getCurrentUserInfo().uid || '';
+				try {
+					const result = await checkoutApi().previewFreight({ goods_id: this.goodsdata._id, sku_id: this.selectedSkuId || undefined, goods_suk: this.specSelected.length ? this.specSelected.map(v => v.name) : undefined, goods_num: this.numberl, goods_seckill: this.control, address_id: this.delivery.address_id || undefined, area_code: this.delivery.area_code });
+					if (request !== this.freightRequest || uid !== (uniCloud.getCurrentUserInfo().uid || '')) return false;
+					this.freightPreview = result;
+					return result.deliverable;
+				} catch(e) { if (request === this.freightRequest) this.freightError = checkoutError(e, key => this.$t(key)); return false; }
+				finally { if (request === this.freightRequest) this.freightLoading = false; }
+			},
 			changeNav(e) {
 				this.currentIndex = e.target.current
 			},
@@ -470,12 +514,16 @@
 				uni.showLoading({
 					title: this.$t('home.loading')
 				})
-				db.collection("opendb-mall-goods").doc(id).get().then((res) => {
-					this.goodsdata = res.result.data[0]
+				return db.collection("opendb-mall-goods").doc(id).get().then((res) => {
+					const goods = res.result.data[0];
+					if (!goods || goods.is_on_sale !== true) throw new Error('商品不存在或已下架');
+					if (this._entryClosed) return;
+					this.goodsdata = goods;
+					if (!Array.isArray(this.goodsdata.goods_banner_imgs)) this.goodsdata.goods_banner_imgs = [];
+					this.initDelivery()
 					if (this.goodsdata.videos != null && this.goodsdata.videos.length > 0) {
 						this.goodsdata.goods_banner_imgs.unshift(this.goodsdata.videos[0])
 					}
-					this.servNum = this.goodsdata.goods_services.length
 					if (this.control) {
 						this.minPrice = this.goodsdata.fs_suks.reduce(function(min, item) {
 							var price = parseInt(item.price);
@@ -487,8 +535,7 @@
 							return price < min ? price : min;
 						}, Infinity);
 					}
-					uni.hideLoading()
-				})
+				}).finally(() => uni.hideLoading());
 			},
 			//获取评价数据
 			evaluateData(id) {
@@ -535,9 +582,12 @@
 					});
 				}
 			},
-			handleSpecConfirm(payload) {
+			async handleSpecConfirm(payload) {
 				this.specSelected = payload.specSelected;
 				this.numberl = payload.numberl;
+				this.selectedSkuId = payload.sku_id || '';
+				const deliverable = await this.refreshFreight();
+				if (this.createOrder && !deliverable) { uni.showToast({ title: this.freightError || this.$t('shipping.blocked'), icon: 'none' }); return; }
 				if (this.createOrder && payload.suks_price) {
 					let suk = this.specSelected.map(item => item.name)
 					let goodsData = [{
@@ -545,12 +595,13 @@
 						num: this.numberl,
 						seckill: this.control,
 						suk: {
+							sku_id: payload.sku_id,
 							price: payload.suks_price,
 							specs: suk
 						}
 					}]
 					uni.navigateTo({
-						url: `/pages/order/createOrder?suk=${JSON.stringify(goodsData)}&&motion=${(this.goodsdata.crossed_price * this.numberl)-(payload.suks_price*this.numberl)}&control=${this.control}`
+						url: `/pages/order/createOrder?suk=${JSON.stringify(goodsData)}&&motion=${(this.goodsdata.crossed_price * this.numberl)-(payload.suks_price*this.numberl)}&control=${this.control}&delivery=1`
 					})
 				}
 			},
@@ -684,20 +735,10 @@
 				this.$refs.sharepopup.open()
 			},
 			select(e) {
-				if (e.index == 0) {
-					return;
-				}
-				if (this.tokenData()) {
-					this.showLoginExpired();
-					return;
-				}
-				this.$refs.uqrcode.toTempFilePath({
-					success: res => {
-						this.show = true;
-						this.$refs.poster.showCanvas(res.tempFilePath);
-						this.uqrcodeurl = res.tempFilePath;
-					}
-				});
+				if (e.index == 0) return;
+				if (this.tokenData()) { this.showLoginExpired(); return; }
+				this.$refs.sharepopup.close();
+				return this.$refs.poster.open();
 			},
 			delayed() {
 				uni.showToast({
@@ -887,40 +928,48 @@
 		font-size: $font-body;
 	}
 
+	/* 外层只画一次轮廓，让双按钮接缝和两端弧线保持连续。 */
+	.footer-actions {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		border: 1rpx solid $brand-action;
+		border-radius: $brand-button-radius;
+		overflow: hidden;
+		background: $brand-surface;
+	}
+
 	/* 加入购物车按钮（次按钮） */
 	.footer-left {
-		width: 210rpx;
-		font-size: $font-product-title;
-		font-weight: $font-product-title-weight;
-		background-color: $brand-bg !important;
-		color: $brand-primary;
-		border-radius: 0;
-		height: 88rpx;
-		line-height: 88rpx;
+		@include shop-button(secondary);
 	}
 
 	/* 立即购买按钮（主按钮） */
 	.footer-right {
-		width: 210rpx;
-		font-size: $font-product-title;
-		font-weight: $font-product-title-weight;
-		background-color: $brand-primary !important;
-		color: $brand-surface;
-		border-radius: 0;
-		height: 88rpx;
-		line-height: 88rpx;
+		@include shop-button(primary);
 	}
 
 	/* 秒杀立即购买按钮 */
 	.footer-rights {
-		width: 360rpx;
+		@include shop-button(primary);
+	}
+
+	.footer-actions button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		min-width: 0;
+		min-height: 88rpx;
+		margin: 0;
+		padding: 20rpx 12rpx;
+		border: 0;
+		border-radius: 0;
 		font-size: $font-product-title;
 		font-weight: $font-product-title-weight;
-		background: $brand-primary !important;
-		color: $brand-surface;
-		border-radius: 0;
-		height: 88rpx;
-		line-height: 88rpx;
+		line-height: 1.4;
+		// 焦点环放在按钮内部，避免被胶囊裁切。
+		&:focus-visible { outline-offset: -6rpx; outline-color: $brand-black; }
 	}
 
 	/* 优惠券标签 */
@@ -1050,12 +1099,14 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		padding-top: 16rpx;
+		padding: 20rpx 24rpx;
 		background: $brand-surface;
 		border-top: 1rpx solid $brand-border;
-		padding-bottom: calc(24rpx + constant(safe-area-inset-bottom));
-		padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+		padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+		padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
 	}
+	.footer-content { display: flex; align-items: center; gap: 24rpx; width: 100%; }
+	.footer-shortcuts { display: flex; flex-shrink: 0; }
 
 	/* 底部快捷入口图标 */
 	.footer-btn {
@@ -1065,8 +1116,9 @@
 		justify-content: center;
 		font-size: $font-meta;
 		color: $brand-muted;
-		width: 80rpx;
-		height: 80rpx;
+		width: 72rpx;
+		min-height: 88rpx;
+		gap: 4rpx;
 
 		.iconfont {
 			font-size: 40rpx;
@@ -1251,4 +1303,29 @@
 			margin-right: 1rpx;
 		}
 	}
+</style>
+
+<style scoped>
+.delivery-row { display: flex; align-items: center; gap: 20rpx; padding: 26rpx 0 0; font-size: 28rpx; color: #515c56; min-height: 48rpx; }.delivery-region-name { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #252b28; }
+</style>
+
+<style scoped>
+.freight-row { display: flex; align-items: flex-start; gap: 0; padding: 26rpx 0 0; min-height: 80rpx; }
+.freight-row--border { padding-bottom: 25rpx; border-bottom: 1px solid #ededed; }
+.freight-label { width: 96rpx; flex-shrink: 0; color: #68736c; font-size: 28rpx; line-height: 42rpx; }
+.freight-content { flex: 1; min-width: 0; }
+.freight-price { display: block; color: #252b28; font-size: 28rpx; line-height: 42rpx; }
+.freight-hint { display: block; margin-top: 4rpx; color: #3e775c; font-size: 24rpx; line-height: 36rpx; }
+.freight-arrow { margin-left: 20rpx; color: #77817a; line-height: 42rpx; font-size: 36rpx; }
+.freight-row:focus-visible { outline: 2px solid #3e775c; outline-offset: 4px; }
+.freight-sheet { padding: 32rpx; padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); color: #252b28; }
+.freight-sheet-heading { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; margin-bottom: 28rpx; }
+.freight-sheet-title { font-size: 34rpx; font-weight: 600; }
+.freight-close { margin: 0; color: #526057; background: transparent; font-size: 26rpx; }
+.freight-sheet-body { max-height: 60vh; }
+.freight-rule { padding-bottom: 26rpx; font-size: 28rpx; line-height: 1.6; }
+.freight-rule-label { display: block; margin-bottom: 8rpx; font-size: 24rpx; color: #647168; }
+.freight-rule-note { display: block; margin-top: 8rpx; font-size: 24rpx; color: #647168; line-height: 1.6; }
+.freight-change-address { display: block; width: fit-content; margin: 10rpx 0 0; padding: 0; background: transparent; font-size: 26rpx; color: #3e775c; text-align: left; }
+.freight-confirm { margin-top: 28rpx; background: #3e775c; color: #fff; font-size: 28rpx; border-radius: 12rpx; }
 </style>

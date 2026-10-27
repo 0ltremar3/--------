@@ -224,7 +224,7 @@
 		},
 	}
 </script>
-<style>
+<style lang="scss">
 	/* pages/user/index.wxss */
 	/* 用户信息 */
 	page {
@@ -273,15 +273,11 @@
 		display: block;
 		overflow-x: hidden;
 	}
-
 	.buy_btn {
-		background-color: #F0E0C6;
-		color: #2f2214;
+		@include shop-button(primary);
 		line-height: 90rpx;
 		height: 90rpx;
-		border-radius: 50rpx;
 		text-align: center;
-		box-shadow: 0rpx -1rpx 11rpx 3rpx #eee;
 	}
 
 	.header-center {

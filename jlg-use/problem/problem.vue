@@ -124,8 +124,8 @@
 		right: 32rpx;
 		bottom: 32rpx;
 	}
-
 	.contact-btn {
+		@include shop-button(secondary);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -134,13 +134,7 @@
 		padding: 0 28rpx;
 		font-size: $font-meta;
 		font-weight: 500;
-		color: $brand-primary;
-		background: $brand-surface;
-		border: 1rpx solid $brand-primary;
-		border-radius: $uni-border-radius-sm;
-		box-shadow: none;
 		letter-spacing: 0.02em;
-
 		&::after {
 			border: none;
 		}

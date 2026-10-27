@@ -422,17 +422,14 @@
 
 	/* 提交按钮 */
 	.but {
+		@include shop-button(primary);
 		display: block;
 		width: calc(100% - 64rpx);
 		margin: 48rpx 32rpx 64rpx;
 		font-size: $font-product-title;
 		font-weight: $font-product-title-weight;
-		color: $brand-surface;
-		background-color: $brand-primary;
-		border-radius: 0;
 		height: 88rpx;
 		line-height: 88rpx;
-		box-shadow: none;
 	}
 
 	button::after {

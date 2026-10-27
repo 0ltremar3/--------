@@ -91,8 +91,7 @@
 				title
 			}) {
 				uni.navigateTo({
-					url: '/uni_modules/uni-id-pages/pages/common/webview/webview?url=' + url + '&id=' + id +
-						'&title=' + title,
+					url: url + '?id=' + encodeURIComponent(id),
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

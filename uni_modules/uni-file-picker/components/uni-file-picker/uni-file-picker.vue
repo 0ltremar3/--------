@@ -23,6 +23,7 @@
 </template>
 
 <script>
+	import { toPublicImageUrl } from '@/common/cloud-image-url.js';
 	import {
 		chooseAndUploadFile,
 		uploadCloudFiles
@@ -597,7 +598,7 @@
 					fileList: [].concat(fileList)
 				}
 				const urls = await uniCloud.getTempFileURL(fileList)
-				return urls.fileList[0].tempFileURL || ''
+				return toPublicImageUrl(urls.fileList[0].tempFileURL || '')
 			},
 			/**
 			 * 获取父元素实例

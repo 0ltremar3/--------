@@ -1,0 +1,8 @@
+{
+  "dcloudAppid": "__UNI__F19699D",
+  "weixinAppid": "wx1fb49506c66ec500",
+  "allowedEnvironments": [
+    "trial",
+    "develop"
+  ]
+}

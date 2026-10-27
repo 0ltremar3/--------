@@ -291,14 +291,11 @@
 			padding-top: 20px;
 			margin-bottom: 16px;
 		}
-
 		.login-class {
-			border-radius: 36rpx;
+			@include shop-button(primary);
 			height: 80rpx;
 			line-height: 80rpx;
-			background-color: rgba(0, 102, 255, 0.8);
 			width: 100%;
-
 			.login-class-text {
 				font-size: 32rpx;
 				color: #FFFFFF;

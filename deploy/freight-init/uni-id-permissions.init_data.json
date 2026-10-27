@@ -1,0 +1,8 @@
+[
+	{
+		"_id": "freight_permission_goods_edit",
+		"permission_id": "GOODS_EDIT",
+		"permission_name": "商品与运费模板管理",
+		"comment": "允许商品编辑和运费模板管理；角色授权需由管理员单独分配"
+	}
+]

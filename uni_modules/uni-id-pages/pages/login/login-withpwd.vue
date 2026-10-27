@@ -235,7 +235,7 @@
 	.inp_text {
 		padding: 0 20rpx;
 		background-color: #F8F8F8;
-		border-radius: 100rpx;
+
 		border: 2rpx solid #d8d8d8;
 	}
 
@@ -247,8 +247,8 @@
 	}
 
 	.uni-btn {
-		background-color: #61A189;
-		border-radius: 100rpx;
+
+
 		line-height: 90rpx;
 		height: 90rpx;
 	}

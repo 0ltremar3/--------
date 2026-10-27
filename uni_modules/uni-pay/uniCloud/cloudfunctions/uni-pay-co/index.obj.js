@@ -13,6 +13,7 @@ const {
 // 加载全局中间件
 const middleware = require('./middleware/index');
 // 加载uniId公共模块
+const commerce = require('jlg-commerce').createCommerce(uniCloud.database());
 const uniIdCommon = require('uni-id-common');
 
 module.exports = {
@@ -55,6 +56,15 @@ module.exports = {
 			// 通用权限校验模块
 			await this.middleware.accessControl();
 		}
+		if (['createOrder', 'closeOrder', 'getOrder', 'getRefund', 'orderAction'].includes(methodName)) {
+			await this.middleware.auth(true);
+			const input = params[0] || {};
+			if (input.out_trade_no || input.transaction_id) {
+				const where = input.out_trade_no ? { out_trade_no: input.out_trade_no } : { transaction_id: input.transaction_id };
+				const found = (await uniCloud.database().collection('uni-pay-orders').where(where).get()).data[0];
+				if (found && found.user_id !== this.authInfo.uid && !(this.authInfo.role || []).includes('admin')) throw new Error('无权操作此订单');
+			}
+		}
 		// 设置全局获取userId公共函数（可在此云对象的任意其他函数内通过 this.getUserId() 获取当前登录用户的id
 		this.getUserId = () => {
 			return this.authInfo && this.authInfo.uid ? this.authInfo.uid : undefined;
@@ -84,6 +94,7 @@ module.exports = {
 	/**
 	 * 创建支付订单
 	 */
+	async orderAction(data) { return commerce.orderAction(this.getUserId(), data.id, data.action, data.reason); },
 	async createOrder(data) {
 		let {
 			provider, // 支付供应商 如 wxpay alipay 参考 https://uniapp.dcloud.net.cn/api/plugins/provider.html#
@@ -94,6 +105,7 @@ module.exports = {
 			description, // 支付描述，如：uniCloud个人版包月套餐
 			type, // 订单类型 goods：订单付款 recharge：余额充值付款 vip：vip充值付款 等等，可自定义
 			goods_arr, //商品组
+			address_id, checkout_version, quote_key,
 			address, //收货地址
 			preferential, //使用的优惠卷
 			notes, //购买备注
@@ -125,6 +137,7 @@ module.exports = {
 			description,
 			type,
 			goods_arr,
+			address_id, checkout_version, quote_key,
 			address,
 			preferential,
 			notes,
@@ -165,7 +178,7 @@ module.exports = {
 			await_notify = false, // 是否需要等待异步通知执行完成，若为了响应速度，可以设置为false，若需要等待异步回调执行完成，则设置为true
 		} = data;
 
-		res = await service.pay.getOrder({
+		let res = await service.pay.getOrder({
 			out_trade_no,
 			transaction_id,
 			await_notify
@@ -186,7 +199,7 @@ module.exports = {
 			refund_fee, // 退款金额
 		} = data;
 
-		res = await service.pay.refund({
+		let res = await service.pay.refund({
 			out_trade_no,
 			out_refund_no,
 			refund_desc,
@@ -204,7 +217,7 @@ module.exports = {
 			out_trade_no, // 插件订单号
 		} = data;
 
-		res = await service.pay.getRefund({
+		let res = await service.pay.getRefund({
 			out_trade_no,
 		});
 
@@ -219,7 +232,7 @@ module.exports = {
 			out_trade_no, // 插件订单号
 		} = data;
 
-		res = await service.pay.closeOrder({
+		let res = await service.pay.closeOrder({
 			out_trade_no,
 		});
 
@@ -238,7 +251,7 @@ module.exports = {
 
 		if (!clientInfo) clientInfo = this.getClientInfo();
 
-		res = await service.pay.getOpenid({
+		let res = await service.pay.getOpenid({
 			provider,
 			code,
 			clientInfo

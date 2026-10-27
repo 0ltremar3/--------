@@ -290,6 +290,7 @@
 					is_distr: options.is_distr,
 					audit_status: options.audit_status,
 					address: options.address,
+					address_id: options.address_id, checkout_version: options.checkout_version, quote_key: options.quote_key,
 					qr_code: options.qr_code,
 					custom: options.custom,
 					other: options.other,
@@ -300,7 +301,10 @@
 				// #ifdef H5
 				if (options.openid && options.provider === "wxpay") createOrderData.openid = options.openid;
 				// #endif
-				let res = await uniPayCo.createOrder(createOrderData);
+				let res;
+				try { res = await uniPayCo.createOrder(createOrderData); }
+				catch (error) { this.$emit('fail', error); return; }
+				if (res.errCode) { this.$emit('fail', res); return; }
 				if (!res.errCode) {
 					this.$emit("create", res);
 					if (res.qr_code && !options.cancel_popup) {
@@ -560,7 +564,10 @@
 					type: options.type,
 					custom: options.custom,
 				};
-				let res = await uniPayCo.createOrder(createOrderData);
+				let res;
+				try { res = await uniPayCo.createOrder(createOrderData); }
+				catch (error) { this.$emit('fail', error); return; }
+				if (res.errCode) { this.$emit('fail', res); return; }
 				if (res.errCode === 0) {
 					this.$emit("create", res);
 					this.res = res;

@@ -101,9 +101,7 @@
 						await addCommentsRecursive(index + 1);
 					} else {
 						// 所有循环完成后更改订单状态
-						db.collection("uni-pay-orders").doc(this.goodsData._id).update({
-							"status": 7
-						}).then(() => {
+						uniCloud.importObject('uni-pay-co').orderAction({ id: this.goodsData._id, action: 'evaluate' }).then(() => {
 							this.getOpenerEventChannel().emit('refreshData')
 							setTimeout(() => uni.navigateBack(), 500)
 							uni.hideLoading();
@@ -118,7 +116,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
 		background-color: #f5f5f5;
 		height: 100%;
@@ -198,18 +196,14 @@
 	}
 
 	.text-area {}
-
 	.btn {
+		@include shop-button(primary);
 		margin: 30rpx;
 		width: 690rpx;
-		color: #fff;
 		font-size: 29rpx;
-		background-color: #61A189;
-		border-radius: 50rpx;
 		box-sizing: border-box;
 		padding: 20rpx 0;
 		text-align: center;
-
 	}
 
 	.w-440 {

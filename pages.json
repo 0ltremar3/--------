@@ -5,7 +5,8 @@
 		"jlg-minPrice": "@/components/jlg-minPrice/jlg-minPrice.vue",
 		"jlg-spec-popup": "@/components/jlg-spec-popup/jlg-spec-popup.vue"
 	},
-	"pages": [{
+	"pages": [
+		{
 			"path": "pages/index/index",
 			"style": {
 				// #ifndef APP-PLUS 
@@ -15,25 +16,13 @@
 			}
 		},
 		{
-			"path": "pages/product/list",
-			"style": {
-				"navigationBarTitleText": "商品列表",
-				"enablePullDownRefresh": false
-			}
-		}, {
-			"path": "pages/product/product",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "商品详情",
-				"enablePullDownRefresh": false
-			}
-		}, {
 			"path": "pages/category/category",
 			"style": {
 				"navigationBarTitleText": "商品分类",
 				"enablePullDownRefresh": false
 			}
-		}, {
+		},
+		{
 			"path": "pages/cart/cart",
 			"style": {
 				"enablePullDownRefresh": true,
@@ -41,18 +30,6 @@
 			}
 		},
 		{
-			"path": "pages/order/createOrder",
-			"style": {
-				"enablePullDownRefresh": false,
-				"navigationBarTitleText": "提交订单"
-			}
-		}, {
-			"path": "pages/order/order",
-			"style": {
-				"enablePullDownRefresh": false,
-				"navigationBarTitleText": "我的订单"
-			}
-		}, {
 			"path": "pages/ucenter/ucenter",
 			"style": {
 				// #ifndef APP-PLUS 
@@ -60,29 +37,9 @@
 				// #endif 
 				"navigationBarTitleText": "个人中心"
 			}
-		}, {
-			"path": "pages/ucenter/settings/settings",
-			"style": {
-				"navigationBarTitleText": "设置"
-			}
-		},
-		{
-			"path": "pages/common/webview/webview",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		},
-		{
-			"path": "pages/ucenter/about/about",
-			"style": {
-				"navigationBarTitleText": "关于我们"
-			}
 		}
 		// #ifdef APP-PLUS
-		,
-		{
+		, {
 			"path": "uni_modules/uni-upgrade-center-app/pages/upgrade-popup",
 			"style": {
 				"disableScroll": true,
@@ -106,105 +63,200 @@
 			}
 		}
 		// #endif
-		, {
-			"path": "pages/coupon/coupon",
-			"style": {
-				"navigationBarTitleText": "领劵中心",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/coupon/prefeList",
-			"style": {
-				"navigationBarTitleText": "优惠列表",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/collect/collect",
-			"style": {
-				"navigationBarTitleText": "我的收藏",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/address/list",
-			"style": {
-				"navigationBarTitleText": "收货地址",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/address/add",
-			"style": {
-				"navigationBarTitleText": "新增地址",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/address/edit",
-			"style": {
-				"navigationBarTitleText": "修改地址",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "uni_modules/uni-pay/pages/success/success",
-			"style": {
-				"backgroundColor": "#F8F8F8",
-				"navigationBarTitleText": "支付成功"
-			}
-		}, {
-			"path": "uni_modules/uni-pay/pages/ad-interactive-webview/ad-interactive-webview",
-			"style": {
-				"backgroundColor": "#F8F8F8",
-				"navigationBarTitleText": "ad"
-			}
-		}, {
-			"path": "pages/order/orderRefund",
-			"style": {
-				"navigationBarTitleText": "订单退款",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/order/orderDetail",
-			"style": {
-				"navigationBarTitleText": "订单详情",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/order/orderLogistic",
-			"style": {
-				"navigationBarTitleText": "物流信息",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/order/orderEvaluate",
-			"style": {
-				"navigationBarTitleText": "发表评价",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/order/refundDetail",
-			"style": {
-				"navigationBarTitleText": "商品评价",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/coupon/mycoupon",
-			"style": {
-				"navigationBarTitleText": "我的优惠券",
-				"enablePullDownRefresh": false
-			}
-
-		}
 	],
-	"subPackages": [{
+	"subPackages": [
+		{
+			"root": "pages/product",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "商品列表",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "product",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "商品详情",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/order",
+			"pages": [
+				{
+					"path": "createOrder",
+					"style": {
+						"enablePullDownRefresh": false,
+						"navigationBarTitleText": "提交订单"
+					}
+				},
+				{
+					"path": "order",
+					"style": {
+						"enablePullDownRefresh": false,
+						"navigationBarTitleText": "我的订单"
+					}
+				},
+				{
+					"path": "orderRefund",
+					"style": {
+						"navigationBarTitleText": "订单退款",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "orderDetail",
+					"style": {
+						"navigationBarTitleText": "订单详情",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "orderLogistic",
+					"style": {
+						"navigationBarTitleText": "物流信息",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "orderEvaluate",
+					"style": {
+						"navigationBarTitleText": "发表评价",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "refundDetail",
+					"style": {
+						"navigationBarTitleText": "商品评价",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/ucenter/settings",
+			"pages": [
+				{
+					"path": "settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/common",
+			"pages": [
+				{
+					"path": "webview/webview",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/ucenter/about",
+			"pages": [
+				{
+					"path": "about",
+					"style": {
+						"navigationBarTitleText": "关于我们"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/coupon",
+			"pages": [
+				{
+					"path": "coupon",
+					"style": {
+						"navigationBarTitleText": "领劵中心",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "prefeList",
+					"style": {
+						"navigationBarTitleText": "优惠列表",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "mycoupon",
+					"style": {
+						"navigationBarTitleText": "我的优惠券",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/collect",
+			"pages": [
+				{
+					"path": "collect",
+					"style": {
+						"navigationBarTitleText": "我的收藏",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/address",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "收货地址",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "add",
+					"style": {
+						"navigationBarTitleText": "新增地址",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "edit",
+					"style": {
+						"navigationBarTitleText": "修改地址",
+						"enablePullDownRefresh": false
+					}
+				}
+			]
+		},
+		{
+			"root": "uni_modules/uni-pay/pages",
+			"pages": [
+				{
+					"path": "success/success",
+					"style": {
+						"backgroundColor": "#F8F8F8",
+						"navigationBarTitleText": "支付成功"
+					}
+				},
+				{
+					"path": "ad-interactive-webview/ad-interactive-webview",
+					"style": {
+						"backgroundColor": "#F8F8F8",
+						"navigationBarTitleText": "ad"
+					}
+				}
+			]
+		},
+		{
 			"root": "uni_modules/uni-id-pages/pages",
 			"pages": [{
 					"path": "userinfo/userinfo",
@@ -459,7 +511,6 @@
 			"/pages/address/add",
 			"/pages/address/edit",
 			"/pages/cart/cart",
-			"/pages/category/category",
 			"/pages/collect/collect",
 			"/pages/coupon/coupon",
 			"/pages/coupon/prefeList",
@@ -469,7 +520,6 @@
 			"/pages/order/orderEvaluate",
 			"/pages/order/orderLogistic",
 			"/pages/order/orderRefund",
-			"/pages/ucenter/ucenter",
 			"/jlg-use/distribution/list",
 			"/jlg-use/distribution/distrList",
 			"/jlg-use/distribution/distributionOrders",

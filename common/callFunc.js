@@ -3,7 +3,7 @@ const call = {
 		return new Promise((resolve, reject) => {
 			uniCloud.callFunction({
 				name: name,
-				data: data,
+				data: { ...data, uniIdToken: uni.getStorageSync('uni_id_token') },
 				success: function(res) {
 					resolve(res);
 				},

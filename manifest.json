@@ -1,5 +1,5 @@
 {
-    "name" : "养生商城",
+    "name" : "山前食养",
     "appid" : "__UNI__F19699D",
     "description" : "",
     "versionName" : "1.0",
@@ -91,7 +91,7 @@
     },
     "quickapp" : {},
     "mp-weixin" : {
-        "appid" : "wx2701f9c9bcd64c0e",
+        "appid" : "wx1fb49506c66ec500",
         "setting" : {
             "urlCheck" : false,
             "es6" : true,
@@ -100,7 +100,7 @@
         },
         "usingComponents" : true,
         "optimization" : {
-            "subPackages" : false
+            "subPackages" : true
         },
         "permission" : {
             "scope.userLocation" : {

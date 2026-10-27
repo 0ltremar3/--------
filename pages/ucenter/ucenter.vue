@@ -35,31 +35,39 @@
 				</view>
 				<view class="uc-order-row">
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=0')" hover-class="uc-hover" :hover-stay-time="50">
-						<view class="uc-badge-wrap">
-							<uv-badge type="error" max="99" :value="items[0]"/>
+						<view class="uc-order-icon">
+							<image class="ds-icon-lg" src="/static/icons/payment.svg" mode="aspectFit"/>
+							<view v-if="items[0] > 0" class="uc-badge-wrap">
+								<uv-badge type="error" :max="99" :value="items[0]" :custom-style="orderBadgeStyle"/>
+							</view>
 						</view>
-						<image class="ds-icon-lg" src="/static/icons/payment.svg" mode="aspectFit"/>
 						<text class="uc-order-label">{{ $t('ucenter.pendingPay') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=1')" hover-class="uc-hover" :hover-stay-time="50">
-						<view class="uc-badge-wrap">
-							<uv-badge type="error" max="99" :value="items[1]"/>
+						<view class="uc-order-icon">
+							<image class="ds-icon-lg" src="/static/icons/delivery.svg" mode="aspectFit"/>
+							<view v-if="items[1] > 0" class="uc-badge-wrap">
+								<uv-badge type="error" :max="99" :value="items[1]" :custom-style="orderBadgeStyle"/>
+							</view>
 						</view>
-						<image class="ds-icon-lg" src="/static/icons/delivery.svg" mode="aspectFit"/>
 						<text class="uc-order-label">{{ $t('ucenter.pendingReceive') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=5')" hover-class="uc-hover" :hover-stay-time="50">
-						<view class="uc-badge-wrap">
-							<uv-badge type="error" max="99" :value="items[2]"/>
+						<view class="uc-order-icon">
+							<image class="ds-icon-lg" src="/static/icons/review.svg" mode="aspectFit"/>
+							<view v-if="items[2] > 0" class="uc-badge-wrap">
+								<uv-badge type="error" :max="99" :value="items[2]" :custom-style="orderBadgeStyle"/>
+							</view>
 						</view>
-						<image class="ds-icon-lg" src="/static/icons/review.svg" mode="aspectFit"/>
 						<text class="uc-order-label">{{ $t('ucenter.pendingReview') }}</text>
 					</view>
 					<view class="uc-order-item" @click="navTo('/pages/order/order?state=6')" hover-class="uc-hover" :hover-stay-time="50">
-						<view class="uc-badge-wrap">
-							<uv-badge type="error" max="99" :value="items[3]"/>
+						<view class="uc-order-icon">
+							<image class="ds-icon-lg" src="/static/icons/refund.svg" mode="aspectFit"/>
+							<view v-if="items[3] > 0" class="uc-badge-wrap">
+								<uv-badge type="error" :max="99" :value="items[3]" :custom-style="orderBadgeStyle"/>
+							</view>
 						</view>
-						<image class="ds-icon-lg" src="/static/icons/refund.svg" mode="aspectFit"/>
 						<text class="uc-order-label">{{ $t('ucenter.refund') }}</text>
 					</view>
 				</view>
@@ -162,6 +170,22 @@
 	export default {
 		data() {
 			return {
+				orderBadgeStyle: {
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					boxSizing: 'border-box',
+					minWidth: '32rpx',
+					height: '32rpx',
+					padding: '0 7rpx',
+					border: '3rpx solid #FFFFFF',
+					fontSize: '20rpx',
+					fontWeight: '500',
+					lineHeight: '1',
+					textAlign: 'center',
+					fontVariantNumeric: 'tabular-nums',
+					backgroundColor: '#F06464'
+				},
 				user_id: uniCloud.getCurrentUserInfo().uid,
 				recordList: [],
 				items: [0, 0, 0, 0],
@@ -171,13 +195,21 @@
 			}
 		},
 		onShow() {
+			const session = uniCloud.getCurrentUserInfo();
+			this.user_id = session.tokenExpired > Date.now() ? session.uid : '';
+			this.recordList = [];
+			this.items = [0, 0, 0, 0];
+			this.uservipList = [];
+			this.membershipLevel = null;
+			this.vipurl = '/jlg-use/member/mymember';
+			if (!this.user_id) return;
 			this.recordData();
 			this.uservipData();
 			this.loadOrderBadges();
 		},
 		computed: {
 			userInfo() { return store.userInfo },
-			hasLogin()  { return store.hasLogin },
+			hasLogin()  { return store.hasLogin && !!this.user_id },
 			userDisplayName() {
 				const userInfo = this.userInfo || {};
 				return userInfo.nickname || userInfo.username || userInfo.mobile || this.$t('ucenter.guestName');
@@ -351,10 +383,18 @@
 		color: $brand-text;
 		line-height: 1;
 	}
+	.uc-order-icon {
+		position: relative;
+		width: 52rpx;
+		height: 52rpx;
+		flex-shrink: 0;
+	}
 	.uc-badge-wrap {
 		position: absolute;
-		top: -10rpx;
-		right: 8rpx;
+		top: 0;
+		right: 0;
+		transform: translate(45%, -30%);
+		pointer-events: none;
 	}
 
 	/* ── 浏览历史 ── */

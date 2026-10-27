@@ -1,0 +1,39 @@
+// 使用 uni.scss 的主题 token；局部引入可兼容小程序组件样式隔离。
+// 页面只负责尺寸、间距和布局，不再重复定义按钮配色和圆角。
+@mixin shop-button($variant: primary, $static: true) {
+	box-sizing: border-box;
+	border-radius: $brand-button-radius;
+	border: 1rpx solid $brand-action;
+	box-shadow: none;
+	text-align: center;
+	transition: opacity 150ms ease-out;
+	@if $variant == secondary {
+		background: $brand-surface;
+		color: $brand-action;
+	} @else {
+		background: $brand-action;
+		color: $brand-surface;
+	}
+
+	&::after { border: none; }
+	&:active { opacity: .8; }
+	// 拼接按钮和已有定位 transform 的按钮保持静态，独立按钮可选择按压缩放。
+	@if not $static {
+		transition: transform 150ms ease-out, opacity 150ms ease-out;
+		&:active { transform: scale(0.96); }
+	}
+	&:focus-visible { outline: 2px solid $brand-action; outline-offset: 3px; }
+	&[disabled], &.is-disabled {
+		background: $brand-border;
+		border-color: $brand-border;
+		color: #626B65;
+		opacity: 1;
+		@if not $static { transform: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+		@if not $static {
+			&:active { transform: none; }
+		}
+	}
+}

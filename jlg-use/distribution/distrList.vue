@@ -1,21 +1,9 @@
 <template>
 	<page-meta :page-style="'overflow:'+(show?'hidden':'visible')"></page-meta>
 	<view class="content">
-		<!-- #ifdef MP-WEIXIN -->
-		<zhangyu-qrcode-poster style="position: absolute;z-index: 9999;" ref="poster" :title="hbname" :headerImg="hbimg"
-			:price="hbprice / 100" :username="usname" :avcimgs="usimg" :origprice="hborigprice/100"
-			@showClick="showClick"></zhangyu-qrcode-poster>
-		<uqrcode :hide="true" ref="uqrcode" canvas-id="qrcode"
-			:value="`http://test.slwjd.com?id=${goods_id}&fxsid=${user_id}`" :options="{ margin: 10 }"></uqrcode>
-		<!-- #endif -->
-		<!-- #ifndef MP-WEIXIN -->
-		<zhangyu-qrcode-poster style="position: absolute;z-index: 9999;" ref="poster" :title="hbname"
-			:price="hbprice / 100" :username="usname" :origprice="hborigprice/100"
-			@showClick="showClick"></zhangyu-qrcode-poster>
-		<uqrcode :hide="true" ref="uqrcode" canvas-id="qrcode"
-			:value="`http://test.slwjd.com/pages/product/product?id=${goods_id}&fxsid=${user_id}`"
-			:options="{ margin: 10 }"></uqrcode>
-		<!-- #endif -->
+		<poster style="position:absolute;z-index:9999" ref="poster" :title="hbname" :header-img="hbimg"
+			:goods-id="goods_id" :identity="user_id || ''" :price="hbprice / 100" :username="usname" :origprice="Number(hborigprice || 0)/100"
+			@showClick="showClick" />
 
 		<view style="background: #fff;padding:10rpx 20rpx;">
 			<uv-search placeholder="请输入商品名称搜索" shape="round" :showAction="false" @search="searchClick"
@@ -135,13 +123,18 @@
 			}
 
 			this.loadData(99);
-			//获取用户头像、昵称用于分享海报
-			db.collection("uni-id-users").doc(this.user_id).field("nickname,avatar_file").get().then((res) => {
-				this.usname = res.result.data[0].nickname ? res.result.data[0].nickname : '匿名用户';
-				this.usimg = res.result.data[0].avatar_file ? res.result.data[0].avatar_file.url :
-					'https://mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.cdn.bspapp.com/image/logo.png';
-			})
+
 		},
+		onShow() {
+			const uid = uniCloud.getCurrentUserInfo().uid || '';
+			if (uid !== this.user_id && this.$refs.poster) this.$refs.poster.invalidate();
+			this.user_id = uid;
+			this.usname = '匿名用户';
+			if (uid) db.collection('uni-id-users').doc(uid).field('nickname').get().then(res => {
+				if (this.user_id === uid) this.usname = (res.result.data[0] || {}).nickname || '匿名用户';
+			}).catch(() => {});
+		},
+		onUnload() { this._closed = true; if (this.$refs.poster) this.$refs.poster.invalidate(); },
 		//加载更多
 		onReachBottom() {
 			this.currentPage++;
@@ -234,21 +227,14 @@
 					url: `/pages/product/product?id=${id}`
 				})
 			},
-			shareClick(img, gsname, price, origreice, id) {
-				let that = this;
-				that.show = true;
-				that.goods_id = id;
-				that.hbimg = img;
-				that.hbname = gsname;
-				that.hbprice = price;
-				that.hborigprice = origreice;
-				setTimeout(() => {
-					that.$refs.uqrcode.toTempFilePath({
-						success: res => {
-							that.$refs.poster.showCanvas(res.tempFilePath);
-						}
-					});
-				}, 500)
+			async shareClick(img, gsname, price, origreice, id) {
+				this.goods_id = id;
+				this.hbimg = img;
+				this.hbname = gsname;
+				this.hbprice = Number(price || 0);
+				this.hborigprice = Number(origreice || 0);
+				await this.$nextTick();
+				if (!this._closed && this.goods_id === id) return this.$refs.poster.open();
 			},
 			showClick(e) {
 				this.show = e;
@@ -348,25 +334,20 @@
 		padding: 0rpx 20rpx;
 		border-bottom: 1rpx solid #e0e0e0;
 	}
-
 	.coupon-name {
+		@include shop-button(primary);
 		width: 96%;
 		height: 75rpx;
-		background-color: #61A189;
-		border-radius: 20rpx;
 		line-height: 76rpx;
-		color: #fff;
 		margin: auto;
 		margin-top: 20rpx;
 		text-align: center;
 	}
-
 	.uni-but {
+		@include shop-button(primary);
 		height: 59rpx;
 		line-height: 60rpx;
 		font-size: 27rpx;
-		background: #61A189;
-		color: #fff;
 		margin-top: 11rpx;
 	}
 </style>

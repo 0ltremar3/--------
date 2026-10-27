@@ -398,11 +398,10 @@
 	/* ── 空状态 ── */
 	.cart-empty {
 		&__btn {
+			@include shop-button(primary, $static: false);
 			margin-top: 32rpx;
 			padding: 20rpx 64rpx;
 			font-size: 28rpx;
-			color: #FFFFFF;
-			background: #61A189;
 			text-align: center;
 		}
 	}
@@ -617,8 +616,8 @@
 			font-size: 22rpx;
 			color: #B8BBB6;
 		}
-
 		&__btn {
+			@include shop-button(primary, $static: false);
 			min-width: 192rpx;
 			height: 88rpx;
 			line-height: 88rpx;
@@ -626,21 +625,15 @@
 			margin: 0;
 			font-size: 30rpx;
 			font-weight: 600;
-			color: #FFFFFF;
-			background: #61A189;
-			border-radius: 0;
-			box-shadow: none;
-			transition: background 0.2s, color 0.2s;
 
 			&--ghost {
-				background: #FFFFFF;
-				color: #61A189;
-				border: 1rpx solid #61A189;
+				@include shop-button(secondary, $static: false);
 			}
 
 			&--disabled {
-				background: #C8CBC4;
-				color: #FFFFFF;
+				background: $brand-border;
+				border-color: $brand-border;
+				color: #626B65;
 			}
 		}
 

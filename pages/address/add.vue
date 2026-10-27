@@ -110,7 +110,8 @@
 						"area_code": that.model.ressData.area,
 						"address": that.model.ressData.addRess,
 						"formatted_address": that.ressarr + that.ressstr
-					}).then(() => {
+					}).then((saved) => {
+						this.getOpenerEventChannel().emit('addressSaved', saved.result.id);
 						uni.showToast({
 							icon: 'none',
 							title: this.$t('address.addSuccess')
@@ -315,7 +316,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.container {
 		background-color: #ffffff;
 		padding: 40rpx;
@@ -339,17 +340,14 @@
 		font-size: 30rpx;
 		color: #303133;
 	}
-
 	.but {
+		@include shop-button(primary);
 		width: 94%;
 		position: absolute;
 		bottom: 16rpx;
 		left: 50%;
 		transform: translateX(-50%);
 		font-size: 32rpx;
-		color: #ffffff;
-		background-color: #61A189;
-		border-radius: 100rpx;
 		height: 84rpx;
 		line-height: 84rpx;
 		z-index: 9999;

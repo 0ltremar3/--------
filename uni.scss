@@ -18,6 +18,9 @@ $uni-color-primary:#61A189;
 
 /* ── 品牌设计 Token ── */
 $brand-primary:       #61A189;
+// 按钮背景、文字和边框沿用品牌主题色；按钮圆角统一在这里修改。
+$brand-action:        $brand-primary;
+$brand-button-radius: 999rpx;
 $brand-black:         #202321;
 $brand-text:          #2a3330;
 $brand-muted:         #8E918D;
@@ -122,3 +125,6 @@ $brand-price-font:
 
 
 
+
+// 只声明 mixin，不在每个页面重复输出全局选择器。
+@import "@/static/common/button.scss";

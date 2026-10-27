@@ -1,0 +1,54 @@
+{
+  "bsonType": "object",
+  "required": [
+    "name",
+    "default_fee",
+    "region_fees",
+    "free_rules",
+    "blocked_regions",
+    "version",
+    "deleted"
+  ],
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "name": {
+      "bsonType": "string"
+    },
+    "default_fee": {
+      "bsonType": "int",
+      "minimum": 0
+    },
+    "region_fees": {
+      "bsonType": "array"
+    },
+    "free_rules": {
+      "bsonType": "array"
+    },
+    "blocked_regions": {
+      "bsonType": "array"
+    },
+    "version": {
+      "bsonType": "int"
+    },
+    "binding_revision": {
+      "bsonType": "int"
+    },
+    "deleted": {
+      "bsonType": "bool"
+    },
+    "created_at": {
+      "bsonType": "long"
+    },
+    "updated_at": {
+      "bsonType": "long"
+    },
+    "updated_by": {
+      "bsonType": "string"
+    }
+  }
+}

@@ -670,17 +670,14 @@
 		padding-bottom: env(safe-area-inset-bottom);
 
 	}
-
 	.submit {
+		@include shop-button(primary);
 		width: 208rpx;
 		height: 76rpx;
-		color: #fff;
 		text-align: center;
 		height: 76rpx;
 		line-height: 76rpx;
 		font-size: 29rpx;
-		border-radius: 77rpx;
-		background-color: #61A189;
 		margin: 20rpx 30rpx;
 	}
 
@@ -795,13 +792,10 @@
 		font-weight: 600;
 		margin-top: 8rpx;
 	}
-
 	.coupon-lqsy {
+		@include shop-button(secondary);
 		font-size: 24rpx;
 		height: 38rpx;
-		background: #fff;
-		border-radius: 100rpx;
-		color: #61A189;
 		line-height: 38rpx;
 		margin: 12rpx auto auto auto;
 		width: 125rpx;

@@ -63,8 +63,9 @@
 		<view class="cat-tabs">
 			<view class="cat-tabs__wrap">
 				<view @click="navToDetailPage(item.description,0)" class="cat-tabs__item"
+					hover-class="cat-tabs__item--pressed" :hover-stay-time="100"
 					v-for="(item,index) in cetagoriesList" :key="index">
-					<image mode="aspectFill" class="cat-tabs__icon" :src="item.icon"></image>
+					<image mode="aspectFit" class="cat-tabs__icon" :src="item.icon"></image>
 					<text class="cat-tabs__label">{{ displayLangText(item, 'name') }}</text>
 				</view>
 			</view>
@@ -108,7 +109,7 @@
 			</scroll-view>
 		</view>
 
-		<!-- 本周精选（热销）-->
+		<!-- 人气好物（热销）-->
 		<view class="section">
 			<view class="section__hd section__hd--3col">
 				<view class="flex-1"></view>
@@ -132,7 +133,7 @@
 			</scroll-view>
 		</view>
 
-		<!-- 食养精选（推荐双列）-->
+		<!-- 精品推荐（推荐双列）-->
 		<view class="section section--grid">
 			<view class="section__hd section__hd--center">
 				<text class="text-section-title">{{ $t('home.wellnessPick') }}</text>
@@ -191,7 +192,9 @@
 			</view>
 		</view>
 
+		<!-- #ifdef H5 -->
 		<uni-pay ref="uniPay"></uni-pay>
+		<!-- #endif -->
 		<uni-load-more :status="loadingType"></uni-load-more>
 	</view>
 </template>
@@ -316,9 +319,13 @@
 			this.goodsdata();
 		},
 		onShow() {
-			if (this.colorCache.length == 0) {
-				this.$refs.bcakColor.open();
-			}
+			// #ifdef MP-WEIXIN
+			this.$nextTick(() => {
+				if (this.colorCache.length == 0 && this.$refs.bcakColor) {
+					this.$refs.bcakColor.open();
+				}
+			});
+			// #endif
 		},
 		methods: {
 			async getWeiXinJsCode() {
@@ -836,38 +843,55 @@
 	/* ── 分类横向 tab（图标+文字，居中） ── */
 	.cat-tabs {
 		width: 100%;
-		// background: #FFFFFF;
 		background: #F7F8F5;
-		padding: 40rpx 0 32rpx;
+		padding: 32rpx 0 24rpx;
 
 		&__wrap {
 			display: flex;
-			flex-wrap: nowrap;
-			justify-content: space-around;
-			padding: 0 8rpx;
+			flex-wrap: wrap;
+			padding: 0 12rpx;
 		}
 
 		&__item {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			flex: 1;
+			flex: 0 0 20%;
+			min-width: 0;
+			box-sizing: border-box;
+			padding: 8rpx 4rpx;
+			transition: transform 150ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms cubic-bezier(0.2, 0, 0, 1);
+
+			&--pressed {
+				transform: scale(0.96);
+				opacity: 0.72;
+			}
 		}
 
 		&__icon {
-			width: 100rpx;
-			height: 100rpx;
-			border-radius: 12rpx;
-			background: #ECEDE8;
-			margin-bottom: 16rpx;
+			width: 124rpx;
+			max-width: 100%;
+			height: 124rpx;
+			margin-bottom: 10rpx;
 		}
 
 		&__label {
 			font-size: 24rpx;
-			font-weight: 400;
+			font-weight: 500;
 			color: #2B2F2C;
-			letter-spacing: 1rpx;
-			white-space: nowrap;
+			max-width: 100%;
+			line-height: 1.5;
+			text-align: center;
+			overflow-wrap: break-word;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cat-tabs__item {
+			transition: none;
+		}
+		.cat-tabs__item--pressed {
+			transform: none;
 		}
 	}
 

@@ -1,0 +1,24 @@
+{
+  "bsonType": "object",
+  "description": "商品编辑保存幂等记录（服务端使用）",
+  "permission": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  },
+  "properties": {
+    "user_id": {
+      "bsonType": "string"
+    },
+    "fingerprint": {
+      "bsonType": "string"
+    },
+    "result": {
+      "bsonType": "object"
+    },
+    "create_date": {
+      "bsonType": "timestamp"
+    }
+  }
+}

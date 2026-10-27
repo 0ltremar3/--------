@@ -382,14 +382,11 @@
 		padding: 0rpx 20rpx;
 		border-bottom: 1rpx solid #e0e0e0;
 	}
-
 	.coupon-name {
+		@include shop-button(primary);
 		width: 96%;
 		height: 75rpx;
-		background-color: #61A189;
-		border-radius: 20rpx;
 		line-height: 76rpx;
-		color: #fff;
 		margin: auto;
 		margin-top: 20rpx;
 		text-align: center;

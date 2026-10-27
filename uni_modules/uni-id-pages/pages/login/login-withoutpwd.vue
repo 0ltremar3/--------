@@ -16,6 +16,7 @@
 				</button>
 				<button open-type="getPhoneNumber|agreePrivacyAuthorization"
 					@getphonenumber="quickMobileLogin" class="uni-btn phone-auth-btn">手机号授权登录</button>
+				<button class="guest-entry" hover-class="guest-entry-pressed" :hover-stay-time="80" @click="cancelLogin"><text class="guest-entry-label">暂不登录，先逛逛</text></button>
 				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 				<!-- 短信验证码登录入口按需恢复
 				<view class="inp_text">
@@ -61,6 +62,7 @@
 			<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 			<button class="uni-btn" type="primary" @click="toSmsPage">获取验证码</button>
 		</template>
+		<button class="guest-entry" hover-class="guest-entry-pressed" :hover-stay-time="80" @click="cancelLogin"><text class="guest-entry-label">暂不登录，先逛逛</text></button>
 		<!-- 固定定位的快捷登录按钮 -->
 		<uni-id-pages-fab-login ref="uniFabLogin"></uni-id-pages-fab-login>
 	</view>
@@ -320,14 +322,14 @@
 	.inp_text {
 		padding: 0 20rpx;
 		background-color: #F8F8F8;
-		border-radius: 100rpx;
+
 		border: 2rpx solid #d8d8d8;
 		margin-bottom: 10px;
 	}
 
 	.uni-btn {
-		background-color: #61A189;
-		border-radius: 100rpx;
+
+
 		line-height: 90rpx;
 		height: 90rpx;
 	}
@@ -400,7 +402,7 @@
 		width: 100%;
 		height: 96rpx;
 		margin: 0;
-		border-radius: 999rpx;
+
 		line-height: 96rpx;
 		font-size: 28rpx;
 		font-weight: 500;
@@ -408,12 +410,13 @@
 	}
 
 	.wechat-btn {
+		@include shop-button(primary);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: #61A189;
+
 		color: #FFFFFF;
-		box-shadow: 0 14rpx 30rpx rgba(28, 114, 49, 0.16);
+
 	}
 
 	.wechat-icon {
@@ -430,15 +433,16 @@
 	}
 
 	.phone-auth-btn {
-		margin-top: 28rpx !important;
-		border: 1rpx solid rgba(28, 114, 49, 0.28);
-		background-color: rgba(255, 255, 255, 0.72) !important;
-		color: #61A189 !important;
+		@include shop-button(secondary);
+		margin-top: 24rpx !important;
+
+
+
 		box-shadow: none;
 	}
 
 	.login-actions ::v-deep .root {
-		margin-top: 80rpx;
+		margin-top: 16rpx;
 		justify-content: center;
 		color: #8A9A8E;
 		font-size: 20rpx;
@@ -454,13 +458,48 @@
 	}
 	/* #endif */
 
-	.link-btn {
-		margin-top: 30rpx;
-		background-color: transparent;
-		color: #61A189;
-		font-size: 28rpx;
-		line-height: 60rpx;
-		height: 60rpx;
+	.guest-entry {
+		// 次级文字入口保留完整触控区域，不与登录按钮争夺视觉层级。
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 44px;
+		margin: 16rpx auto 0;
+		padding: 0 32rpx;
+		border: 0;
+		border-radius: 8rpx;
+		background: transparent;
+		box-shadow: none;
+		// 深鼠尾草绿，保证浅色背景上的小字号可读性。
+		color: #487C67;
+		font-size: 26rpx;
+		font-weight: 400;
+		line-height: 1.5;
+		letter-spacing: 0;
+		transition: transform 150ms ease-out, background-color 150ms ease-out;
+	}
+
+	.guest-entry-label {
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+	}
+
+	.guest-entry-pressed,
+	.guest-entry:active {
+		transform: scale(0.96);
+		background-color: rgba(0, 0, 0, 0.04);
+	}
+
+	.guest-entry:focus-visible {
+		outline: 2px solid #487C67;
+		outline-offset: 2px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.guest-entry { transition: none; }
+		.guest-entry-pressed,
+		.guest-entry:active { transform: none; }
 	}
 
 	button::after {

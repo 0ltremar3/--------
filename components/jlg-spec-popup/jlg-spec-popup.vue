@@ -43,8 +43,8 @@
 							@click="numberl > 1 && numberl--">−</view>
 						<text class="qty-counter__val">{{numberl}}</text>
 						<view class="qty-counter__btn"
-							:class="numberl >= (suks_inventory || 99) ? 'qty-counter__btn--disabled' : ''"
-							@click="numberl < (suks_inventory || 99) && numberl++">+</view>
+							:class="numberl >= (suks_inventory) ? 'qty-counter__btn--disabled' : ''"
+							@click="numberl < (suks_inventory) && numberl++">+</view>
 					</view>
 				</view>
 			</scroll-view>
@@ -76,6 +76,7 @@
 				suks_price: null,
 				suks_inventory: 0,
 				suks_img: '',
+				sku_id: '',
 				numberl: 1,
 				initialSpecSelected: [],
 			};
@@ -120,11 +121,16 @@
 					uni.showToast({ title: this.$t('specPopup.selectSpecFirst'), icon: 'none' });
 					return;
 				}
+				if (this.suks_inventory < this.numberl) {
+					uni.showToast({ title: this.$t('createOrder.stockInsufficient'), icon: 'none' });
+					return;
+				}
 				this.$refs.popup.close();
 				const payload = {
 					item: this.item,
 					goods: this.goods,
 					specSelected: this.specSelected,
+					sku_id: this.sku_id,
 					suks_price: this.suks_price,
 					suks_inventory: this.suks_inventory,
 					suks_img: this.suks_img,
@@ -142,7 +148,8 @@
 						goods_id: this.item._id,
 						control: this.seckill,
 						specSelected: this.specSelected,
-						suks_price: this.suks_price,
+						sku_id: this.sku_id,
+					suks_price: this.suks_price,
 						numberl: this.numberl
 					}
 				}).then(res => {
@@ -182,11 +189,13 @@
 				this.suks_price = null;
 				this.suks_inventory = 0;
 				this.suks_img = '';
+				this.sku_id = '';
 				const suks = this._getSuks();
 				for (let i = 0; i < suks.length; i++) {
 					const specs = suks[i].specs;
 					if (specs.length === this.specSelected.length &&
 						specs.every((spec, idx) => spec === this.specSelected[idx].name)) {
+						this.sku_id = suks[i].sku_id || '';
 						this.suks_price = suks[i].price;
 						this.suks_inventory = suks[i].inventory;
 						this.suks_img = suks[i].goods_thumb || '';
@@ -203,6 +212,7 @@
 				this.suks_price = null;
 				this.suks_inventory = 0;
 				this.suks_img = '';
+				this.sku_id = '';
 				this.numberl = options.numberl || 1;
 				this.initialSpecSelected = options.specSelected || [];
 			},
@@ -324,19 +334,18 @@
 			font-size: $font-body;
 			color: $brand-text;
 		}
-
 		&__footer {
+			@include shop-button(primary);
 			height: 96rpx;
 			line-height: 96rpx;
 			text-align: center;
-			background: $brand-primary;
-			color: $brand-surface;
 			font-size: $font-body;
 			font-weight: 500;
 			letter-spacing: 2rpx;
 			flex-shrink: 0;
-			padding-bottom: constant(safe-area-inset-bottom);
-			padding-bottom: env(safe-area-inset-bottom);
+			margin: 20rpx 28rpx;
+			margin-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+			margin-bottom: calc(20rpx + env(safe-area-inset-bottom));
 		}
 	}
 

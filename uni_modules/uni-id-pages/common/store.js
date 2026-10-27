@@ -1,3 +1,4 @@
+import { bindPendingReferral } from '@/common/product-share.js';
 import pagesJson from '@/pages.json'
 import config from '@/uni_modules/uni-id-pages/config.js'
 
@@ -127,16 +128,7 @@ export const mutations = {
 		const {
 			showToast = true, toastText = '登录成功', autoBack = true, uniIdRedirectUrl = '', passwordConfirmed
 		} = e
-		let dicrID = wx.getStorageSync('dicrID');
-		let user_id = uniCloud.getCurrentUserInfo().uid;
-		if (dicrID.length > 20) {
-			const dist = uniCloud.importObject('jlg-distribution')
-			dist.add(dicrID, user_id).then(res => {
-				console.log("分销处理成功")
-			}).catch(e => {
-				console.log("分销处理失败")
-			})
-		}
+		bindPendingReferral();
 		// console.log({toastText,autoBack});
 		if (showToast) {
 			uni.showToast({

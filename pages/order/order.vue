@@ -1,96 +1,68 @@
 <template>
-	<view class="content">
-		<view style="background: #fff;padding:10rpx 20rpx;">
-			<uv-search :placeholder="$t('orders.searchPlaceholder')" v-model="keyword" shape="round" :showAction="false"
-				@search="searchClick" @clear="clearClick"></uv-search>
+	<view class="order-page">
+		<view class="order-search">
+			<uv-search :placeholder="$t('orders.searchPlaceholder')" v-model="keyword" shape="square" :showAction="false"
+				bgColor="#F7F8F5" color="#202321" placeholderColor="#626B65" @search="searchClick" @clear="clearClick"></uv-search>
 		</view>
 		<uv-sticky bgColor="#fff" :custom-nav-height="navTop">
 			<uv-tabs :list="tabList" @click="tabClick" lineColor="#61A189" :current="labelIndex" :scrollable="false"
-				:activeStyle="{color: '#61A189'}"></uv-tabs>
+				:activeStyle="{color: '#365F4F', fontWeight: '600'}" :inactiveStyle="{color: '#626B65'}"></uv-tabs>
 		</uv-sticky>
-		<view class="list">
-			<!-- 空白页 -->
-			<uv-empty v-if="ordersList.length === 0" mode="data" icon="/static/temp/shwk.png" :text="$t('orders.empty')"></uv-empty>
-
-			<!-- 订单列表 -->
-			<!-- 只展示真实支付的订单 -->
-			<view v-else v-for="(item,index) in ordersList" v-if="item.status > 0?item.transaction_id:true" :key="index"
-				class="list-item flex-dir-column ">
-				<view class=" flex-dir-row  flex-y-center pb-30 flex-x-between b-b">
-					<text @click="copy(item.order_no)" class="col-9 f-26">{{$t('orders.orderNo') + item.order_no}}
-						<text class="iconfont f-40 ml-20 icon-uniE036"></text></text>
-					<text :style="{color: item.stateTipColor}"
-						class="col-9 f-28">{{orderStatusText(item.status)}}</text>
+		<view class="order-list">
+			<view v-if="ordersList.length === 0" class="order-empty">
+				<uv-empty mode="data" icon="/static/temp/shwk.png" :text="$t('orders.empty')"></uv-empty>
+				<text class="order-hint">{{$t('orders.emptyHint')}}</text>
+			</view>
+			<view v-else v-for="(item,index) in ordersList" v-if="item.status > 0?item.transaction_id:true" :key="index" class="order-card">
+				<view class="order-card-header">
+					<text class="order-status" :class="{'is-muted': [-1,2,3,7].includes(item.status), 'is-refunding': item.status === 6}">{{orderStatusText(item.status)}}</text>
+					<button class="order-text-button" hover-class="order-pressed" @click="navigator(item._id)">
+						{{$t('orders.viewDetail')}}<uni-icons type="right" size="14" color="#626B65"></uni-icons>
+					</button>
 				</view>
-				<view @click="navigator(item._id)" class=" mt-30 flex-dir-row flex-y-center flex-x-between w-100"
-					style="position: relative;" v-for="(goodsItem, goodsIndex) in item.goods_arr" :key="goodsIndex">
-					<!-- <view v-if="goodsItem.goods_seckill" class="seckill_img">
-						<image src="../../static/temp/secskill.png"></image>
-					</view> -->
-					<image class="goods-img" :src="goodsItem.goods_img" mode="aspectFill"></image>
-					<view class="flex-dir-column  ml-20 flex-1">
-						<text class="f-29 col-0 goods-name">{{displayGoodsName(goodsItem)}}</text>
-						<view class="flex-dir-row flex-y-center">
-							<text class="spec" v-for="(goodsSuk,sukIndex) in goodsItem.goods_suk">{{goodsSuk}}</text>
-						</view>
-						<view class="flex-dir-row flex-y-center flex-x-between mt-20">
-							<jlg-minPrice :min-price="goodsItem.goods_price" maxSize="26rpx" minSize="24rpx"
-								col="#000"></jlg-minPrice>
-							<text class="spec">x{{goodsItem.goods_num}}</text>
-						</view>
-
-					</view>
+				<view class="order-number-row">
+					<text class="order-number">{{$t('orders.orderNo') + item.order_no}}</text>
+					<button class="order-text-button" hover-class="order-pressed" @click="copy(item.order_no)">{{$t('orders.copy')}}</button>
 				</view>
-
-				<view @click="navigator(item._id)" class="mt-10 flex-dir-row flex-x-end flex-y-center">
-					<text class="f-26">{{ $t('orders.total') }}</text>
-					<jlg-minPrice :min-price="item.total_fee" maxSize="32rpx"></jlg-minPrice>
-				</view>
-				<view class="flex-dir-row b-t   pt-30 mt-30 flex-y-center flex-x-between">
-					<view class="flex-dir-row flex-y-center">
-						<view class="flex-dir-row" v-if="item.status == 0 && !item.custom">
-							<text class="col-9 f-26 mr-10" style="line-height: 42rpx;">{{ $t('orders.payRemaining') }}</text>
-							<view v-if="item.a">
-								<uv-count-down :time="time" format="HH:mm:ss" @finish="cloudFunc"></uv-count-down>
-							</view>
-							<view v-else>
-								<uv-count-down :time="times" format="HH:mm:ss" @finish="cloudFunc"></uv-count-down>
-							</view>
+				<view v-for="(goodsItem, goodsIndex) in item.goods_arr" :key="goodsIndex" class="order-product" hover-class="order-pressed" @click="navigator(item._id)">
+					<image class="order-product-image" :src="goodsItem.goods_img" mode="aspectFill"></image>
+					<view class="order-product-info">
+						<text class="order-product-name">{{displayGoodsName(goodsItem)}}</text>
+						<view class="order-specs"><text v-for="(goodsSuk,sukIndex) in goodsItem.goods_suk" :key="sukIndex" class="order-spec">{{goodsSuk}}</text></view>
+						<view class="order-product-price">
+							<jlg-minPrice :min-price="goodsItem.goods_price" maxSize="30rpx" minSize="24rpx" col="#202321"></jlg-minPrice>
+							<text class="order-hint">×{{goodsItem.goods_num}}</text>
 						</view>
 					</view>
-					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="item.status == 0">
-						<view class="btn-1" @click="cancelOrder(item)">{{ $t('orders.cancelOrder') }}</view>
-						<view v-if="!item.custom" class="btn-2" @click="open(item)">{{ $t('orders.payNow') }}</view>
-					</view>
-
-					<view class=" flex-dir-row flex-x-end flex-y-center"
-						v-if="[1].includes(item.status) && !item.custom">
-						<view class="btn-1" @click="refundClick(item)">{{ $t('orders.requestRefund') }}</view>
-					</view>
-					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[6].includes(item.status)">
-						<view class="btn-1" @click="canceClick(item)">{{ $t('orders.cancelRefund') }}</view>
-					</view>
-					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[5].includes(item.status)">
-						<view class="btn-2" @click="naTvo(item)">{{ $t('orders.reviewNow') }}</view>
-					</view>
-					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="[4].includes(item.status)">
-						<view class="btn-2" @click="confirmReceipt(item)">{{ $t('orders.confirmReceipt') }}</view>
-					</view>
-					<view class=" flex-dir-row flex-x-end flex-y-center" v-if="item.status===-1">
-						<view class="btn-1" @click="deleteOrder(index)">{{ $t('orders.deleteOrder') }}</view>
-					</view>
 				</view>
-
+				<view class="order-total" @click="navigator(item._id)">
+					<text>{{$t('orders.total')}}</text>
+					<jlg-minPrice :min-price="item.total_fee" maxSize="38rpx" minSize="26rpx" :Weight="500"></jlg-minPrice>
+				</view>
+				<view v-if="item.status == 0 && !item.custom" class="order-countdown">
+					<uni-icons type="clock" size="16" color="#626B65"></uni-icons>
+					<text>{{$t('orders.payRemaining')}}</text>
+					<uv-count-down v-if="item.a" :time="time" format="HH:mm:ss" @finish="cloudFunc"></uv-count-down>
+					<uv-count-down v-else :time="times" format="HH:mm:ss" @finish="cloudFunc"></uv-count-down>
+				</view>
+				<view v-if="item.status == 0 || (item.status == 1 && !item.custom) || [-1,4,5,6].includes(item.status)" class="order-actions">
+					<template v-if="item.status == 0">
+						<button class="order-button" hover-class="order-pressed" @click="cancelOrder(item)">{{$t('orders.cancelOrder')}}</button>
+						<button v-if="!item.custom" class="order-button order-button-primary" hover-class="order-pressed" @click="open(item)">{{$t('orders.payNow')}}</button>
+					</template>
+					<button v-if="[1].includes(item.status) && !item.custom" class="order-button" hover-class="order-pressed" @click="refundClick(item)">{{$t('orders.requestRefund')}}</button>
+					<button v-if="[6].includes(item.status)" class="order-button" hover-class="order-pressed" @click="canceClick(item)">{{$t('orders.cancelRefund')}}</button>
+					<button v-if="[5].includes(item.status)" class="order-button order-button-primary" hover-class="order-pressed" @click="naTvo(item)">{{$t('orders.reviewNow')}}</button>
+					<button v-if="[4].includes(item.status)" class="order-button order-button-primary" hover-class="order-pressed" @click="confirmReceipt(item)">{{$t('orders.confirmReceipt')}}</button>
+					<button v-if="item.status===-1" class="order-button" hover-class="order-pressed" @click="deleteOrder(index)">{{$t('orders.deleteOrder')}}</button>
+				</view>
 				<uni-popup ref="popup" type="dialog">
 					<uni-popup-dialog type="warn" :cancelText="$t('orders.cancel')" :confirmText="$t('orders.confirm')" :title="$t('orders.deleteTitle')"
-						:content="$t('orders.deleteContent')" @confirm="dialogConfirm(item._id)"
-						@close="dialogClose(index)"></uni-popup-dialog>
+						:content="$t('orders.deleteContent')" @confirm="dialogConfirm(item._id)" @close="dialogClose(index)"></uni-popup-dialog>
 				</uni-popup>
 			</view>
 			<uni-load-more v-if="ordersList.length > 0" :status="loadingType"></uni-load-more>
 		</view>
-
-
 		<view><uni-pay ref="uniPay" @success="onSuccess"></uni-pay></view>
 	</view>
 </template>
@@ -100,7 +72,7 @@
 	export default {
 		data() {
 			return {
-				tabIndex: 0,
+				tabIndex: 99,
 				labelIndex: 0,
 				keyword: '',
 				user_id: uniCloud.getCurrentUserInfo().uid,
@@ -139,7 +111,7 @@
 				]
 			}
 		},
-		onLoad(e) {
+		onLoad(e = {}) {
 			// 获取当前时间
 			const now = new Date();
 			// 获取明天的日期
@@ -151,19 +123,12 @@
 			this.time = endTime - now.getTime();
 			const tomorrows = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0).getTime();
 			this.times = tomorrows - now.getTime();
-			this.loadData(e.state)
-			if (e.state == 99) {
-				this.labelIndex = 0;
-			} else if (e.state == 0) {
-				this.labelIndex = 1;
-			} else if (e.state == 1) {
-				this.labelIndex = 2;
-			} else if (e.state == 5) {
-				this.labelIndex = 3;
-			} else if (e.state == 6) {
-				this.labelIndex = 4;
-			}
-			this.tabIndex = Number(e.state)
+			// 订单中心入口不带参数时，默认展示全部订单。
+			const state = e.state == null || String(e.state).trim() === '' ? 99 : Number(e.state);
+			const index = this.tabList.findIndex(tab => tab.state === state);
+			this.labelIndex = index === -1 ? 0 : index;
+			this.tabIndex = this.tabList[this.labelIndex].state;
+			this.loadData(this.tabIndex);
 		},
 		onReachBottom: function() {
 			this.currentPage++; // 滚动到底部，页码加1
@@ -301,9 +266,7 @@
 					content: this.$t('orders.receiptContent'),
 					success: function(res) {
 						if (res.confirm) {
-							db.collection("uni-pay-orders").doc(item._id).update({
-								"status": 5
-							}).then(() => {
+							uniCloud.importObject('uni-pay-co').orderAction({ id: item._id, action: 'receipt' }).then(() => {
 								uni.showToast({
 									title: that.$t('orders.receiptSuccess'),
 									icon: "none",
@@ -352,26 +315,7 @@
 					uni.showLoading({
 						title: this.$t('orders.waiting')
 					});
-					// 还原优惠卷使用状态
-					for (const items of item.preferential) {
-						await db.collection("jlg-goods-coupon").doc(items.id).update({
-							"is_use": false
-						});
-					}
-
-					// 还原商品库存及销量
-					for (const items of item.goods_arr) {
-						const res = await db.collection("opendb-mall-goods").doc(items.goods_id).get();
-						await db.collection("opendb-mall-goods").doc(items.goods_id).update({
-							"remain_count": res.result.data[0].remain_count + items.goods_num,
-							"total_sell_count": res.result.data[0].total_sell_count - items.goods_num
-						});
-					}
-
-					// 取消订单
-					await db.collection("uni-pay-orders").doc(item._id).update({
-						"status": -1
-					});
+					await uniCloud.importObject('uni-pay-co').closeOrder({ out_trade_no: item.out_trade_no });
 
 					uni.showToast({
 						title: this.$t('orders.cancelSuccess'),
@@ -383,6 +327,7 @@
 					this.loadData(this.tabIndex);
 				} catch (error) {
 					console.error(error);
+					uni.showToast({ title: error.errMsg || error.message || '取消失败，请刷新后重试', icon: 'none' });
 					// 处理错误
 				} finally {
 					uni.hideLoading();
@@ -429,11 +374,7 @@
 			},
 			//取消退款
 			canceClick(item) {
-				db.collection("uni-pay-orders").doc(item._id).update({
-					"status": item.origstate,
-					"refund_fee": 0,
-					"refund_list": []
-				}).then(() => {
+				uniCloud.importObject('uni-pay-co').orderAction({ id: item._id, action: 'cancelRefund' }).then(() => {
 					uni.showToast({
 						title: this.$t('orders.cancelSuccess'),
 						icon: "none",
@@ -522,101 +463,20 @@
 	}
 </script>
 
-<style lang="scss">
-	.seckill_img {
-		position: absolute;
-		left: -1rpx;
-		top: 7rpx;
-		z-index: 999;
+<style lang="scss" scoped>
+	@import "./order-ui.scss";
+	.order-search { padding: 20rpx 32rpx 12rpx; background: $brand-surface; }
+	.order-list { padding: 20rpx 0 calc(32rpx + env(safe-area-inset-bottom)); }
+	.order-card { margin-bottom: 20rpx; padding: 12rpx 32rpx 28rpx; background: $brand-surface; }
+	.order-card-header { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+	.order-status { color: #365F4F; font-size: 30rpx; font-weight: 600; }
+	.is-muted { color: #626B65; }
+	.is-refunding { color: #87541E; }
+	.order-number-row { display: flex; align-items: center; gap: 12rpx; border-bottom: 1rpx solid $brand-border; }
+	.order-number { flex: 1; min-width: 0; color: #626B65; font-size: 24rpx; overflow-wrap: anywhere; }
+	.order-total { display: flex; justify-content: flex-end; align-items: baseline; gap: 12rpx; padding: 24rpx 0 8rpx; }
+	.order-countdown { display: flex; align-items: center; flex-wrap: wrap; gap: 12rpx; background: $brand-bg; padding: 16rpx 20rpx; margin-top: 16rpx; color: #626B65; font-size: 24rpx; }
+	.order-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 16rpx; margin-top: 20rpx; }
+	.order-empty { display: flex; flex-direction: column; align-items: center; gap: 24rpx; padding: 96rpx 32rpx; text-align: center; }
 
-		image {
-			width: 62rpx;
-			height: 62rpx;
-		}
-	}
-
-	page {
-		background: #f3f3f3;
-		height: 100%;
-	}
-
-	.list {
-		height: 100%;
-	}
-
-	.list-item {
-		border-radius: 20rpx;
-		background-color: #fff;
-		padding: 30rpx;
-		box-sizing: border-box;
-		margin: 30rpx 20rpx;
-	}
-
-	.goods-img {
-		display: block;
-		width: 150rpx;
-		height: 150rpx;
-		border-radius: 12rpx;
-	}
-
-	.spec {
-		font-size: 26rpx;
-		color: #8e8e8e;
-		padding: 10rpx 12rpx 10rpx 0rpx;
-	}
-
-	.btn-1 {
-		width: 160rpx;
-		height: 60rpx;
-		margin: 0;
-		margin-left: 24rpx;
-		padding: 0;
-		text-align: center;
-		font-size: 28rpx;
-		color: #1a1a1a;
-		border-radius: 100px;
-		border: 1rpx solid #c6c6c6;
-		line-height: 56rpx;
-	}
-
-	.btn-2 {
-		width: 160rpx;
-		height: 60rpx;
-		margin: 0;
-		margin-left: 24rpx;
-		padding: 0;
-		text-align: center;
-		font-size: 28rpx;
-		color: #61A189;
-		border-radius: 100px;
-		border: 1rpx solid #61A189;
-
-		background-color: #fff7fa;
-		line-height: 56rpx;
-	}
-
-	.price {
-		&:before {
-			content: '￥';
-			font-size: 24rpx;
-			margin: 0 2upx 0 -4upx;
-		}
-	}
-
-	.b-b {
-		border-bottom: 1rpx solid #eee;
-	}
-
-	.b-t {
-		border-top: 1rpx solid #eee;
-	}
-
-	.goods-name {
-		word-break: break-all;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
-	}
 </style>

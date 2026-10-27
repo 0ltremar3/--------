@@ -1,0 +1,261 @@
+{
+  "date": "2026-09-22",
+  "spaceName": "health-test",
+  "spaceId": "mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c",
+  "checks": [
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/jlg-cart/index.js",
+      "matches": true,
+      "sha256": "0595cd2ae5ef04dcbde068d80655fcd6e36970222c4c76125ce7b9aa35406773"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/delete-order/index.js",
+      "matches": true,
+      "sha256": "0d85f3fbd1fdf9cac0c9961e75afdd2503adb66e97840fa2a7974e9a412338f8"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/jlg-goods-admin/index.obj.js",
+      "matches": true,
+      "sha256": "8b86fd93aef5ad03d9a5de836f92a6f1699f791515866e622d8d72311e723984"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/uni-pay-co.param.js",
+      "matches": true,
+      "sha256": "7c8df57bb1461d3fcad74a6ed1da9b7e8cfcf888e61c4a24b05793dfe7286535"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/index.obj.js",
+      "matches": true,
+      "sha256": "9817e45814736a8b9f052661dd47f1baed2a1296232a8207430956466a20b237"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/middleware/auth.js",
+      "matches": true,
+      "sha256": "eaad09820a1ec8013ca54363b50a64c4ae9c1ee901f52bc29eca118099cbb3d9"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/middleware/index.js",
+      "matches": true,
+      "sha256": "4265170615998f74ff0ab8a2cb58d1dab78a2c1d8b2282cca83bf24f43dadfe0"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/middleware/access-control.js",
+      "matches": true,
+      "sha256": "b3bdf4bcf0e347761a2e3b1728d60f277e513b6e558ce8168cd498224e49e763"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/notify/goods.js",
+      "matches": true,
+      "sha256": "3ba3daf6bb8214ef645f1d97b8851bce0e4940f79e0088b45f0fca6f653ef1f0"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/notify/appleiap.js",
+      "matches": true,
+      "sha256": "1321a2a944fd0329a82c7284badcd54fbdcd57d1f94d62a67476b72acac3889f"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/notify/vip.js",
+      "matches": true,
+      "sha256": "c038683c6f43bf970001c4d172725d1b57672b3fb26b8935eb5a7c1b297b2db8"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/config/permission.js",
+      "matches": true,
+      "sha256": "3e65db9bd098556478cf2b2619a8a2e0bf8355f078cafdd9965d2983fc1e4e4b"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/dao/uniPayOrders.js",
+      "matches": true,
+      "sha256": "3c1c3322d7b6eb2d61d849efad8ef7e6fe161eaa9dd5fee22b945279d96a423d"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/dao/index.js",
+      "matches": true,
+      "sha256": "83b556fa955d436436e761b374e0d58aa922f113b275728926e060949f430460"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/dao/uniIdUsers.js",
+      "matches": true,
+      "sha256": "2b58a0aa6b4b60b60cfaa46968005fa6d6a3978594c39c340ff878f68c174e03"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/qrcode.js",
+      "matches": true,
+      "sha256": "ac2b3517c199f439faf10734ac45f74f4e8dbd8a2e9ca5bc272afa31f30e4dc9"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/alipay.js",
+      "matches": true,
+      "sha256": "fb347505f2950215d18f1dfdcc9b12610eb2b7904e5c9df0db5d1f48c4c92750"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/index.js",
+      "matches": true,
+      "sha256": "8af43e39f5da46320a7557619b492e2952c6564bca77c5e640783c8a350eac87"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/wxpay.js",
+      "matches": true,
+      "sha256": "5524383fdacc26d6c86683980c21362c407f613e5f9583f63f34e901c153c739"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/common.js",
+      "matches": true,
+      "sha256": "58e4fb3b4dab75cea55d60618e027e7094148b3332a9ac61ee180646ccda74e6"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/libs/crypto.js",
+      "matches": true,
+      "sha256": "ec530490224f150a0db5619a77c8bc1ee94912001831fb44140b3c53d48e0baa"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/lang/index.js",
+      "matches": true,
+      "sha256": "7f8b35250083f3834417f65608e4d662efab0cfe3db33d206185bed5963c9bbf"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/lang/en.js",
+      "matches": true,
+      "sha256": "b5dc458316683b119d3aa350f20d782a84338dbebf8b38f044ad0d009982a074"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/lang/zh-hans.js",
+      "matches": true,
+      "sha256": "f43009ebe2da2504071292b60553e2e68e5b7532facba0b865ac74117012821b"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/common/error.js",
+      "matches": true,
+      "sha256": "64a00c37f34da14b525f7482e8cc31abf4f7ff4e62bb319244c9cc8b446de668"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/service/index.js",
+      "matches": true,
+      "sha256": "7fe5f8d48cf63fee9faecd0955c7ff5df318c53314d7e7a7e594c42e2de666fd"
+    },
+    {
+      "path": "uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/service/pay.js",
+      "matches": true,
+      "sha256": "a18fc885f433d7c2c6a020529a1544f663996597acdc0abcc255ca7355ab4875"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-commerce/index.js",
+      "matches": true,
+      "sha256": "a5d3d432f2e67977ed50029ef3e943a530e0ccb434647e5c22f6e864e9ecfa1a"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-commerce/refund.js",
+      "matches": true,
+      "sha256": "69e9cb0a3b7710d3adecb6f10107c3b620ed901af7cbdd75ef4c74f8451fe7d0"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-commerce/model.js",
+      "matches": true,
+      "sha256": "220d833387595b0a88fc2b637b780bface783a75e41c211092228ad1fc641e9a"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/index.js",
+      "matches": true,
+      "sha256": "0e164809f5baddf5c5cf63a7280e9816ddc906f9a1ff510fb6503f5a9e6f7a85"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/notify/goods.js",
+      "matches": true,
+      "sha256": "3ba3daf6bb8214ef645f1d97b8851bce0e4940f79e0088b45f0fca6f653ef1f0"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/notify/appleiap.js",
+      "matches": true,
+      "sha256": "1321a2a944fd0329a82c7284badcd54fbdcd57d1f94d62a67476b72acac3889f"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/notify/vip.js",
+      "matches": true,
+      "sha256": "c038683c6f43bf970001c4d172725d1b57672b3fb26b8935eb5a7c1b297b2db8"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/dao/uniPayOrders.js",
+      "matches": true,
+      "sha256": "3c1c3322d7b6eb2d61d849efad8ef7e6fe161eaa9dd5fee22b945279d96a423d"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/dao/index.js",
+      "matches": true,
+      "sha256": "83b556fa955d436436e761b374e0d58aa922f113b275728926e060949f430460"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/dao/uniIdUsers.js",
+      "matches": true,
+      "sha256": "2b58a0aa6b4b60b60cfaa46968005fa6d6a3978594c39c340ff878f68c174e03"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/qrcode.js",
+      "matches": true,
+      "sha256": "ac2b3517c199f439faf10734ac45f74f4e8dbd8a2e9ca5bc272afa31f30e4dc9"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/alipay.js",
+      "matches": true,
+      "sha256": "fb347505f2950215d18f1dfdcc9b12610eb2b7904e5c9df0db5d1f48c4c92750"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/index.js",
+      "matches": true,
+      "sha256": "8af43e39f5da46320a7557619b492e2952c6564bca77c5e640783c8a350eac87"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/wxpay.js",
+      "matches": true,
+      "sha256": "5524383fdacc26d6c86683980c21362c407f613e5f9583f63f34e901c153c739"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/common.js",
+      "matches": true,
+      "sha256": "58e4fb3b4dab75cea55d60618e027e7094148b3332a9ac61ee180646ccda74e6"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/libs/crypto.js",
+      "matches": true,
+      "sha256": "ec530490224f150a0db5619a77c8bc1ee94912001831fb44140b3c53d48e0baa"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/common/error.js",
+      "matches": true,
+      "sha256": "64a00c37f34da14b525f7482e8cc31abf4f7ff4e62bb319244c9cc8b446de668"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/service/index.js",
+      "matches": true,
+      "sha256": "7fe5f8d48cf63fee9faecd0955c7ff5df318c53314d7e7a7e594c42e2de666fd"
+    },
+    {
+      "path": "uniCloud-aliyun/cloudfunctions/common/jlg-pay-runtime/service/pay.js",
+      "matches": true,
+      "sha256": "a18fc885f433d7c2c6a020529a1544f663996597acdc0abcc255ca7355ab4875"
+    },
+    {
+      "path": "uniCloud-aliyun/database/opendb-mall-goods.schema.json",
+      "matches": true
+    },
+    {
+      "path": "uniCloud-aliyun/database/uni-pay-orders.schema.json",
+      "matches": true
+    },
+    {
+      "path": "uniCloud-aliyun/database/jlg-goods-coupon.schema.json",
+      "matches": true
+    },
+    {
+      "path": "uniCloud-aliyun/database/jlg-goods-couponrule.schema.json",
+      "matches": true
+    },
+    {
+      "path": "delete-order timer",
+      "matches": true
+    },
+    {
+      "path": "delete-order dependency",
+      "matches": true
+    }
+  ]
+}

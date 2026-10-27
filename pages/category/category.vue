@@ -7,9 +7,9 @@
 		</view>
 
 		<!-- 主体：侧边栏 + 右侧商品区 -->
-		<view class="cate-main" :style="{ height: mainHeight + 'px' }">
+		<view class="cate-main">
 			<!-- 左侧父类侧边栏 -->
-			<scroll-view class="sidebar" scroll-y :style="{ height: mainHeight + 'px' }">
+			<scroll-view class="sidebar" scroll-y>
 				<view v-if="flist.length === 0 && !catLoading" class="sidebar-empty">
 					<text class="sidebar-empty__text">{{ $t('category.emptyCategory') }}</text>
 				</view>
@@ -21,7 +21,7 @@
 			</scroll-view>
 
 			<!-- 右侧：子分类tab+排序（sticky）+ 商品列表 -->
-			<scroll-view class="goods-scroll" scroll-y :style="{ height: mainHeight + 'px' }"
+			<scroll-view class="goods-scroll" scroll-y
 				@scrolltolower="loadMore" enable-back-to-top>
 
 				<!-- 子分类 Tab + 排序入口（同一行，sticky 吸顶） -->
@@ -110,8 +110,6 @@
 
 	export default {
 		data() {
-			const sysInfo = uni.getSystemInfoSync();
-			const rpx = sysInfo.windowWidth / 750;
 			return {
 				flist: [],
 				catLoading: false,
@@ -125,16 +123,10 @@
 				sortType: 0,
 				sortOrders: ['add_date asc', 'add_date desc', 'crossed_price asc', 'crossed_price desc'],
 				searchKeyword: '',
-				windowWidth: sysInfo.windowWidth,
-				windowHeight: sysInfo.windowHeight,
-				searchBarH: Math.ceil(112 * rpx),
 				user_id: '',
 			};
 		},
 		computed: {
-			mainHeight() {
-				return this.windowHeight - this.searchBarH;
-			},
 			currentSubCates() {
 				if (this.flist.length === 0 || !this.flist[this.activeParentIndex]) return [];
 				return this.flist[this.activeParentIndex].childrens || [];
@@ -161,10 +153,11 @@
 			return { title: this.$t('home.shareTitle') };
 		},
 		onLoad() {
-			try {
-				this.user_id = uniCloud.getCurrentUserInfo().uid;
-			} catch(e) {}
 			this.loadCategories();
+		},
+		onShow() {
+			const session = uniCloud.getCurrentUserInfo();
+			this.user_id = session.tokenExpired > Date.now() ? session.uid : '';
 		},
 		methods: {
 			loadCategories() {
@@ -301,7 +294,7 @@
 				this.$refs.specPopup.open(item);
 			},
 			navToDetail(id) {
-				uniCloud.callFunction({
+				if (this.user_id) uniCloud.callFunction({
 					name: 'jlg-record',
 					data: { user_id: this.user_id, id }
 				}).catch(() => {});
@@ -322,9 +315,15 @@
 	}
 
 	.cate-page {
+		// H5 预留框架 tabBar，原生 tabBar 已在页面可用区域之外。
+		position: fixed;
+		top: var(--window-top, 0px);
+		right: 0;
+		bottom: var(--window-bottom, 0px);
+		left: 0;
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
+		overflow: hidden;
 		background: $brand-bg;
 	}
 
@@ -338,6 +337,8 @@
 
 	/* ── 主体布局 ── */
 	.cate-main {
+		flex: 1;
+		min-height: 0;
 		display: flex;
 		flex-direction: row;
 		overflow: hidden;
@@ -346,6 +347,7 @@
 	/* ── 左侧侧边栏 ── */
 	.sidebar {
 		width: $sidebar-w;
+		height: 100%;
 		flex-shrink: 0;
 		background: $brand-bg;
 	}
@@ -400,6 +402,7 @@
 	/* ── 右侧商品滚动区 ── */
 	.goods-scroll {
 		flex: 1;
+		height: 100%;
 		overflow: hidden;
 	}
 

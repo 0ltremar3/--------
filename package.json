@@ -39,12 +39,12 @@
 			"uni-id-pages"
 		],
 		"encrypt": [
-			"uniCloud-aliyun/cloudfunctions/delete-order/index.js",
-			"uniCloud-aliyun/cloudfunctions/jlg-cart/index.js",
-			"uniCloud-aliyun/cloudfunctions/jlg-home/index.js",
-			"uniCloud-aliyun/cloudfunctions/jlg-logistics/index.js",
-			"uniCloud-aliyun/cloudfunctions/jlg-record/index.js",
-			"uniCloud-aliyun/cloudfunctions/jlg-distribution/index.obj.js"
+			"uniCloud-alipay/cloudfunctions/delete-order/index.js",
+			"uniCloud-alipay/cloudfunctions/jlg-cart/index.js",
+			"uniCloud-alipay/cloudfunctions/jlg-home/index.js",
+			"uniCloud-alipay/cloudfunctions/jlg-logistics/index.js",
+			"uniCloud-alipay/cloudfunctions/jlg-record/index.js",
+			"uniCloud-alipay/cloudfunctions/jlg-distribution/index.obj.js"
 		],
 		"platforms": {
 			"cloud": {

@@ -238,7 +238,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/* #ifndef APP-NVUE */
 	page {
 		flex: 1;
@@ -264,24 +264,16 @@
 	}
 
 	.bottom-back {
-		margin-top: 10px;
-		width: 750rpx;
-		height: 44px;
-		/* #ifndef APP-NVUE */
+		@include shop-button(secondary);
+		margin: 32rpx;
+		min-height: 88rpx;
 		display: flex;
-		/* #endif */
-		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		/* #ifndef APP-NVUE */
-		border: none;
-		/* #endif */
-		border-width: 0;
-		border-radius: 0;
-		background-color: #FFFFFF;
 	}
 
 	.bottom-back-text {
+		color: inherit;
 		font-size: 33rpx;
 	}
 

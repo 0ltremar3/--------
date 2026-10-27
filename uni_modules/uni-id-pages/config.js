@@ -29,11 +29,11 @@ export default {
 	//政策协议
 	"agreements": {
 		"serviceUrl": {
-			"url": "http://static-mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.next.bspapp.com/jlg-use/problem/probileDetail",
+			"url": "/jlg-use/problem/probileDetail",
 			"id": "64cb6029bd0220bf8cac6988"
 		}, //用户服务协议链接
 		"privacyUrl": {
-			"url": "http://static-mp-f3674fcb-abe5-48a7-af28-4ce3b0ee209a.next.bspapp.com/jlg-use/problem/probileDetail",
+			"url": "/jlg-use/problem/probileDetail",
 			"id": "64cb60692139291cebe3401f"
 		}, //隐私政策条款链接
 		// 哪些场景下显示，1.注册（包括登录并注册，如：微信登录、苹果登录、短信验证码登录）、2.登录（如：用户名密码登录）

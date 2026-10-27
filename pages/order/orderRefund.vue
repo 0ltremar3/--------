@@ -35,12 +35,7 @@
 				let array = [];
 				array.push(this.message)
 				if (this.message != '') {
-					db.collection('uni-pay-orders').doc(id).update({
-						"status": 6,
-						"refund_fee": this.data.total_fee,
-						"refund_list": array,
-						"origstate": this.data.status
-					}).then(() => {
+					uniCloud.importObject('uni-pay-co').orderAction({ id, action: 'refund', reason: this.message }).then(() => {
 						uni.showToast({
 							title: "已提交申请",
 							icon: "none",
@@ -61,19 +56,16 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	button::after {
 		border: none;
 	}
-
 	.but {
+		@include shop-button(primary);
 		height: 80rpx;
 		width: 100%;
 		margin: auto;
-		border-radius: 50px;
 		line-height: 80rpx;
-		color: #fff;
-		background-color: #61A189;
 	}
 
 	.btn_van {

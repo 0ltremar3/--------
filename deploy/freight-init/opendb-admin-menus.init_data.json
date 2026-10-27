@@ -1,0 +1,27 @@
+[
+	{
+		"_id": "shipping_management",
+		"menu_id": "shipping_management",
+		"name": "配送管理",
+		"url": "",
+		"parent_id": "",
+		"sort": 20,
+		"icon": "uni-icons-paperplane",
+		"permission": [
+			"GOODS_EDIT"
+		],
+		"enable": true
+	},
+	{
+		"_id": "freight_templates",
+		"menu_id": "freight_templates",
+		"name": "运费模板",
+		"url": "/pages/jlg-freight-templates/list",
+		"parent_id": "shipping_management",
+		"sort": 0,
+		"permission": [
+			"GOODS_EDIT"
+		],
+		"enable": true
+	}
+]

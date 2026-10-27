@@ -1,31 +1,33 @@
 <template>
-	<page-meta :page-style="'overflow:'+(true?'hidden':'visible')"></page-meta>
-	<view class="content" v-if="isShow" @click.stop="showClick()">
-		<!-- #ifndef MP-WEIXIN -->
-		<view style="position: absolute;top: -9999999999999999999999999px;">
-			<canvas @click.stop="" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"
-				canvas-id="my-canvas"></canvas>
+	<view>
+		<!-- 原生画布保持挂载；弹层快速关闭/重开不能销毁后复用同一个 canvas-id。 -->
+		<view style="position:fixed;left:-10000px;top:0;pointer-events:none">
+			<!-- #ifdef MP-WEIXIN -->
+			<canvas type="2d" id="share-canvas" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"></canvas>
+			<!-- #endif -->
+			<!-- #ifndef MP-WEIXIN -->
+			<canvas canvas-id="share-canvas" id="share-canvas" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"></canvas>
+			<!-- #endif -->
 		</view>
-		<image :src="pahta" mode="widthFix" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"></image>
-		<!-- #endif -->
-		<!-- #ifdef MP-WEIXIN -->
-		<canvas @click.stop="" :style="{ width: canvasW + 'px', height: canvasH + 'px' }"
-			canvas-id="my-canvas"></canvas>
-		<!-- #endif -->
-		<view class="btn-row">
-			<!-- #ifdef H5-->
-			<view class="save-btn ghost" @click.stop="saveQrcode">保存商品码</view>
-			<view class="save-btn" @click.stop="saveImage">长按保存图片</view>
-			<!-- #endif -->
-			<!-- #ifdef MP-WEIXIN-->
-			<view class="save-btn ghost" @click.stop="saveQrcode">保存商品码</view>
-			<view class="save-btn" @click.stop="saveImage">保存图片</view>
-			<!-- #endif -->
+		<view class="content" v-if="isShow" @click.stop="showClick">
+			<view v-if="envVersion !== 'release'" style="color:white;margin:16rpx">测试用，勿用于正式包装</view>
+			<image v-if="pahta || qrcodeFilePath" :src="pahta || qrcodeFilePath" mode="aspectFit" style="width:650rpx;height:65vh" @click.stop=""></image>
+			<view v-if="error" style="color:white;padding:24rpx" @click.stop="">{{ error }}</view>
+			<view class="btn-row" @click.stop="">
+				<button class="save-btn ghost" @click.stop="prepareCode">{{ qrcodeFilePath ? '预览商品码' : '重试商品码' }}</button>
+				<button class="save-btn" @click.stop="showCanvas">生成海报</button>
+			</view>
+			<view class="btn-row" @click.stop="">
+				<button class="save-btn ghost" :disabled="!qrcodeFilePath || saving" @click.stop="saveQrcode">保存商品码</button>
+				<button class="save-btn" :disabled="!pahta || saving" @click.stop="saveImage">保存海报</button>
+			</view>
+			<button class="save-btn ghost" style="margin-top:24rpx" @click.stop="showClick">关闭</button>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { getProductCode, codeEnvironment, imageInfo, withTimeout, apiCall, savePicture } from '@/common/product-share.js';
 	// 与 uni.scss 品牌 Token 保持一致，SCSS 变量无法在 JS 中直接引用，故在此镜像定义
 	const BRAND = Object.freeze({
 		primary:    '#61A189', // $brand-primary
@@ -39,72 +41,110 @@
 
 	export default {
 		props: {
-			headerImg: {
-				type: String,
-				default: ''
-			},
-			title: {
-				type: String,
-				default: '山前食养商城'
-			},
-			price: {
-				type: Number,
-				default: 9.99
-			},
-			origprice: {
-				type: Number,
-				default: 99.99
-			},
-			abImg: {
-				type: String,
-				default: 'http://test.slwjd.com/hbimage/ggimg.png'
-			},
-			avcimgs: {
-				type: String,
-				default: ''
-			},
-			username: {
-				type: String,
-				default: '匿名用户'
-			}
+			goodsId: { type: String, default: '' },
+			identity: { type: String, default: '' },
+			headerImg: { type: String, default: '' },
+			title: { type: String, default: '山前食养商城' },
+			price: { type: Number, default: 0 },
+			origprice: { type: Number, default: 0 },
+			username: { type: String, default: '匿名用户' }
 		},
 		data() {
-			return {
-				canvasW: 0,
-				canvasH: 0,
-				ctx: null,
-				isShow: false,
-				qrcode: '',
-				pahta: '',
-				qrcodeFilePath: ''
-			}
+			return { canvasW: 1, canvasH: 1, canvasId: 'share-canvas', isShow: false, pahta: '', qrcodeFilePath: '', envVersion: '', stage: '', error: '', saving: false, revision: 0 };
 		},
+		computed: {
+			contentKey() { return JSON.stringify([this.goodsId, this.identity, this.headerImg, this.title, this.price, this.origprice, this.username, this.envVersion, 1]); }
+		},
+		watch: { contentKey() { this.invalidate(); } },
+		beforeDestroy() { this.invalidate(); },
 		methods: {
-			showClick() {
-				this.isShow = false
-				this.$emit('showClick', this.isShow);
+			invalidate() {
+				this.revision++;
+				this._work = null;
+				this._code = null;
+				this.pahta = '';
+				this.qrcodeFilePath = '';
+				if (this._loading) { uni.hideLoading(); this._loading = false; }
+				this.isShow = false;
+				this.$emit('showClick', false);
 			},
-			//显示
-			showCanvas(qrcode) {
-				this.isShow = true
-				this.qrcode = qrcode
-				this.__init()
+			showClick() { this.invalidate(); },
+			async open() {
+				this.envVersion = codeEnvironment();
+				await this.$nextTick();
+				this.isShow = true;
+				this.$emit('showClick', true);
+				return this.prepareCode();
+			},
+			checkTask(revision) {
+				if (revision !== this.revision || !this.isShow) throw new Error('任务已取消');
+			},
+			run(action) {
+				if (this._work) return this._work;
+				const revision = this.revision;
+				this.error = '';
+				this.stage = '准备商品码';
+				this._loading = true;
+				uni.showLoading({ title: '正在生成...', mask: true });
+				const started = Date.now();
+				const work = withTimeout(Promise.resolve().then(() => action(revision)), 8000, () => this.stage + '超时，请重试').catch(error => {
+					if (revision === this.revision) {
+						console.warn('[share] failed-stage', this.stage);
+						this.error = error.message || error.errMsg || '生成失败，请检查网络及图片权限后重试';
+						this.revision++; // timeout also invalidates callbacks that arrive later
+					}
+				}).finally(() => {
+					console.info('[share] generation-total-ms', Date.now() - started);
+					if (this._work === work) {
+						this._work = null;
+						if (this._loading) uni.hideLoading();
+						this._loading = false;
+					}
+				});
+				this._work = work;
+				return work;
+			},
+			async code(revision) {
+				const key = JSON.stringify([this.goodsId, this.identity, this.envVersion]);
+				let value = this._codeCache && this._codeCache.key === key ? this._codeCache.value : null;
+				if (value) {
+					try { await apiCall('getImageInfo', { src: value.path }); } catch (_) { value = null; }
+				}
+				if (!value) value = await getProductCode(this.goodsId, this.envVersion);
+				this.checkTask(revision);
+				this._codeCache = { key, value };
+				this.qrcodeFilePath = value.path;
+				return value.path;
+			},
+			prepareCode() {
+				return this.run(async revision => {
+					await this.code(revision);
+					this.checkTask(revision);
+					this.pahta = '';
+				});
+			},
+			showCanvas() {
+				return this.run(async revision => {
+					if (this._posterCache && this._posterCache.key === this.contentKey) {
+						try {
+							await apiCall('getImageInfo', { src: this._posterCache.path });
+							this.checkTask(revision);
+							this.pahta = this._posterCache.path;
+							return;
+						} catch (_) { this.checkTask(revision); }
+					}
+					await this.__init(revision);
+				});
 			},
 			//初始化画布
-			async __init() {
-				uni.showLoading({ title: '生成海报中...', mask: true })
-				this.ctx = uni.createCanvasContext('my-canvas', this)
-				this.canvasW = uni.upx2px(650)
-
-				// ── 阶段1：预加载所有图片 ──
-				let brandLogoImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
-				// #ifdef H5
-				let headerImg = await this.getImageInfo('https://mp-33f14b87-9d61-4c31-83d5-b969e0cb9a6c.cdn.bspapp.com/logo.png')
-				// #endif
-				// #ifdef MP-WEIXIN
-				let headerImg = await this.getImageInfo(this.headerImg)
-				let avcimgsImg = await this.getImageInfo(this.avcimgs)
-				// #endif
+			async __init(revision) {
+				this.stage = '准备海报素材';
+				const [brandLogoImg, headerImg, qrcodePath] = await Promise.all([
+					imageInfo('/static/share-brand.png'), imageInfo(this.headerImg), this.code(revision)
+				]);
+				this.checkTask(revision);
+				this.canvasW = uni.upx2px(650);
+				// 微信原生 canvas-id 在挂载时注册，不能随任务 revision 改名。
 
 				// ── 阶段2：根据图片真实比例算高度，再算 canvasH ──
 				let hW = uni.upx2px(570)
@@ -113,75 +153,116 @@
 				// canvasH = 产品图高 + 上方用户区(~134upx) + 标题价格(~160upx) + 分割线+底部内容(~230upx) + 底部留白(~36upx)
 				this.canvasH = hH + uni.upx2px(560)
 
+				this.stage = '等待画布就绪';
+				await this.$nextTick();
+				this.checkTask(revision);
+				let canvas, ctx, qrcodeImg = qrcodePath;
+				let brandImage = brandLogoImg.path, productImage = headerImg.path;
+				// #ifdef MP-WEIXIN
+				const field = await new Promise(resolve => {
+					uni.createSelectorQuery().in(this).select('#' + this.canvasId).fields({ node: true, size: true }, resolve).exec();
+				});
+				this.checkTask(revision);
+				if (!field || !field.node || !field.width || !field.height) throw new Error('画布尚未就绪，请重试');
+				canvas = field.node;
+				const ratio = uni.getSystemInfoSync().pixelRatio || 1;
+				canvas.width = Math.round(this.canvasW * ratio);
+				canvas.height = Math.round(this.canvasH * ratio);
+				ctx = canvas.getContext('2d');
+				ctx.scale(ratio, ratio);
+				this.stage = '解码海报图片';
+				const decoded = new Map();
+				const decode = src => {
+					if (!decoded.has(src)) decoded.set(src, new Promise((resolve, reject) => {
+						const image = canvas.createImage();
+						image.onload = () => resolve(image);
+						image.onerror = () => reject(new Error('海报图片解码失败，请重试'));
+						image.src = src;
+					}));
+					return decoded.get(src);
+				};
+				[brandImage, productImage, qrcodeImg] = await Promise.all([decode(brandImage), decode(productImage), decode(qrcodePath)]);
+				// #endif
+				// #ifndef MP-WEIXIN
+				await new Promise((resolve, reject) => {
+					uni.createSelectorQuery().in(this).select('#' + this.canvasId).boundingClientRect(rect => {
+						if (rect && rect.width > 0 && rect.height > 0) resolve();
+						else reject(new Error('画布尚未就绪，请重试'));
+					}).exec();
+				});
+				ctx = uni.createCanvasContext(this.canvasId, this);
+				// #endif
+				this.checkTask(revision);
+
 				// ── 阶段3：绘制白色圆角背景（高度已确定）──
-				this.ctx.setFillStyle('rgba(255,255,255,0)')
-				this.ctx.fillRect(0, 0, this.canvasW, this.canvasH)
-				this.drawRoundRect(this.ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), BRAND.surface)
+				ctx.fillStyle = 'rgba(255,255,255,0)';
+				ctx.fillRect(0, 0, this.canvasW, this.canvasH)
+				this.drawRoundRect(ctx, 0, 0, this.canvasW, this.canvasH, uni.upx2px(18), BRAND.surface)
 
 				// ── 阶段4：绘制用户头像 ──
 				let radius = 25
 				let x = 18
 				let y = 8
-				this.ctx.save()
-				this.ctx.beginPath()
-				this.ctx.arc(x + radius, y + radius, radius, 0, 2 * Math.PI)
-				this.ctx.closePath()
-				this.ctx.clip()
+				ctx.save()
+				ctx.beginPath()
+				ctx.arc(x + radius, y + radius, radius, 0, 2 * Math.PI)
+				ctx.closePath()
+				ctx.clip()
 				// #ifdef H5
-				this.drawRoundImg(this.ctx, brandLogoImg.path, x, y, radius * 2, radius * 2, radius)
+				this.drawRoundImg(ctx, brandImage, x, y, radius * 2, radius * 2, radius)
 				// #endif
 				// #ifdef MP-WEIXIN
-				this.drawRoundImg(this.ctx, brandLogoImg.path, x, y, uni.upx2px(100), uni.upx2px(100), 20)
+				this.drawRoundImg(ctx, brandImage, x, y, uni.upx2px(100), uni.upx2px(100), 20)
 				// #endif
-				this.ctx.restore()
+				ctx.restore()
 
 				// ── 阶段5：绘制昵称与副标题 ──
 				let textX = x + radius * 2 + 7
 				let textY = y + radius - 3
-				this.ctx.font = '15px Arial'
-				this.ctx.fillStyle = BRAND.black
-				this.ctx.fillText(this.username, textX, textY)
-				this.ctx.font = '12px Arial'
-				this.ctx.fillStyle = BRAND.muted
-				this.ctx.fillText('发现优质好物，一起开启品质生活之旅', x + radius * 2 + 7, y + radius + 15)
+				ctx.font = '15px Arial'
+				ctx.fillStyle = BRAND.black
+				ctx.fillText(this.username, textX, textY)
+				ctx.font = '12px Arial'
+				ctx.fillStyle = BRAND.muted
+				ctx.fillText('发现优质好物，一起开启品质生活之旅', x + radius * 2 + 7, y + radius + 15)
 
 				// ── 阶段6：绘制商品主图（自适应比例）──
-				this.drawRoundImg(this.ctx, headerImg.path,
+				this.drawRoundImg(ctx, productImage,
 					(this.canvasW - hW) / 2,
 					(this.canvasW - hW) / 0.6,
 					hW, hH, uni.upx2px(16))
 
 				// ── 阶段7：绘制标题 ──
-				this.drawTitle(this.ctx, this.title,
+				this.drawTitle(ctx, this.title,
 					(this.canvasW - hW) / 2,
 					(this.canvasW - hW) / 1.3 + hH + uni.upx2px(130),
 					uni.upx2px(570), 23)
 
 				// ── 阶段8：绘制价格与原价 ──
 				let priceY = (this.canvasW - hW) / 0.9 + hH + uni.upx2px(200)
-				this.ctx.setFontSize(14)
-				this.ctx.setFillStyle(BRAND.primary)
-				this.ctx.fillText('￥', (this.canvasW - hW) / 2, priceY)
-				this.ctx.setFontSize(22)
-				this.ctx.fillText(this.price, (this.canvasW - hW) / 2 + uni.upx2px(36), priceY)
-				const origX = (this.canvasW - hW) / 2 + uni.upx2px(36) + this.ctx.measureText('￥' + this.price).width + uni.upx2px(5)
-				this.ctx.setFontSize(14)
-				this.ctx.setFillStyle(BRAND.muted)
-				this.ctx.fillText('原价：', origX - uni.upx2px(30), priceY)
+				ctx.font = '14px Arial';
+				ctx.fillStyle = BRAND.primary;
+				ctx.fillText('￥', (this.canvasW - hW) / 2, priceY)
+				ctx.font = '22px Arial';
+				ctx.fillText(this.price, (this.canvasW - hW) / 2 + uni.upx2px(36), priceY)
+				const origX = (this.canvasW - hW) / 2 + uni.upx2px(36) + ctx.measureText('￥' + this.price).width + uni.upx2px(5)
+				ctx.font = '14px Arial';
+				ctx.fillStyle = BRAND.muted;
+				ctx.fillText('原价：', origX - uni.upx2px(30), priceY)
 				const origPriceStr = '￥' + this.origprice.toFixed(2)
-				this.ctx.fillText(origPriceStr, origX + uni.upx2px(35), priceY)
-				this.ctx.setStrokeStyle(BRAND.muted)
-				this.ctx.setLineWidth(1)
-				this.ctx.beginPath()
-				this.ctx.moveTo(origX + uni.upx2px(76), priceY - uni.upx2px(8))
-				this.ctx.lineTo(origX + uni.upx2px(35) + this.ctx.measureText(origPriceStr).width, priceY - uni.upx2px(8))
-				this.ctx.stroke()
+				ctx.fillText(origPriceStr, origX + uni.upx2px(35), priceY)
+				ctx.strokeStyle = BRAND.muted;
+				ctx.lineWidth = 1;
+				ctx.beginPath()
+				ctx.moveTo(origX + uni.upx2px(76), priceY - uni.upx2px(8))
+				ctx.lineTo(origX + uni.upx2px(35) + ctx.measureText(origPriceStr).width, priceY - uni.upx2px(8))
+				ctx.stroke()
 
 				// ── 阶段9：虚线分割 ──
 				// 价格基线在 hH+144px，分割线放在价格后 ~20px：uni.upx2px(330)=165px
 				let margin = (this.canvasW - hW) / 2
 				let dividerY = hH + uni.upx2px(330)
-				this.drawDashLine(this.ctx, uni.upx2px(20), dividerY, this.canvasW - uni.upx2px(20), dividerY, 5)
+				this.drawDashLine(ctx, uni.upx2px(20), dividerY, this.canvasW - uni.upx2px(20), dividerY, 5)
 
 				// ── 阶段10-12：底部品牌 + 二维码（在分割线与卡片底部之间垂直居中）──
 				let qrSize   = uni.upx2px(150)
@@ -203,45 +284,36 @@
 				let logoY = rowY + Math.round((qrSize - logoSize) / 2)
 
 				// 绘制提示文案
-				this.ctx.setFontSize(12)
-				this.ctx.setFillStyle(BRAND.muted)
-				this.ctx.fillText('长按识别"山前食养"小程序', margin + uni.upx2px(14), hintY)
+				ctx.font = '12px Arial';
+				ctx.fillStyle = BRAND.muted;
+				ctx.fillText('长按识别"山前食养"小程序', margin + uni.upx2px(14), hintY)
 
 				// 绘制品牌 logo
-				this.drawRoundImg(this.ctx, brandLogoImg.path, logoX, logoY, logoSize, logoSize, uni.upx2px(8))
+				this.drawRoundImg(ctx, brandImage, logoX, logoY, logoSize, logoSize, uni.upx2px(8))
 				// 品牌名与标语垂直居中于 logo
-				this.ctx.setFontSize(16)
-				this.ctx.setFillStyle(BRAND.black)
-				this.ctx.fillText('山前食养', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.38))
-				this.ctx.setFontSize(11)
-				this.ctx.setFillStyle(BRAND.muted)
-				this.ctx.fillText('养生 · 美食 · 原产好物', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.65))
+				ctx.font = '16px Arial';
+				ctx.fillStyle = BRAND.black;
+				ctx.fillText('山前食养', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.38))
+				ctx.font = '11px Arial';
+				ctx.fillStyle = BRAND.muted;
+				ctx.fillText('养生 · 美食 · 原产好物', logoX + logoSize + uni.upx2px(16), logoY + Math.round(logoSize * 0.65))
 
-				// 绘制二维码
-				// #ifdef H5
-				let qrcodeImg = this.qrcode
+				ctx.drawImage(qrcodeImg, qrX, qrY, qrSize, qrSize);
+				this.stage = '绘制海报';
+				const drawStarted = Date.now();
+				// #ifndef MP-WEIXIN
+				await new Promise(resolve => ctx.draw(false, resolve));
 				// #endif
-				// #ifdef MP-WEIXIN
-				let qrcodeImg = await this.base64Save(this.qrcode)
-				// #endif
-				this.qrcodeFilePath = qrcodeImg
-				this.ctx.drawImage(qrcodeImg, qrX, qrY, qrSize, qrSize)
-
-								// ── 阶段13：延迟渲染 ──
-				setTimeout(() => {
-					this.ctx.draw(true, () => {
-						// #ifdef H5
-						uni.canvasToTempFilePath({
-							canvasId: 'my-canvas',
-							quality: 1,
-							complete: (res) => {
-								this.pahta = res.tempFilePath
-							}
-						}, this)
-						// #endif
-						uni.hideLoading()
-					})
-				}, 500)
+				console.info('[share] draw-ms', Date.now() - drawStarted);
+				this.checkTask(revision);
+				this.stage = '导出海报';
+				const exportStarted = Date.now();
+				const exported = await apiCall('canvasToTempFilePath', { canvas, canvasId: this.canvasId, quality: 1, fileType: 'png' }, this);
+				this.checkTask(revision);
+				if (!exported.tempFilePath) throw new Error('图片导出失败，请重试');
+				console.info('[share] export-ms', Date.now() - exportStarted);
+				this.pahta = exported.tempFilePath;
+				this._posterCache = { key: this.contentKey, path: this.pahta };
 			},
 
 			//绘制实心圆
@@ -249,7 +321,7 @@
 			ctx.save()
 			ctx.beginPath();
 			ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
-			ctx.setFillStyle('rgba(0,0,0,.18)')
+			ctx.fillStyle = 'rgba(0,0,0,.18)';
 			ctx.fill();
 				ctx.restore()
 				ctx.closePath()
@@ -267,8 +339,8 @@
 			},
 		//绘制虚线
 		drawDashLine(ctx, x1, y1, x2, y2, dashLength) {
-			ctx.setStrokeStyle(BRAND.border)
-				ctx.setLineWidth(1) //设置线条宽度
+			ctx.strokeStyle = BRAND.border;
+				ctx.lineWidth = 1; //设置线条宽度
 				var dashLen = dashLength,
 					xpos = x2 - x1, //得到横向的宽度;
 					ypos = y2 - y1, //得到纵向的高度;
@@ -288,8 +360,8 @@
 		drawTitle(ctx, title, x, y, maxWidth, lineHeight) {
 			const fontSize = 16;
 			const color = BRAND.text;
-				ctx.setFontSize(fontSize);
-				ctx.setFillStyle(color);
+				ctx.font = fontSize + 'px Arial';
+				ctx.fillStyle = color;
 
 				const maxLines = 2;
 				const ellipsis = '...';
@@ -352,149 +424,28 @@
 			drawRoundRect(ctx, x, y, width, height, radius, color) {
 				ctx.save();
 				ctx.beginPath();
-				ctx.setFillStyle(color);
-				ctx.setStrokeStyle(color)
-				ctx.setLineJoin('round'); //交点设置成圆角
-				ctx.setLineWidth(radius);
+				ctx.fillStyle = color;
+				ctx.strokeStyle = color;
+				ctx.lineJoin = 'round'; //交点设置成圆角
+				ctx.lineWidth = radius;
 				ctx.strokeRect(x + radius / 2, y + radius / 2, width - radius, height - radius);
 				ctx.fillRect(x + radius, y + radius, width - radius * 2, height - radius * 2);
 				ctx.stroke();
 				ctx.closePath();
 			},
-			//获取图片
-			getImageInfo(imgSrc) {
-				return new Promise((resolve, reject) => {
-					uni.getImageInfo({
-						src: imgSrc,
-						success: (image) => {
-							resolve(image);
-							console.log('获取图片成功', image)
-						},
-						fail: (err) => {
-							reject(err);
-							console.log('获取图片失败', err)
-						}
-					});
-				});
+			async save(path) {
+				if (this.saving) return;
+				this.saving = true;
+				const revision = this.revision;
+				try {
+					await savePicture(path);
+					if (revision === this.revision) this.showClick();
+				} catch (error) {
+					if (revision === this.revision) uni.showToast({ title: error.message || error.errMsg || '保存失败，请重试', icon: 'none' });
+				} finally { this.saving = false; }
 			},
-			base64Save(base64File) { //base64File 需要加前缀
-				const fsm = wx.getFileSystemManager(); //获取全局文件管理器
-
-				let extName = base64File.match(/data\:\S+\/(\S+);/)
-				if (extName) {
-					//获取文件后缀
-					extName = extName[1]
-				}
-
-				//获取自1970到现在的毫秒 + 文件后缀 生成文件名
-				let fileName = Date.now() + '.' + extName
-
-				return new Promise((resolve, reject) => {
-					//写入文件的路径
-					let filePath = wx.env.USER_DATA_PATH + '/' + fileName
-
-					fsm.writeFile({
-						filePath,
-						data: base64File.replace(/^data:\S+\/\S+;base64,/, ''), //替换前缀为空
-						encoding: 'base64',
-						success: (res) => {
-							// console.log('filePath', filePath); //路径：http://user.....
-							resolve(filePath);
-						},
-						fail() {
-							reject('写入失败');
-						},
-					});
-				});
-			},
-			//仅保存商品二维码
-			saveQrcode() {
-				if (!this.qrcodeFilePath) {
-					uni.showToast({ title: '请先生成海报', icon: 'none' })
-					return
-				}
-				// #ifdef MP-WEIXIN
-				uni.getSetting({
-					success: (res) => {
-						const needAuth = !res.authSetting['scope.writePhotosAlbum']
-						if (needAuth) {
-							uni.openSetting({})
-							return
-						}
-						uni.saveImageToPhotosAlbum({
-							filePath: this.qrcodeFilePath,
-							success: () => {
-								uni.showToast({ title: '商品码已保存', icon: 'success', duration: 2000 })
-							},
-							fail: () => {
-								uni.showToast({ title: '保存失败，请检查相册权限', icon: 'none' })
-							}
-						})
-					}
-				})
-				// #endif
-				// #ifdef H5
-				const a = document.createElement('a')
-				a.href = this.qrcodeFilePath
-				a.download = 'qrcode.png'
-				a.click()
-				// #endif
-			},
-
-			//保存图片到相册
-			saveImage() {
-				// #ifdef MP-WEIXIN
-				//判断用户授权
-				uni.getSetting({
-					success(res) {
-						console.log('获取用户权限', res.authSetting)
-						if (Object.keys(res.authSetting).length > 0) {
-							//判断是否有相册权限
-							if (res.authSetting['scope.writePhotosAlbum'] == null) {
-								//打开设置权限
-								uni.openSetting({
-									success(res) {
-										console.log('设置权限', res.authSetting)
-									}
-								})
-							} else {
-								if (!res.authSetting['scope.writePhotosAlbum']) {
-									//打开设置权限
-									uni.openSetting({
-										success(res) {
-											console.log('设置权限', res.authSetting)
-										}
-									})
-								}
-							}
-						} else {
-							return
-						}
-					}
-				})
-				var that = this
-				uni.canvasToTempFilePath({
-					canvasId: 'my-canvas',
-					quality: 1,
-					complete: (res) => {
-						console.log('保存到相册', res);
-						uni.saveImageToPhotosAlbum({
-							filePath: res.tempFilePath,
-							success(res) {
-								uni.showToast({
-									title: '已保存到相册',
-									icon: 'success',
-									duration: 2000
-								})
-								setTimeout(() => {
-									that.isShow = false
-								}, 2000)
-							}
-						})
-					}
-				}, this);
-				// #endif
-			}
+			saveQrcode() { return this.save(this.qrcodeFilePath); },
+			saveImage() { return this.save(this.pahta); }
 		}
 	}
 </script>
@@ -513,23 +464,18 @@
 		align-items: center;
 
 		.btn-row {
-			margin-top: 50rpx;
+			margin-top: 20rpx;
 			display: flex;
 			flex-direction: row;
 			gap: 24rpx;
 		}
-
 		.save-btn {
-			color: $brand-surface;
-			background: $brand-primary;
-			padding: 18rpx 48rpx;
-			border-radius: $uni-border-radius-sm;
+			@include shop-button(primary);
+			padding: 16rpx 24rpx;
 			font-size: $uni-font-size-base;
 			letter-spacing: 2rpx;
-
 			&.ghost {
-				color: $brand-primary;
-				background: $brand-surface;
+				@include shop-button(secondary);
 			}
 		}
 	}

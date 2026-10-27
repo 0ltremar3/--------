@@ -24,6 +24,7 @@ const {
 
 const db = uniCloud.database();
 const _ = db.command;
+const commerce = require('jlg-commerce').createCommerce(db);
 
 const notifyPath = "/payNotify/";
 
@@ -91,6 +92,10 @@ class service {
 
 		if (resultCode == "SUCCESS" || tradeState === "SUCCESS") {
 			let time = Date.now();
+			const stockOrder = await commerce.settle(outTradeNo, totalFee, {
+				transaction_id: transactionId, pay_date: time, notify_date: time, openid, provider, provider_pay_type
+			});
+			if (stockOrder) return libs.common.returnNotifySUCCESS({ provider, provider_pay_type });
 			let payOrderInfo = await dao.uniPayOrders.updateAndReturn({
 				whereJson: {
 					status: 0, // status:0 为必须条件，防止重复推送时的错误
@@ -162,6 +167,10 @@ class service {
 	 * 统一支付 - 创建支付订单
 	 */
 	async createOrder(data = {}) {
+		if (data.type === 'goods') {
+			if (!['wxpay', 'alipay'].includes(data.provider)) throw new Error('商品订单仅支持微信或支付宝');
+			data = await commerce.prepare(data);
+		}
 		let {
 			provider, // 支付供应商
 			total_fee, // 支付金额
@@ -323,6 +332,14 @@ class service {
 					delete getOrderInfoParam.sceneInfo.h5_info.wap_name;
 				}
 			}
+		}
+		if (type === 'goods') {
+			const claim = await dao.uniPayOrders.updateAndReturn({
+				whereJson: { _id: data._id, status: 0, stock_state: 'reserved' },
+				dataJson: { provider_pay_type, provider_appid: uniPayConifg.appId, appid, uni_platform: platform, stock_payment_started: true }
+			});
+			// 重试支付可能不修改任何字段，按匹配的订单判断，不能按修改条数判断。
+			if (!claim) throw new Error('订单已关闭或已付款');
 		}
 		try {
 			// 如果是苹果内购，不需要执行uniPayInstance.getOrderInfo等操作
@@ -508,6 +525,7 @@ class service {
 			}
 		}
 		if (queryRes.tradeState === 'SUCCESS' || queryRes.tradeState === 'FINISHED') {
+			if (payOrderInfo.stock_version === 1) payOrderInfo = await commerce.settle(payOrderInfo.out_trade_no, queryRes.totalFee, { transaction_id: queryRes.transactionId || payOrderInfo.transaction_id || '', pay_date: Date.now() });
 			if (typeof payOrderInfo.user_order_success == "undefined" && await_notify) {
 				let whileTime = 0; // 当前循环已执行的时间（毫秒）
 				let whileInterval = 500; // 每次循环间隔时间（毫秒）
@@ -579,6 +597,7 @@ class service {
 				errCode: ERROR[52001]
 			};
 		}
+		if (payOrderInfo.stock_version === 1) return require('jlg-commerce/refund').refundStock(db, await this.initUniPayInstance(payOrderInfo), payOrderInfo, data);
 		let refund_count = payOrderInfo.refund_count || 0;
 		refund_count++;
 		// 生成退款订单号
@@ -695,9 +714,10 @@ class service {
 		try {
 			let refundQueryJson = {
 				outTradeNo: out_trade_no,
-				outRefundNo: payOrderInfo.refund_list[0].out_refund_no
+				outRefundNo: payOrderInfo.stock_refund_no || payOrderInfo.refund_list[0].out_refund_no
 			};
 			queryRes = await uniPayInstance.refundQuery(refundQueryJson);
+			if (payOrderInfo.stock_version === 1) await require('jlg-commerce/refund').confirmRefund(db, out_trade_no, queryRes);
 		} catch (err) {
 			throw {
 				errCode: ERROR[53003],
@@ -763,16 +783,33 @@ class service {
 				errCode: ERROR[52001]
 			};
 		}
-		let {
-			provider
-		} = payOrderInfo;
-		let uniPayInstance = await this.initUniPayInstance(payOrderInfo);
-		let closeOrderRes = await uniPayInstance.closeOrder({
-			outTradeNo: out_trade_no
-		});
+		const { provider } = payOrderInfo;
+		if (payOrderInfo.status === -1) return { errCode: 0, errMsg: '订单已关闭' };
+		if (payOrderInfo.status !== 0) throw new Error('已付款订单不能取消');
+		if (payOrderInfo.stock_version === 1 && !payOrderInfo.stock_payment_started) {
+			await commerce.release(out_trade_no, true);
+			return { errCode: 0, errMsg: '订单已关闭' };
+		}
+		const uniPayInstance = await this.initUniPayInstance(payOrderInfo);
+		const query = await uniPayInstance.orderQuery({ outTradeNo: out_trade_no });
+		if (['SUCCESS', 'FINISHED', 'TRADE_SUCCESS', 'TRADE_FINISHED'].includes(query.tradeState)) {
+			if (payOrderInfo.stock_version === 1) await commerce.settle(out_trade_no, query.totalFee, { transaction_id: query.transactionId || '', pay_date: Date.now() });
+			throw new Error('订单已付款，不能取消');
+		}
+		let closeOrderRes;
+		if (['CLOSED', 'TRADE_CLOSED'].includes(query.tradeState)) {
+			closeOrderRes = provider === 'wxpay' ? { resultCode: 'SUCCESS' } : { code: '10000' };
+		} else {
+			closeOrderRes = await uniPayInstance.closeOrder({ outTradeNo: out_trade_no });
+		}
+
 		if ((provider === "wxpay" && closeOrderRes.resultCode === "SUCCESS") || (provider === "alipay" &&
 				closeOrderRes.code ===
 				"10000")) {
+			if (payOrderInfo.type === 'goods') {
+				await commerce.release(out_trade_no);
+				return { errCode: 0, errMsg: '订单关闭成功', result: closeOrderRes };
+			}
 			// 修改订单状态为已取消
 			await dao.uniPayOrders.update({
 				whereJson: {

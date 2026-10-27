@@ -237,13 +237,9 @@
 		font-size: $font-body;
 		color: $brand-muted;
 	}
-
 	.ress_scbut {
-		background-color: transparent;
+		@include shop-button(secondary);
 		font-size: $font-meta;
-		color: $brand-muted;
-		border: 1rpx solid $brand-border;
-		border-radius: $uni-border-radius-sm;
 		padding: 0 24rpx;
 		height: 56rpx;
 		line-height: 56rpx;
@@ -252,20 +248,16 @@
 	button::after {
 		border: none;
 	}
-
 	.but {
+		@include shop-button(primary);
 		width: calc(100% - 64rpx);
 		position: fixed;
 		bottom: env(safe-area-inset-bottom, 32rpx);
 		left: 32rpx;
 		font-size: $font-product-title;
 		font-weight: $font-product-title-weight;
-		color: $brand-surface;
-		background-color: $brand-primary;
-		border-radius: $uni-border-radius-base;
 		height: 88rpx;
 		line-height: 88rpx;
-		box-shadow: none;
 	}
 
 	.checked {

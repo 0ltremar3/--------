@@ -1,7 +1,12 @@
 <template>
 	<view class="detail-page">
 		<view class="article-wrap">
-			<mp-html ref="mpAll" :content="loadList.content" />
+			<view v-if="loading">正在加载内容…</view>
+			<view v-else-if="error">
+				<text>{{ error }}</text>
+				<button @click="loadData(id)">重新加载</button>
+			</view>
+			<mp-html v-else ref="mpAll" :content="loadList.content" :copy-link="false" />
 		</view>
 	</view>
 </template>
@@ -12,7 +17,9 @@
 		data() {
 			return {
 				id: '',
-				loadList: [],
+				loadList: {},
+				loading: false,
+				error: '',
 			}
 		},
 		onLoad(e) {
@@ -30,13 +37,28 @@
 			}
 		},
 		methods: {
-			loadData(id) {
-				db.collection("opendb-news-articles").doc(id).get().then((res) => {
-					this.loadList = res.result.data[0]
-					uni.setNavigationBarTitle({
-						title: this.loadList.title
-					})
-				})
+			async loadData(id) {
+				this.error = '';
+				this.loadList = {};
+				if (!id) {
+					this.error = '内容不存在，请返回重试';
+					return;
+				}
+				this.loading = true;
+				try {
+					const res = await db.collection('opendb-news-articles').doc(id).get();
+					const article = res.result.data[0];
+					if (!article || !article.content || !article.content.trim()) {
+						this.error = '内容暂未发布，请稍后重试';
+						return;
+					}
+					this.loadList = article;
+					uni.setNavigationBarTitle({ title: article.title || '详情' });
+				} catch (e) {
+					this.error = '内容加载失败，请检查网络后重试';
+				} finally {
+					this.loading = false;
+				}
 			}
 		}
 	}

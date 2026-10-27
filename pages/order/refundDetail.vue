@@ -164,9 +164,9 @@
 </script>
 
 <style lang="scss">
-	@import url("../../static/colorui/icon.css");
-	@import url("../../static/common/common.scss");
-	@import url("../../static/colorui/main.css");
+	@import url("./styles/colorui/icon.css");
+	@import '@/static/common/common.scss';
+	@import url("./styles/colorui/main.css");
 
 	page {
 		background: #f0f0f0;

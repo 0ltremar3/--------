@@ -27,7 +27,7 @@ view[class*='use-area']{ border-radius: 20rpx; background: #fff; padding: 20rpx;
 view[class*='-round-area']{ border-radius: 20rpx; }
 
 .use-page { min-height: 100%; width: 100%; background: #fff; } .use-hover-class { opacity: 0.6; }
-.use-btn {background-color: #ff6a6c; padding: 16rpx 60rpx; border-radius: 60rpx; color: #fff;}
+.use-btn { @include shop-button(primary); padding: 16rpx 60rpx; }
 
 /* 三角形 */ 
 .triangle-up:after { content: ' ';width: 0;height: 0;
@@ -283,7 +283,9 @@ uni-toast {z-index: 99999;}
 
 /* 价格色覆盖 → 主题绿 */
 .price, .price-jf, .discount, .s-price { color: #202321; }
-.use-btn { background-color: #61A189; }
+// 通用按钮：原有 use-btn 继续可用，新页面可直接使用以下语义类。
+.ds-button-primary { @include shop-button(primary); }
+.ds-button-secondary { @include shop-button(secondary); }
 .tag-base { background: #61A189; border-color: #61A189; }
 .triangle-b::after { border-top-color: #61A189; }
 

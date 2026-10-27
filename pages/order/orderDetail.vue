@@ -1,122 +1,80 @@
 <template>
-	<view class="content">
-		<view class="top_van">
-			<uni-steps :options="stepsList" :active="active" active-color="#ffffff" deactive-color="#f1f1f1" />
-		</view>
-		<view class="page_van">
-			<view class="logistics_van">
-				<view @click="naTvo(logistics,0)" class="title_van">
-					<view class="icon_logistic">
-						<text style="color: #414141;margin-left: 6rpx;" class="iconfont icon-uniE00C"></text>
-					</view>
-					<view style="flex: 1;" v-if="logistics.data != null">
-						<view style="color: #1c87dc;;" class="goods_name">
-							{{logistics.data[0].context}}
-						</view>
-						<view class="logistic_time">{{logistics.data[0].time}}</view>
-					</view>
-					<view style="flex: 1;" v-else>
-						<view style="color: #969696;height: 72rpx;line-height: 72rpx;" class="goods_name">
-							暂无物流信息
-						</view>
-					</view>
-					<view class="icon_logistic" style="line-height: 56rpx;">
-						<text class="iconfont icon-uniE003"></text>
-					</view>
+	<view class="order-page order-detail">
+		<template v-if="orderList._id">
+			<view class="order-state-panel">
+				<text class="order-state-title">{{statusPresentation.title}}</text>
+				<text class="order-state-hint">{{statusPresentation.hint}}</text>
+				<view v-if="[0,1,4,5,7].includes(orderList.status)" class="order-progress">
+					<uni-steps :options="progressLabels" :active="active" active-color="#365F4F" deactive-color="#626B65" />
 				</view>
-				<view class="title_van address_van">
-					<view class="icon_user">
-						<text class="iconfont icon-ditu_dingwei_o" style="font-size: 57rpx;"></text>
+			</view>
+			<view class="order-section">
+				<view v-if="orderList.shippingInfo" class="order-shipping">
+					<view class="order-section-heading">
+						<text class="order-section-title">{{$t('orders.shippingInfo')}}</text>
+						<button class="order-text-button" hover-class="order-pressed" @click="naTvo(logistics,0)">{{$t('orders.viewLogistics')}}<uni-icons type="right" size="14" color="#626B65"></uni-icons></button>
 					</view>
-					<view>
-						<view>
-							<text class="user_name">{{orderList.name}}</text>
-							<text class="logistic_text">{{orderList.phone}}</text>
-						</view>
-						<text class="logistic_texts">{{orderList.addressol}}</text>
+					<text class="order-shipping-company">{{orderList.shippingInfo.loginame}}</text>
+					<view class="order-info-row">
+						<text class="order-waybill" selectable>{{orderList.shippingInfo.loginum}}</text>
+						<button class="order-text-button" hover-class="order-pressed" @click="copy(orderList.shippingInfo.loginum)">{{$t('orders.copy')}}</button>
+					</view>
+					<view v-if="logistics.data && logistics.data.length" class="order-shipping-update">
+						<text>{{logistics.data[0].context}}</text>
+						<text class="order-hint">{{logistics.data[0].time}}</text>
+					</view>
+					<text v-else class="order-hint">{{$t('orders.noLogistics')}}</text>
+				</view>
+				<view class="order-address">
+					<uni-icons type="location" size="23" color="#365F4F"></uni-icons>
+					<view class="order-address-body">
+						<text class="order-hint">{{$t('orders.shippingAddress')}}</text>
+						<view class="order-recipient"><text class="order-recipient-name">{{orderList.name}}</text><text>{{orderList.phone}}</text></view>
+						<text class="order-address-text" selectable>{{orderList.addressol}}</text>
 					</view>
 				</view>
 			</view>
-			<view class="logistics_vans">
-				<view class="goods_van">
-					商品信息
-				</view>
-				<view @click="naTvo(item.goods_id,2)" class="title_van" style="margin-top: 22rpx;"
-					v-for="(item,index) in orderList.goods_arr" :key="index">
-					<view class="img_van">
-						<image class="goods_img" :src="item.goods_img"></image>
-					</view>
-					<view class="goods_info">
-						<view class="goods_name">{{item.goods_name}}</view>
-						<text class="goods_suk" v-for="suk in item.goods_suk">{{suk}}</text>
-						<view class="goods_price">
-							<jlg-minPrice class="price_text" :min-price="item.goods_price"
-								maxSize="30rpx"></jlg-minPrice>
-							<text class="goods_num">×{{item.goods_num}}</text>
+			<view class="order-section">
+				<text class="order-section-title">{{$t('orders.goodsInfo')}}</text>
+				<view v-for="(item,index) in orderList.goods_arr" :key="index" class="order-product" hover-class="order-pressed" @click="naTvo(item.goods_id,2)">
+					<image class="order-product-image" :src="item.goods_img" mode="aspectFill"></image>
+					<view class="order-product-info">
+						<text class="order-product-name">{{displayGoodsName(item)}}</text>
+						<view class="order-specs"><text v-for="(suk,sukIndex) in item.goods_suk" :key="sukIndex" class="order-spec">{{suk}}</text></view>
+						<view class="order-product-price">
+							<jlg-minPrice :min-price="item.goods_price" maxSize="30rpx" minSize="24rpx"></jlg-minPrice>
+							<text class="order-hint">×{{item.goods_num}}</text>
 						</view>
 					</view>
 				</view>
-			</view>
-			<view class="goods_vans">
-				<view class="goods_title">订单编号
-					<text class="text">{{orderList.order_no}}</text>
-				</view>
-				<view class="goods_title">支付方式
-					<text class="text">微信支付</text>
-				</view>
-				<view class="goods_title">{{orderList.status > 1?'支付时间':'创建时间'}}
-					<text
-						class="text">{{formatDate(orderList.status > 1?orderList.pay_date:orderList.create_date)}}</text>
-				</view>
-				<view class="goods_title">购买备注
-					<text class="text">{{orderList.notes}}</text>
+				<view class="order-price-breakdown">
+					<view class="order-info-row"><text class="order-info-label">{{$t('orders.goodsAmount')}}</text><text>￥{{(orderList.origprice/100).toFixed(2)}}</text></view>
+					<view class="order-info-row"><text class="order-info-label">{{$t('orders.freight')}}</text><text>{{orderList.freight != null && orderList.freight > 0 ? '+￥' + (orderList.freight/100).toFixed(2) : $t('orders.freeShipping')}}</text></view>
+					<view class="order-info-row"><text class="order-info-label">{{$t('orders.coupon')}}</text><text>{{orderList.deduprice != null && orderList.deduprice > 0 ? '-￥' + (orderList.deduprice/100).toFixed(2) : $t('orders.noCoupon')}}</text></view>
+					<view class="order-amount"><text>{{orderList.status === 0 ? $t('orders.amountDue') : $t('orders.amountPaid')}}</text><jlg-minPrice :min-price="Number(orderList.total_fee)" maxSize="44rpx" minSize="28rpx" :Weight="500"></jlg-minPrice></view>
 				</view>
 			</view>
-			<view class="goods_vans">
-				<view class="goods_title">商品金额
-					<text class="texts">￥{{orderList.origprice/100}}</text>
+			<view class="order-section">
+				<text class="order-section-title">{{$t('orders.orderInfo')}}</text>
+				<view class="order-info-row order-id-row"><text class="order-info-label">{{$t('orders.orderNumber')}}</text><text class="order-info-value" selectable>{{orderList.order_no}}</text><button class="order-text-button" hover-class="order-pressed" @click="copy(orderList.order_no)">{{$t('orders.copy')}}</button></view>
+				<view class="order-info-row"><text class="order-info-label">{{$t('orders.paymentMethod')}}</text><text class="order-info-value">{{$t('orders.wechatPay')}}</text></view>
+				<view class="order-info-row"><text class="order-info-label">{{$t('orders.createdAt')}}</text><text class="order-info-value">{{formatDate(orderList.create_date)}}</text></view>
+				<view v-if="orderList.pay_date" class="order-info-row"><text class="order-info-label">{{$t('orders.paidAt')}}</text><text class="order-info-value">{{formatDate(orderList.pay_date)}}</text></view>
+				<view class="order-info-row"><text class="order-info-label">{{$t('orders.notes')}}</text><text class="order-info-value">{{orderList.notes || $t('orders.noNotes')}}</text></view>
+			</view>
+			<view v-if="![-1,2,3,7].includes(orderList.status) && !(orderList.status === 1 && orderList.custom)" class="order-footer">
+				<text v-if="orderList.status === 4" class="order-footer-hint">{{$t('orders.receiptHint')}}</text>
+				<view class="order-footer-actions">
+					<button v-if="orderList.status == 0" class="order-button" hover-class="order-pressed" @click="cancelOrder(orderList)">{{$t('orders.cancelOrder')}}</button>
+					<button v-else-if="[1].includes(orderList.status) && !orderList.custom" class="order-button" hover-class="order-pressed" @click="refundClick(orderList)">{{$t('orders.requestRefund')}}</button>
+					<button v-else-if="[4].includes(orderList.status)" class="order-button" hover-class="order-pressed" @click="naTvo(logistics,0)">{{$t('orders.viewLogistics')}}</button>
+					<button v-if="orderList.status == 0 && !orderList.custom" class="order-button order-button-primary" hover-class="order-pressed" @click="open(orderList)">{{$t('orders.payNow')}}</button>
+					<button v-else-if="[4].includes(orderList.status)" class="order-button order-button-primary" hover-class="order-pressed" @click="confirmReceipt(orderList)">{{$t('orders.confirmReceipt')}}</button>
+					<button v-else-if="[6].includes(orderList.status)" class="order-button" hover-class="order-pressed" @click="canceClick(orderList)">{{$t('orders.cancelRefund')}}</button>
+					<button v-else-if="[5].includes(orderList.status)" class="order-button order-button-primary" hover-class="order-pressed" @click="naTvo(orderList,1)">{{$t('orders.reviewNow')}}</button>
 				</view>
-				<view class="goods_title">运费
-					<text v-if="orderList.freight != null && orderList.freight>0"
-						class="texts">+￥{{orderList.freight/100}}</text>
-					<text v-else style="color: #828282;" class="texts">免运费</text>
-				</view>
-				<view class="goods_title">优惠卷
-					<text v-if="orderList.deduprice != null && orderList.deduprice >0"
-						class="texts">-￥{{orderList.deduprice/100}}</text>
-					<text v-else style="color: #828282;" class="texts">未使用优惠卷</text>
-				</view>
-				<view class="goods_title">
-					<text class="texts" style="line-height: 50rpx;">实付金额：
-					</text>
-					<jlg-minPrice :min-price="Number(orderList.total_fee)" maxSize="34rpx"></jlg-minPrice>
-				</view>
 			</view>
-		</view>
-		<view v-if="![-1,2,3,7].includes(orderList.status)" class="footer pb-sp">
-			<view v-if="orderList.status == 0" class="btn1" @click="cancelOrder(orderList)">
-				取消订单
-			</view>
-			<view v-else-if="[1].includes(orderList.status) && !orderList.custom" class="btn1"
-				@click="refundClick(orderList)">
-				申请退款
-			</view>
-			<view v-else-if="[4].includes(orderList.status)" class="btn1" @click="naTvo(logistics,0)">
-				查看物流
-			</view>
-			<view v-if="orderList.status == 0 && !orderList.custom" class="btn2" @click="open(orderList)">
-				立即支付
-			</view>
-			<view v-else-if="[4].includes(orderList.status)" class="btn2" @click="confirmReceipt(orderList)">
-				确认收货
-			</view>
-			<view v-else-if="[6].includes(orderList.status)" class="btn2" @click="canceClick(orderList)">
-				取消退款
-			</view>
-			<view v-else-if="[5].includes(orderList.status)" class="btn2" @click="naTvo(orderList,1)">
-				立即评价
-			</view>
-		</view>
+		</template>
 		<view><uni-pay ref="uniPay" @success="onSuccess"></uni-pay></view>
 	</view>
 </template>
@@ -134,25 +92,77 @@
 				loginame: '',
 			}
 		},
+		computed: {
+			statusPresentation() {
+				const statuses = {
+					'-1': ['statusClosed', 'closedHint'],
+					0: ['statusPendingPay', 'payHint'],
+					1: ['statusPendingShip', 'shipHint'],
+					2: ['statusPartialRefund', 'partialRefundHint'],
+					3: ['statusRefunded', 'refundedHint'],
+					4: ['statusPendingReceive', 'receiveHint'],
+					5: ['statusPendingReview', 'reviewHint'],
+					6: ['statusRefunding', 'refundingHint'],
+					7: ['statusCompleted', 'completedHint']
+				};
+				const keys = statuses[this.orderList.status] || ['orderInfo', ''];
+				return { title: this.$t('orders.' + keys[0]), hint: keys[1] ? this.$t('orders.' + keys[1]) : '' };
+			},
+			progressLabels() {
+				return ['statusPendingPay', 'statusPendingShip', 'statusPendingReceive', 'statusPendingReview', 'statusCompleted']
+					.map(key => ({ title: this.$t('orders.' + key) }));
+			}
+		},
 		onLoad(e) {
-			this.orderData(e.id);
-			this.orderid = e.id;
+			return this.orderData(e.id, e.out_trade_no);
 		},
 		methods: {
-			orderData(id) {
+			displayGoodsName(item) {
+				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
+				return String(language).indexOf('en') === 0 ? (item.goods_name_en || item.goods_name) : item.goods_name;
+			},
+			copy(value) {
+				uni.setClipboardData({
+					data: String(value),
+					success: () => uni.showToast({ title: this.$t('orders.copySuccess'), icon: 'none' }),
+					fail: () => uni.showToast({ title: this.$t('orders.copyFailed'), icon: 'none' })
+				});
+			},
+			orderData(id, outTradeNo) {
+				this.orderList = [];
+				this.orderid = '';
+				const uid = uniCloud.getCurrentUserInfo().uid;
+				if (!uid) {
+					uni.showToast({ title: '请先登录后查看订单', icon: 'none' });
+					return;
+				}
+				const query = { user_id: uid };
+				if (typeof outTradeNo === 'string' && outTradeNo.trim()) {
+					query.out_trade_no = outTradeNo.trim();
+				} else if (typeof id === 'string' && id.trim()) {
+					query._id = id.trim();
+				} else {
+					uni.showToast({ title: '缺少有效的订单参数', icon: 'none' });
+					return;
+				}
 				uni.showLoading({
 					title: "加载中"
 				})
-				db.collection("uni-pay-orders").doc(id).get().then((res) => {
-					this.orderList = res.result.data[0]
-					const str = this.orderList.address;
+				return db.collection('uni-pay-orders').where(query).limit(1).get().then((res) => {
+					const order = res.result.data[0];
+					if (!order) {
+						uni.showToast({ title: '订单不存在或无权访问', icon: 'none' });
+						return;
+					}
+					this.orderList = order;
+					this.orderid = order._id;
+					const str = this.orderList.address || '';
 					const nameMatch = str.match(/姓名：(.*?)；/);
 					const phoneMatch = str.match(/电话：(.*?)；/);
 					const addressMatch = str.match(/地址：(.*?)$/);
 					this.orderList.name = nameMatch ? nameMatch[1] : '';
 					this.orderList.phone = phoneMatch ? phoneMatch[1] : '';
 					this.orderList.addressol = addressMatch ? addressMatch[1] : '';
-					uni.hideLoading()
 					switch (this.orderList.status) {
 						case 0:
 							this.active = 0;
@@ -162,7 +172,7 @@
 							break;
 						case 4:
 							this.active = 2;
-							switch (this.orderList.shippingInfo.loginame) {
+							switch ((this.orderList.shippingInfo || {}).loginame) {
 								case '极兔速递':
 									this.loginame = 'jtexpress';
 									break;
@@ -214,7 +224,13 @@
 							this.orderList.status == 6 ? '退款中' : (this.orderList.status == -1 ?
 								'已关闭' : '已完成')))
 					}]
-				})
+				}).catch(() => {
+					this.orderList = [];
+					this.orderid = '';
+					uni.showToast({ title: '订单加载失败，请稍后重试', icon: 'none' });
+				}).finally(() => {
+					uni.hideLoading();
+				});
 			},
 			//取消订单
 			async cancelOrder(item) {
@@ -222,26 +238,7 @@
 					uni.showLoading({
 						title: '请稍后...'
 					});
-					// 还原优惠卷使用状态
-					for (const items of item.preferential) {
-						await db.collection("jlg-goods-coupon").doc(items.id).update({
-							"is_use": false
-						});
-					}
-
-					// 还原商品库存及销量
-					for (const items of item.goods_arr) {
-						const res = await db.collection("opendb-mall-goods").doc(items.goods_id).get();
-						await db.collection("opendb-mall-goods").doc(items.goods_id).update({
-							"remain_count": res.result.data[0].remain_count + items.goods_num,
-							"total_sell_count": res.result.data[0].total_sell_count - items.goods_num
-						});
-					}
-
-					// 取消订单
-					await db.collection("uni-pay-orders").doc(item._id).update({
-						"status": -1
-					});
+					await uniCloud.importObject('uni-pay-co').closeOrder({ out_trade_no: item.out_trade_no });
 
 					uni.showToast({
 						title: "取消成功",
@@ -252,6 +249,7 @@
 					setTimeout(() => uni.navigateBack(), 1500)
 				} catch (error) {
 					console.error(error);
+					uni.showToast({ title: error.errMsg || error.message || '取消失败，请刷新后重试', icon: 'none' });
 					// 处理错误
 				} finally {
 					uni.hideLoading();
@@ -260,11 +258,7 @@
 			//取消退款
 			canceClick(item) {
 				let that = this;
-				db.collection("uni-pay-orders").doc(item._id).update({
-					"status": item.origstate,
-					"refund_fee": 0,
-					"refund_list": []
-				}).then(() => {
+				uniCloud.importObject('uni-pay-co').orderAction({ id: item._id, action: 'cancelRefund' }).then(() => {
 					uni.showToast({
 						title: "取消成功",
 						icon: "none",
@@ -301,9 +295,7 @@
 					content: "是否确认已收到商品",
 					success: function(res) {
 						if (res.confirm) {
-							db.collection("uni-pay-orders").doc(item._id).update({
-								"status": 5
-							}).then(() => {
+							uniCloud.importObject('uni-pay-co').orderAction({ id: item._id, action: 'receipt' }).then(() => {
 								uni.showToast({
 									title: "收货成功",
 									icon: "none",
@@ -388,227 +380,36 @@
 	}
 </script>
 
-<style lang="scss">
-	page,
-	.content {
-		background: #f3f3f3;
-		height: 100%;
-	}
+<style lang="scss" scoped>
+	@import "./order-ui.scss";
+	.order-detail { padding-bottom: calc(220rpx + env(safe-area-inset-bottom)); }
+	.order-state-panel { padding: 40rpx 32rpx 32rpx; background: $brand-bg; }
+	.order-state-title { display: block; color: $brand-black; font-size: $font-page-title; font-weight: 600; }
+	.order-state-hint { display: block; margin-top: 12rpx; color: #626B65; font-size: 26rpx; line-height: 1.6; }
+	.order-progress { margin: 32rpx -16rpx 0; }
+	.order-section { background: $brand-surface; padding: 28rpx 32rpx; margin-bottom: 16rpx; }
+	.order-section-title { display: block; color: $brand-black; font-size: 28rpx; font-weight: 600; }
+	.order-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+	.order-shipping { padding-bottom: 24rpx; margin-bottom: 28rpx; border-bottom: 1rpx solid $brand-border; }
+	.order-shipping-company { display: block; margin-top: 8rpx; font-weight: 500; }
+	.order-waybill { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+	.order-shipping-update { display: flex; flex-direction: column; gap: 8rpx; line-height: 1.6; }
+	.order-address { display: flex; align-items: flex-start; gap: 20rpx; }
+	.order-address-body { flex: 1; min-width: 0; }
+	.order-recipient { display: flex; flex-wrap: wrap; gap: 8rpx 20rpx; margin: 12rpx 0; }
+	.order-recipient-name { font-size: 30rpx; font-weight: 500; }
+	.order-address-text { display: block; line-height: 1.7; overflow-wrap: anywhere; }
+	.order-info-row { display: flex; align-items: baseline; gap: 16rpx; padding: 14rpx 0; line-height: 1.6; }
+	.order-info-label { flex-shrink: 0; color: #626B65; }
+	.order-info-value { flex: 1; min-width: 0; text-align: right; overflow-wrap: anywhere; }
+	.order-id-row { align-items: center; padding: 0; }
+	.order-price-breakdown { margin-top: 28rpx; padding-top: 16rpx; border-top: 1rpx solid $brand-border; }
+	.order-price-breakdown .order-info-row { justify-content: space-between; }
+	.order-amount { display: flex; justify-content: flex-end; align-items: baseline; flex-wrap: wrap; gap: 16rpx; margin-top: 16rpx; padding-top: 24rpx; border-top: 1rpx solid $brand-border; }
+	.order-footer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: $brand-surface; border-top: 1rpx solid $brand-border; padding: 20rpx 32rpx calc(20rpx + env(safe-area-inset-bottom)); }
+	.order-footer-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 16rpx; }
+	.order-footer-actions .order-button { flex: 1; min-width: 0; }
+	.order-footer-actions .order-button:only-child { flex: 0 1 auto; min-width: 240rpx; }
+	.order-footer-hint { display: block; text-align: right; color: #626B65; font-size: 24rpx; line-height: 1.5; margin-bottom: 16rpx; }
 
-	.top_van {
-		width: 100%;
-		background: #ff7391;
-		padding: 30rpx 0rpx 90rpx 0rpx;
-	}
-
-	.page_van {
-		padding: 0rpx 20rpx 20rpx 20rpx;
-		position: absolute;
-		width: 100%;
-		top: 112rpx;
-		z-index: 999;
-		padding-bottom: 200rpx;
-	}
-
-	.logistics_van {
-		width: 100%;
-		background: #fff;
-		border-radius: 20rpx;
-		padding: 25rpx 20rpx;
-		margin-top: 20rpx;
-	}
-
-	.logistics_vans {
-		width: 100%;
-		background: #fff;
-		border-radius: 20rpx;
-		padding: 20rpx;
-		margin-top: 20rpx;
-	}
-
-	.title_van {
-		display: flex;
-		flex-direction: row;
-	}
-
-	.address_van {
-		margin-top: 11px;
-		border-top: 1rpx solid #efefef;
-		padding-top: 8px;
-	}
-
-	.icon_logistic {
-		height: 20rpx;
-		line-height: 76rpx;
-	}
-
-	.icon_user {
-		height: 20rpx;
-		line-height: 80rpx;
-	}
-
-	.iconfont {
-		font-size: 45rpx;
-		margin-right: 20rpx;
-		color: #000;
-	}
-
-	.logistic_time {
-		font-size: 24rpx;
-		color: #afafaf;
-		margin-top: 6rpx;
-	}
-
-	.logistic_text {
-		font-size: 26rpx;
-		color: #3c3c3c;
-	}
-
-	.logistic_texts {
-		font-size: 26rpx;
-		color: #3c3c3c;
-		word-break: break-all;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-	}
-
-	.user_name {
-		font-size: 30rpx;
-		margin-right: 12rpx;
-	}
-
-	.goods_van {
-		height: 58rpx;
-		font-size: 30rpx;
-		border-bottom: 1rpx solid #efefef;
-	}
-
-	.img_van {
-		width: 150rpx;
-		height: 150rpx;
-		margin-right: 20rpx;
-	}
-
-	.goods_img {
-		width: 100%;
-		height: 100%;
-		border-radius: 20rpx;
-	}
-
-	.goods_info {
-		width: 74%;
-	}
-
-	.goods_name {
-		font-size: 27rpx;
-		word-break: break-all;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
-	}
-
-	.goods_suk {
-		margin-top: 11rpx;
-		font-size: 25rpx;
-		color: #a0a0a0;
-		margin-right: 20rpx;
-	}
-
-	.goods_price {
-		display: flex;
-		flex-direction: row;
-		margin-top: 32rpx;
-		font-size: 27rpx;
-	}
-
-	.price_text {
-		flex: 1;
-		color: #61A189;
-	}
-
-	.icon-uniE003 {
-		margin-right: 0rpx !important;
-		color: #717171 !important;
-		font-size: 40rpx;
-	}
-
-	.goods_num {
-		color: #a0a0a0;
-	}
-
-	.goods_vans {
-		width: 100%;
-		background: #fff;
-		border-radius: 20rpx;
-		padding: 30rpx 20rpx 0rpx 20rpx;
-		margin-top: 20rpx;
-	}
-
-	.goods_title {
-		height: 62rpx;
-		font-size: 26rpx;
-		display: flex;
-	}
-
-	.text {
-		color: #828282;
-		margin-left: 50rpx;
-	}
-
-	.texts {
-		color: #000000;
-		margin-left: 50rpx;
-		flex: 1;
-		text-align: right;
-
-
-	}
-
-	.goods_title:last-child {
-		border: none !important;
-		margin-bottom: 0rpx !important;
-	}
-
-	.footer {
-		width: 750rpx;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: flex-end;
-		background-color: #fff;
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		padding-right: 30rpx;
-		box-sizing: border-box;
-		z-index: 9999999999;
-	}
-
-	.btn1 {
-		border: 1rpx solid #b5b5b5;
-		color: #545454;
-		font-size: 28rpx;
-		padding: 11rpx 26rpx 13rpx 26rpx;
-		border-radius: 42rpx;
-		margin-top: 20rpx;
-		box-sizing: border-box;
-	}
-
-	.btn2 {
-		border: 1rpx solid #ff97ad;
-		background-color: #fff8fa;
-		color: #f75275;
-		font-size: 28rpx;
-		padding: 11rpx 26rpx 13rpx 26rpx;
-		border-radius: 42rpx;
-		margin-top: 20rpx;
-		box-sizing: border-box;
-		margin-left: 30rpx;
-
-	}
 </style>

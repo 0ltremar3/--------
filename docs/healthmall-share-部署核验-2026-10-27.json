@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-27",
+  "provider": "alipay",
+  "spaceName": "healthmall",
+  "spaceId": "env-00jy6y52fd8l",
+  "functions": [
+    "jlg-share",
+    "jlg-distribution"
+  ],
+  "schemas": [
+    "jlg-share-codes",
+    "jlg-share-limits",
+    "uni-id-users:share_parent_id only"
+  ],
+  "config": "uni-config-center/jlg-share trial + develop",
+  "readbackChecks": 20,
+  "uniqueIndexes": [
+    "scene_unique",
+    "cacheKey_unique"
+  ],
+  "smoke": [
+    {
+      "test": "invalid-scene",
+      "errCode": "INVALID_SCENE",
+      "errMsg": "商品码无效"
+    },
+    {
+      "test": "unknown-scene",
+      "errCode": "SCENE_UNAVAILABLE",
+      "errMsg": "商品码不存在或已停用"
+    },
+    {
+      "test": "anonymous-code",
+      "errCode": "LOGIN_REQUIRED",
+      "errMsg": "请先登录后生成商品码"
+    },
+    {
+      "test": "anonymous-bind",
+      "errCode": "LOGIN_REQUIRED",
+      "errMsg": "请先登录"
+    }
+  ],
+  "clientUploaded": false,
+  "realWeChatCodeVerified": false,
+  "allowedEnvironments": [
+    "trial",
+    "develop"
+  ],
+  "developConfigReadbackVerified": true
+}

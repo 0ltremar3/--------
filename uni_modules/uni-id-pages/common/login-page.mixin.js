@@ -82,6 +82,11 @@ let mixin = {
 		}
 	},
 	methods: {
+		cancelLogin() {
+			// 回到公开首页，避免退回受保护页面后再次触发登录。
+			this.uniIdRedirectUrl = '';
+			uni.switchTab({ url: '/pages/index/index' });
+		},
 		loginSuccess(e) {
 			mutations.loginSuccess({
 				...e,

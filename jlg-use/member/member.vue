@@ -616,12 +616,9 @@
 		font-weight: 600;
 		color: #067192;
 	}
-
 	.join-button {
-		border-radius: 2000rpx;
+		@include shop-button(secondary);
 		padding: 10rpx 30rpx;
-		background: #fff;
-		color: #ff7fa9;
 		font-size: 26rpx;
 	}
 
@@ -780,13 +777,10 @@
 		padding-top: 20rpx;
 		border-top: 1rpx dashed #067192;
 	}
-
 	.coupon-buttons {
+		@include shop-button(primary);
 		font-size: 24rpx;
-		background: #067192;
-		border-radius: 2000rpx;
 		padding: 5rpx 30rpx;
-		color: #fff;
 		white-space: nowrap;
 	}
 
@@ -869,12 +863,9 @@
 		display: flex;
 		align-items: center;
 	}
-
 	.get-button {
-		border-radius: 2000rpx;
+		@include shop-button(primary);
 		padding: 10rpx 30rpx;
 		font-size: 24rpx;
-		color: #fff;
-		background: #067192;
 	}
 </style>

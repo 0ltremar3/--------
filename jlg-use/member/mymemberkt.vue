@@ -289,7 +289,7 @@
 		},
 	}
 </script>
-<style>
+<style lang="scss">
 	/* pages/user/index.wxss */
 	/* 用户信息 */
 	page {
@@ -357,13 +357,9 @@
 		height: 20rpx;
 		background-color: #F6F6F8;
 	}
-
-
 	.buy_btn {
-		background: linear-gradient(to right, #FECD81, #FED89B);
-		color: #2f2214;
+		@include shop-button(primary);
 		padding: 10rpx 30rpx;
-		border-radius: 50rpx;
 	}
 
 	.header-center {
@@ -446,11 +442,8 @@
 	.product:nth-child(3n) {
 		margin-right: 0;
 	}
-
 	.product_btn {
-		color: #fff;
-		background: linear-gradient(to right, #ff3a3a, #61A189);
-		border-radius: 8rpx;
+		@include shop-button(primary);
 		box-sizing: border-box;
 		text-align: center;
 		padding: 5rpx 15rpx;

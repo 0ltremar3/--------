@@ -58,7 +58,7 @@
 				</view>
 				<view class="flex-dir-row mt-20  flex-y-center flex-x-end">
 					<text class="f-28 col-3">{{ $t('createOrder.subtotal') }}</text>
-					<jlg-minPrice :min-price="payments" maxSize="32rpx"></jlg-minPrice>
+					<text v-if="!quoteResult">—</text><jlg-minPrice v-else :min-price="payments" maxSize="32rpx"></jlg-minPrice>
 				</view>
 			</view>
 		</view>
@@ -85,7 +85,7 @@
 				</view>
 
 			</view>
-			<view class="flex-dir-row b-b pb-20 mt-20 flex-y-center flex-x-between">
+			<view v-if="hasPromotion" class="flex-dir-row b-b pb-20 mt-20 flex-y-center flex-x-between">
 				<view class="col-3 f-28">{{ $t('createOrder.promotion') }}</view>
 				<text class="f-28 col-61A189">-￥{{(crossed_total/100).toFixed(2)}}</text>
 			</view>
@@ -101,6 +101,9 @@
 					placeholder-class="placeholder" />
 			</view>
 		</view>
+		<view class="shipping-status" v-if="quoteError" role="alert">{{quoteError}}<button size="mini" @click="requestQuote">{{$t('shipping.retry')}}</button></view>
+		<view class="shipping-status" v-if="selectedCoupons.length"><button size="mini" @click="selectedCoupons = []">{{$t('shipping.removeCoupons')}}</button></view>
+		<view class="shipping-status" v-if="quoteResult"><text>{{$t('shipping.merge')}}</text><button size="mini" @click="detailsOpen = !detailsOpen">{{$t('shipping.details')}}</button><view v-if="detailsOpen"><view v-for="group in quoteResult.freight_snapshot.groups" :key="group.group_id">{{group.template_name || $t('shipping.legacy')}}：¥{{(group.fee / 100).toFixed(2)}}</view></view></view>
 		<!-- 占位 -->
 		<view class="line">
 
@@ -109,9 +112,9 @@
 		<view class="footer">
 			<view class="pl-30 col-61A189  flex-dir-row flex-y-baseline">
 				<text class="col-0 f-26">{{ $t('createOrder.actualPay') }}</text>
-				<jlg-minPrice :min-price="(payment) + (freight)" maxSize="40rpx" minSize="27rpx"></jlg-minPrice>
+				<text v-if="!canSubmit">—</text><jlg-minPrice v-else :min-price="quoteResult.total_fee" maxSize="40rpx" minSize="27rpx"></jlg-minPrice>
 			</view>
-			<text class="submit" @click="submit">{{ $t('createOrder.submitOrder') }}</text>
+			<button class="submit" :disabled="!canSubmit || !openstate" @click="submit">{{ $t('createOrder.submitOrder') }}</button>
 		</view>
 		<!-- 优惠卷 -->
 		<view>
@@ -148,7 +151,7 @@
 										class="coupon-z">{{ couponValueSuffix(item) }}</text></text>
 							</view>
 							<view style="font-size: 30rpx;">{{ couponThresholdText(item) }}</view>
-							<view class="coupon-lqsy">{{item.couponstate === false?$t('createOrder.couponUsed'):$t('productDetail.useNow')}}</view>
+							<view class="coupon-lqsy">{{selectedCoupons.includes(item._id) ? $t('shipping.removeCoupons') : $t('productDetail.useNow')}}</view>
 						</view>
 					</view>
 				</scroll-view>
@@ -158,16 +161,19 @@
 			<uni-popup-dialog mode="base" :title="$t('createOrder.paymentTitle')" :content="$t('createOrder.paymentContent')" :duration="0" :confirmText="$t('createOrder.payNow')"
 				:cancelText="$t('createOrder.back')" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
 		</uni-popup>
-		<view><uni-pay ref="uniPay" @success="onSuccess" @create="onCreate" @cancel="onCancel"></uni-pay></view>
+		<view><uni-pay ref="uniPay" @success="onSuccess" @create="onCreate" @cancel="onCancel" @fail="onPayFail"></uni-pay></view>
+		<jlg-delivery-picker ref="deliveryPicker" :allow-region="false" @change="chooseDelivery" />
 	</view>
 </template>
 
 <script>
+	import { getDelivery, setDelivery, deliveryForAddress, checkoutApi, checkoutError } from '@/common/delivery.js';
 	const db = uniCloud.database();
 	export default {
 		data() {
 			return {
 				goodsList: [],
+				quoteResult: null, quotedInput: '', quoteLoading: false, quoteError: '', quoteRequest: 0, selectedCoupons: [], detailsOpen: false,
 				goods_id: [],
 				payment: null, //使用优惠卷后的总金额
 				payments: null, //未使用优惠卷时的总金额
@@ -199,19 +205,49 @@
 			this.distributionData();
 			this.loadData(goodsData);
 			this.ressDate();
-			this.couponData();
+
 			if (e.control == 'true') {
 				this.control = true;
 			}
 		},
+		onShow() { this.user_id = uniCloud.getCurrentUserInfo().uid; if (this.goodsList.length) this.ressDate(); },
+		onUnload() { this.quoteRequest++; },
+		watch: { quoteInputKey() { this.requestQuote(); } },
 		computed: {
+			quoteInputKey() { return JSON.stringify([this.ressList && this.ressList._id, this.goodsList.map(item => [item._id, item.goodssuk.suk.sku_id, item.goodssuk.suk.specs, item.goodssuk.num, item.goodssuk.seckill]), this.selectedCoupons]); },
+			canSubmit() { return !!this.quoteResult && !this.quoteLoading && !this.quoteError && this.quotedInput === this.quoteInputKey; },
+			hasPromotion() {
+				return Number.isFinite(this.crossed_total) && this.crossed_total > 0;
+			},
 			freightText() {
+				if (this.quoteLoading) return this.$t('shipping.loading');
+				if (!this.quoteResult) return '—';
 				if (this.freight == 0) return this.$t('createOrder.freeShipping');
 				const amount = (this.freight / 100).toFixed(2);
 				return this.getCurrentLang() === 'en' ? `CNY ${amount}` : `￥${amount}`;
 			}
 		},
 		methods: {
+			async requestQuote() {
+				const request = ++this.quoteRequest, key = this.quoteInputKey;
+				this.quoteResult = null; this.quotedInput = ''; this.quoteError = ''; this.quoteLoading = false; this.freight = null; this.payment = null; this.payments = null; this.couponname = [];
+				if (!this.goodsList.length) return;
+				if (!this.ressList || !this.ressList._id) { this.quoteError = this.$t('shipping.needAddress'); return; }
+				this.quoteLoading = true;
+				try {
+					const result = await checkoutApi().quote({ address_id: this.ressList._id, goods_arr: this.orderLines(), preferential: this.selectedCoupons.map(id => ({ id })) });
+					if (request !== this.quoteRequest || key !== this.quoteInputKey || this.user_id !== uniCloud.getCurrentUserInfo().uid) return;
+					this.quoteResult = result; this.quotedInput = key; this.payment = result.payable; this.payments = result.origprice; this.freight = result.freight; this.couponname = result.preferential;
+					this.goodsList.forEach(item => { const line = result.goods_arr.find(row => row.goods_id === item._id && row.goods_seckill === (item.goodssuk.seckill === true) && (item.goodssuk.suk.sku_id ? row.sku_id === item.goodssuk.suk.sku_id : JSON.stringify(row.goods_suk) === JSON.stringify(item.goodssuk.suk.specs))); if (line) item.goodssuk.suk.price = line.goods_price; });
+				} catch(e) { if (request === this.quoteRequest) this.quoteError = checkoutError(e, key => this.$t(key)); }
+				finally { if (request === this.quoteRequest) this.quoteLoading = false; }
+			},
+			orderLines() { return this.goodsList.map(item => ({ goods_id: item._id, sku_id: item.goodssuk.suk.sku_id, goods_suk: item.goodssuk.suk.specs, goods_num: item.goodssuk.num, goods_seckill: item.goodssuk.seckill === true })); },
+			async chooseDelivery(selection) {
+				this.quoteRequest++; this.quoteResult = null; this.quoteLoading = true; this.quoteError = ''; this.ressList = [];
+				try { const { result } = await db.collection('jlg-goods-address').doc(selection.address_id).get(); if (getDelivery() && getDelivery().address_id !== selection.address_id) return; this.ressList = result.data[0] || []; await this.requestQuote(); }
+				catch(e) { this.quoteLoading = false; this.quoteError = this.$t('shipping.addressInvalid'); }
+			},
 			getCurrentLang() {
 				const language = uni.getStorageSync('CURRENT_LANG') || this.$i18n.locale || 'zh-Hans';
 				return String(language).indexOf('en') === 0 ? 'en' : 'zh-Hans';
@@ -263,68 +299,24 @@
 			couponThresholdText(item) {
 				return `${this.$t('productDetail.couponThresholdPrefix')}${item.orderAmount[0] / 100}${this.$t('productDetail.couponThresholdSuffix')}`;
 			},
-			ressDate() {
-				db.collection("jlg-goods-address").where({
-					"user_id": this.user_id
-				}).orderBy("is_default desc").get().then((res) => {
-					this.ressList = res.result.data[0]
-				})
+			async ressDate() {
+				const selected = getDelivery();
+				if (selected) {
+					if (selected.address_id) return this.chooseDelivery(selected);
+					this.ressList = []; this.quoteError = this.$t('shipping.needAddress'); return;
+				}
+				try {
+					const { result } = await db.collection('jlg-goods-address').where({ user_id: this.user_id, is_default: true }).limit(1).get();
+					if (result.data[0]) { const value = await deliveryForAddress(result.data[0]); if (!getDelivery()) { setDelivery(value); await this.chooseDelivery(value); } }
+				} catch(e) { this.quoteError = this.$t('shipping.addressInvalid'); }
 			},
 			async loadData(data) {
-				uni.showToast({
-					title: this.$t('createOrder.loading'),
-					icon: 'loading',
-					duration: 2000000
-				})
-				// 获取openid
-				this.openid = uni.getStorageSync("uni-pay-weixin-h5-openid");
-				let fetchedData = [];
-				for (let i = 0; i < data.length; i++) {
-					const res = await db.collection("opendb-mall-goods").doc(data[i].id).get();
-					fetchedData.push(res.result.data[0]);
-					fetchedData[i].goodssuk = data[i];
-					this.goods_id.push(fetchedData[i]._id)
-				}
-				let price = null;
-				let maxFreightAmount = 0;
-				fetchedData.forEach((item) => {
-					price += item.goodssuk.suk.price * item.goodssuk.num;
-					if (!item.freight && item.freight_amount > maxFreightAmount) {
-						maxFreightAmount = item.freight_amount;
-					}
-				})
-				this.goodsList = fetchedData
-				this.payment = price;
-				this.payments = price;
-				this.freight = maxFreightAmount;
-				let time = Date.now();
-				// 检查当前用户会员身份
-				let uservip = await db.collection("jlg-member").where({
-					user_id: this.user_id
-				}).get();
-				// 查找会员参数
-				let vipdata = await db.collection("jlg-parameter").get();
-				// 如果会员数据存在
-				if (uservip.result.data.length > 0) {
-					// 如果会员还未过期
-					if (uservip.result.data[0].failure_time > time) {
-						// 如果是svip会员
-						if (uservip.result.data[0].grade == 0) {
-							this.payment = Math.round(this.payments * (vipdata.result.data[0].svip_price / 100));
-							this.couponname.push({
-								id: 'svip',
-								name: this.memberDiscountText('SVIP', vipdata.result.data[0].svip_price)
-							})
-						} else {
-							this.payment = Math.round(this.payments * (vipdata.result.data[0].vip_price / 100))
-							this.couponname.push({
-								id: 'vip',
-								name: this.memberDiscountText('VIP', vipdata.result.data[0].vip_price)
-							})
-						}
-					}
-				}
-				uni.hideToast()
+				this.openid = uni.getStorageSync('uni-pay-weixin-h5-openid');
+				try {
+					const rows = [];
+					for (const selected of data) { const { result } = await db.collection('opendb-mall-goods').doc(selected.id).get(); if (!result.data[0]) throw new Error(); rows.push({ ...result.data[0], goodssuk: selected }); }
+					this.goods_id = rows.map(row => row._id); this.goodsList = rows; this.couponData();
+				} catch(e) { this.quoteError = this.$t('shipping.stockInvalid'); }
 			},
 			//判断是否当前用户是否存在上级，如存在，则此订单为分销订单
 			distributionData() {
@@ -352,98 +344,8 @@
 					});
 			},
 			//选择优惠卷
-			selectCoupon(id, type, price, orderAmount, endTime, couponstate, isShare, couponName, goodsarr, alltype) {
-				let time = Date.now();
-				if (endTime <= time) {
-					uni.showToast({
-						title: this.$t('createOrder.expiredCoupon'),
-						icon: "none",
-						duration: 1600
-					});
-					return;
-				}
-
-				if (couponstate === false) {
-					uni.showToast({
-						title: this.$t('createOrder.used'),
-						icon: "none",
-						duration: 1600
-					});
-					return;
-				}
-
-				let num = 0
-				if (alltype == '指定商品') {
-					this.goodsList.forEach((item) => {
-						if (goodsarr.includes(item.goodssuk.id) && !item.goodssuk.seckill) {
-							num += item.goodssuk.suk.price * item.goodssuk.num
-						}
-					})
-					if (num <= orderAmount) {
-
-						uni.showToast({
-							title: this.$t('createOrder.thresholdNotMet'),
-							icon: "none",
-							duration: 1600
-						});
-						return;
-					}
-				} else {
-					this.goodsList.forEach((item) => {
-						if (item.goodssuk.seckill) {
-							num += item.goodssuk.suk.price * item.goodssuk.num
-						}
-					})
-					if (this.payments - num <= orderAmount) {
-						uni.showToast({
-							title: this.$t('createOrder.thresholdNotMet'),
-							icon: "none",
-							duration: 1600
-						});
-						return;
-					}
-				}
-
-
-				if (!isShare && !this.is_shares()) {
-					uni.showToast({
-						title: this.$t('createOrder.noStack'),
-						icon: "none",
-						duration: 1600
-					});
-					return;
-				}
-				if (alltype == '指定商品') {
-					// 如果是指定商品可用,只优惠指定商品金额的百分比
-					if (type === "满减") {
-						this.payment = this.payment - price;
-					} else if (type === "折扣") {
-						this.payment = Math.round(this.payment - (num - num * (price / 100)));
-					}
-				} else {
-					if (type === "满减") {
-						this.payment = this.payment - price;
-					} else if (type === "折扣") {
-						this.payment = Math.round(this.payment - (this.payments - this.payments * (price / 100)));
-					}
-				}
-
-				this.couponList.forEach((item) => {
-					if (item._id === id) {
-						item.couponstate = false;
-					}
-				});
-
-				uni.showToast({
-					title: this.$t('createOrder.useSuccess'),
-					icon: "none",
-					duration: 1600
-				});
-
-				this.couponname.push({
-					id: id,
-					name: couponName
-				});
+			selectCoupon(id) {
+				this.selectedCoupons = this.selectedCoupons.includes(id) ? this.selectedCoupons.filter(value => value !== id) : [...this.selectedCoupons, id];
 				this.$refs.popup.close();
 			},
 			is_shares() {
@@ -473,20 +375,9 @@
 			changePayType(type) {
 				this.payType = type;
 			},
-			navigator() {
-				let that = this;
-				uni.navigateTo({
-					url: `/pages/address/list?source=1`,
-					events: {
-						refreshData: (data) => {
-							db.collection("jlg-goods-address").doc(data).get().then((res) => {
-								that.ressList = res.result.data[0]
-							})
-						}
-					}
-				})
-			},
+			navigator() { this.$refs.deliveryPicker.open(); },
 			async submit() {
+				if (!this.canSubmit) { uni.showToast({ title: this.quoteError || this.$t('shipping.loading'), icon: 'none' }); return; }
 				// #ifndef APP
 				if (this.ressList.formatted_address) {
 					if (this.openstate) {
@@ -494,21 +385,10 @@
 						uni.showLoading({
 							title: this.$t('createOrder.loadingEllipsis')
 						});
-						this.order_no = `${Math.floor(10000 + Math.random() * 90000)}${Date.now()}`;
+						this.order_no = this.order_no || `${Math.floor(10000 + Math.random() * 90000)}${Date.now()}`;
 						this.out_trade_no = `${this.order_no}-1`;
 
-						// 库存效验
-						let remain_count_state = await this.InventoryValidation(this.goodsList);
-						if (!remain_count_state) {
-							return uni.showToast({
-								title: this.$t('createOrder.stockInsufficient'),
-								icon: "none",
-								duration: 2000
-							})
-						}
-						for (const item of this.goodsList) {
-							await this.processGoodsItem(item);
-						}
+						this.goods_arr = this.orderLines();
 						this.open();
 
 					} else {
@@ -534,103 +414,12 @@
 				})
 				// #endif
 			},
-			async InventoryValidation(items) {
-				// 对每个商品分组，分组后对同规格商品数量累加，如果商品数量大于库存数量，不提交订单
-				let groupedItems = await items.reduce((acc, currentItem) => {
-					let group = acc.find(item => item._id === currentItem._id);
-
-					if (group) {
-						group.suks.push({
-							num: currentItem.goodssuk.num,
-							suks: currentItem.goodssuk.suk
-						})
-					} else {
-						// console.log(acc)
-						acc.push({
-							_id: currentItem._id,
-							suks: [{
-								num: currentItem.goodssuk.num,
-								suks: currentItem.goodssuk.suk
-							}]
-						});
-					}
-
-					return acc;
-				}, []);
-				let remain_count_state = true;
-				let dbPromises = groupedItems.map(async (item) => {
-					let res = await db.collection("opendb-mall-goods").doc(item._id).get();
-					if (this.control) {
-						for (let i = 0; i < res.result.data[0].fs_suks.length; i++) {
-							// 获取当前规格组合的规格数组
-							const specs = res.result.data[0].fs_suks[i].specs;
-							// 判断规格数组长度与已选规格数组长度是否相等，
-							// 并且使用 every() 方法逐个比较规格值是否相等
-							for (let ii = 0; ii < item.suks.length; ii++) {
-								if (specs.length === item.suks[ii].suks.specs.length && specs.every((spec,
-										index) => spec === item.suks[ii].suks.specs[index])) {
-									if (res.result.data[0].fs_suks[i].inventory < item.suks[ii].num) {
-										remain_count_state = false;
-									}
-								}
-							}
-						}
-					} else {
-						for (let i = 0; i < res.result.data[0].suks.length; i++) {
-							// 获取当前规格组合的规格数组
-							const specs = res.result.data[0].suks[i].specs;
-							// 判断规格数组长度与已选规格数组长度是否相等，
-							// 并且使用 every() 方法逐个比较规格值是否相等
-							for (let ii = 0; ii < item.suks.length; ii++) {
-								if (specs.length === item.suks[ii].suks.specs.length && specs.every((spec,
-										index) => spec === item.suks[ii].suks.specs[index])) {
-									if (res.result.data[0].suks[i].inventory < item.suks[ii].num) {
-										remain_count_state = false;
-									}
-								}
-							}
-						}
-					}
-				});
-
-				// 等待所有的 Promise 解决
-				await Promise.all(dbPromises);
-
-				return remain_count_state;
-			},
-			async processGoodsItem(item) {
-				const goodsItem = {
-					goods_id: item._id,
-					goods_name: item.name,
-					goods_name_en: item.name_en || item.name,
-					goods_img: item.goods_thumb,
-					goods_suk: item.goodssuk.suk.specs,
-					goods_price: item.goodssuk.suk.price,
-					goods_num: item.goodssuk.num,
-					goods_seckill: item.goodssuk.seckill
-				};
-
-				const res = await db.collection("opendb-mall-goods").doc(item._id).get();
-				await db.collection("opendb-mall-goods").doc(item._id).update({
-					"remain_count": res.result.data[0].remain_count - item.goodssuk.num,
-					"total_sell_count": res.result.data[0].total_sell_count + item.goodssuk.num
-				});
-
-				this.goods_arr.push(goodsItem);
-			},
 			open() {
-				//更改优惠卷使用状态
-				this.couponList.forEach(item => {
-					if (item.couponstate == false) {
-						db.collection("jlg-goods-coupon").doc(item._id).update({
-							"is_use": true
-						})
-					}
-				})
 				uni.hideLoading();
 				// 打开支付收银台
 				this.$refs.uniPay.open({
-					total_fee: this.payment + this.freight, // 支付金额，单位分 100 = 1元
+					address_id: this.ressList._id, checkout_version: 1, quote_key: this.quoteResult.quote_key,
+					total_fee: this.quoteResult.total_fee, // 支付金额，单位分 100 = 1元
 					order_no: this.order_no, // 业务系统订单号（即你自己业务系统的订单表的订单号）
 					out_trade_no: this.out_trade_no, // 插件支付单号
 					description: this.description, // 支付描述
@@ -647,6 +436,12 @@
 					audit_status: this.$t('createOrder.auditPending'),
 					openid: this.openid,
 				});
+			},
+			onPayFail(res) {
+				this.openstate = true;
+				uni.hideLoading();
+				uni.showToast({ title: checkoutError(res, key => this.$t(key)), icon: 'none' });
+				if (['PRICE_CHANGED', 'NOT_DELIVERABLE', 'ADDRESS_INVALID', 'FREIGHT_CONFIG_INVALID', 'COUPON_INVALID'].includes(res.errCode)) this.requestQuote();
 			},
 			onSuccess(res) {
 				console.log('success: ', res);
@@ -763,17 +558,14 @@
 		padding-bottom: env(safe-area-inset-bottom);
 
 	}
-
 	.submit {
+		@include shop-button(primary);
 		width: 208rpx;
 		height: 76rpx;
-		color: #fff;
 		text-align: center;
 		height: 76rpx;
 		line-height: 76rpx;
 		font-size: 29rpx;
-		border-radius: 77rpx;
-		background-color: #61A189;
 		margin: 20rpx 30rpx;
 	}
 
@@ -888,13 +680,10 @@
 		font-weight: 600;
 		margin-top: 8rpx;
 	}
-
 	.coupon-lqsy {
+		@include shop-button(secondary);
 		font-size: 24rpx;
 		height: 38rpx;
-		background: #fff;
-		border-radius: 100rpx;
-		color: #61A189;
 		line-height: 38rpx;
 		margin: 12rpx auto auto auto;
 		width: 125rpx;
@@ -908,4 +697,8 @@
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 1;
 	}
+</style>
+
+<style scoped>
+.shipping-status { margin: 20rpx 24rpx; padding: 24rpx; background: #fff; color: #46524b; font-size: 26rpx; line-height: 1.7; }.shipping-status button { margin-top: 12rpx; }.submit[disabled] { opacity: .5; }
 </style>

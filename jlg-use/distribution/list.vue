@@ -370,10 +370,8 @@
 
 	/* 邀请按钮 — ghost 风格 */
 	.share-btn {
+		@include shop-button(secondary);
 		font-size: $font-meta;
-		color: $brand-primary;
-		border: 1rpx solid $brand-primary;
-		border-radius: $uni-border-radius-sm;
 		padding: 12rpx 28rpx;
 	}
 
@@ -444,26 +442,18 @@
 	.comm-btn-wrap {
 		flex: 1;
 	}
-
 	.btn-ghost {
+		@include shop-button(secondary);
 		height: 80rpx;
 		line-height: 80rpx;
-		background: $brand-surface;
-		color: $brand-primary;
-		border: 1rpx solid $brand-primary;
-		border-radius: $uni-border-radius-sm;
 		text-align: center;
 		font-size: $font-body;
 		font-weight: $font-product-title-weight;
 	}
-
 	.btn-primary {
+		@include shop-button(primary);
 		height: 80rpx;
 		line-height: 80rpx;
-		background: $brand-primary;
-		color: $brand-surface;
-		border: 1rpx solid $brand-primary;
-		border-radius: $uni-border-radius-sm;
 		text-align: center;
 		font-size: $font-body;
 		font-weight: $font-product-title-weight;

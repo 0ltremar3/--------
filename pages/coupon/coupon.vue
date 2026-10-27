@@ -230,7 +230,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
 		background: #f3f3f3;
 		height: 100%;
@@ -315,13 +315,10 @@
 		font-weight: 600;
 		margin-top: 8rpx;
 	}
-
 	.coupon-lqsy {
+		@include shop-button(secondary);
 		font-size: 24rpx;
 		height: 38rpx;
-		background: #fff;
-		border-radius: 100rpx;
-		color: #61A189;
 		line-height: 38rpx;
 		margin: 12rpx auto auto auto;
 		width: 125rpx;
@@ -345,13 +342,10 @@
 		padding-bottom: env(safe-area-inset-bottom);
 
 	}
-
 	.but {
+		@include shop-button(primary);
 		width: 100%;
 		font-size: 32rpx;
-		color: #ffffff;
-		background-color: #61A189;
-		border-radius: 100rpx;
 		height: 84rpx;
 		line-height: 84rpx;
 	}

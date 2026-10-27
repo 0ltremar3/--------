@@ -1,0 +1,10 @@
+{
+  "name": "jlg-pay-runtime",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "jlg-commerce": "file:../jlg-commerce",
+    "uni-pay": "file:../../../../uni_modules/uni-pay/uniCloud/cloudfunctions/common/uni-pay",
+    "uni-config-center": "file:../../../../uni_modules/uni-config-center/uniCloud/cloudfunctions/common/uni-config-center"
+  }
+}
