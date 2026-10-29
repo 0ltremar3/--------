@@ -53,8 +53,21 @@
 
 				</view>
 				<view class="flex-dir-row mt-20  flex-y-center flex-x-between">
-					<view class="col-3 f-28">{{ $t('createOrder.freight') }}</view>
+					<button class="checkout-freight-help" :aria-label="$t('shipping.viewDetails')" :disabled="!canSubmit" @click="openFreightDetails">
+						<text>{{ $t('createOrder.freight') }}</text>
+						<uni-icons type="help" size="16" color="#757575" />
+					</button>
 					<text class="f-w f-28 col-0">{{freightText}}</text>
+				</view>
+				<view v-if="!ressList || !ressList._id" class="checkout-freight-status">
+					<button class="checkout-freight-action" @click="navigator">{{$t('createOrder.selectAddress')}}</button>
+				</view>
+				<view v-else-if="quoteError" class="checkout-freight-status" role="alert">
+					<text>{{quoteError}}</text>
+					<view class="checkout-freight-actions">
+						<button class="checkout-freight-action" @click="requestQuote">{{$t('shipping.retry')}}</button>
+						<button class="checkout-freight-action" @click="navigator">{{$t('shipping.changeAddress')}}</button>
+					</view>
 				</view>
 				<view class="flex-dir-row mt-20  flex-y-center flex-x-end">
 					<text class="f-28 col-3">{{ $t('createOrder.subtotal') }}</text>
@@ -65,7 +78,7 @@
 		<view class="list-item flex-dir-column">
 			<view class="flex-dir-row b-b pb-20 flex-y-center flex-x-between">
 				<view class="col-3 f-28">{{ $t('createOrder.coupon') }}</view>
-				<view @click="openpop()" v-if="coupomFalse && !control" class="flex-dir-row flex-y-center">
+				<view @click="openpop()" v-if="canChooseCoupons" class="flex-dir-row flex-y-center">
 					<view v-if="couponname.length == 0" class="f-26 col-61A189">
 						{{ $t('createOrder.selectCoupon') }}
 					</view>
@@ -101,9 +114,6 @@
 					placeholder-class="placeholder" />
 			</view>
 		</view>
-		<view class="shipping-status" v-if="quoteError" role="alert">{{quoteError}}<button size="mini" @click="requestQuote">{{$t('shipping.retry')}}</button></view>
-		<view class="shipping-status" v-if="selectedCoupons.length"><button size="mini" @click="selectedCoupons = []">{{$t('shipping.removeCoupons')}}</button></view>
-		<view class="shipping-status" v-if="quoteResult"><text>{{$t('shipping.merge')}}</text><button size="mini" @click="detailsOpen = !detailsOpen">{{$t('shipping.details')}}</button><view v-if="detailsOpen"><view v-for="group in quoteResult.freight_snapshot.groups" :key="group.group_id">{{group.template_name || $t('shipping.legacy')}}：¥{{(group.fee / 100).toFixed(2)}}</view></view></view>
 		<!-- 占位 -->
 		<view class="line">
 
@@ -119,13 +129,17 @@
 		<!-- 优惠卷 -->
 		<view>
 			<uv-popup bgColor="#eaeaea" ref="popup" :round="10" mode="bottom">
+				<view class="checkout-coupon-heading">
+					<text class="checkout-coupon-title">{{$t('createOrder.selectCoupon')}}</text>
+					<button v-if="selectedCoupons.length" class="checkout-coupon-clear" @click="clearCoupons">{{$t('createOrder.skipCoupons')}}</button>
+				</view>
 				<view style="font-size: 22rpx;color: #61A189;padding: 11px 0px 0px 12px;">{{ $t('createOrder.seckillCouponTip') }}</view>
 				<!-- <scroll-view></scroll-view> -->
 				<scroll-view scroll-y class="coupon-cen">
-					<view v-if="item.allowType[0] !== '指定商品' || goods_id.some(id=> item.goodsArr[0].includes(id))"
+					<view v-if="selectedCoupons.includes(item._id) || item.allowType[0] !== '指定商品' || goods_id.some(id=> item.goodsArr[0].includes(id))"
 						v-for="(item,index) in couponList" :key="index"
-						@click="selectCoupon(item._id,item.couponType[0],item.Price[0],item.orderAmount[0],item.endTime[0],item.couponstate,item.isShare[0],couponNameText(item),item.goodsArr[0],item.allowType[0])"
-						class="coupon-van">
+						@click="selectCoupon(item._id)"
+						class="coupon-van" :class="{'coupon-van--selected': selectedCoupons.includes(item._id)}">
 						<view class="coupon-letf">
 							<view class="flex-dir-row">
 								<view class="coupon-icqc">
@@ -151,12 +165,36 @@
 										class="coupon-z">{{ couponValueSuffix(item) }}</text></text>
 							</view>
 							<view style="font-size: 30rpx;">{{ couponThresholdText(item) }}</view>
-							<view class="coupon-lqsy">{{selectedCoupons.includes(item._id) ? $t('shipping.removeCoupons') : $t('productDetail.useNow')}}</view>
+							<view class="coupon-lqsy">{{selectedCoupons.includes(item._id) ? $t('createOrder.cancelCoupon') : $t('productDetail.useNow')}}</view>
 						</view>
 					</view>
 				</scroll-view>
 			</uv-popup>
 		</view>
+		<uni-popup ref="freightDetails" type="bottom" :animation="false" :safe-area="false">
+			<view class="checkout-freight-sheet" role="dialog" :aria-label="$t('shipping.details')">
+				<view class="checkout-freight-heading">
+					<text class="checkout-freight-title">{{$t('shipping.details')}}</text>
+					<button class="checkout-freight-close" @click="closeFreightDetails">{{$t('shipping.close')}}</button>
+				</view>
+				<scroll-view scroll-y class="checkout-freight-body">
+					<view v-if="canSubmit" class="checkout-freight-content">
+						<view class="checkout-freight-summary"><text>{{$t('shipping.orderFreight')}}</text><text class="checkout-freight-amount">{{freightText}}</text></view>
+						<view v-if="quoteResult.address_snapshot" class="checkout-freight-destination">{{$t('shipping.to')}} {{quoteResult.address_snapshot.region_name}}</view>
+						<view v-for="group in freightGroups" :key="group.group_id" class="checkout-freight-group">
+							<view class="checkout-freight-group-heading"><text class="checkout-freight-goods">{{group.goodsNames}}</text><text v-if="freightGroups.length > 1" class="checkout-freight-amount">{{group.feeText}}</text></view>
+							<template v-if="group.showThreshold">
+								<view>{{$t('shipping.checkoutThreshold', {amount: group.thresholdText})}}</view>
+								<view>{{$t('shipping.checkoutAmount', {amount: group.amountText})}}</view>
+							</template>
+							<view class="checkout-freight-explanation">{{group.explanation}}</view>
+						</view>
+						<view v-if="freightGroups.length > 1" class="checkout-freight-note">{{$t('shipping.merge')}}</view>
+						<view v-if="hasFreightThreshold" class="checkout-freight-note">{{$t('shipping.amountBasisNote')}}</view>
+					</view>
+				</scroll-view>
+			</view>
+		</uni-popup>
 		<uni-popup ref="messpopup" type="dialog">
 			<uni-popup-dialog mode="base" :title="$t('createOrder.paymentTitle')" :content="$t('createOrder.paymentContent')" :duration="0" :confirmText="$t('createOrder.payNow')"
 				:cancelText="$t('createOrder.back')" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
@@ -173,7 +211,7 @@
 		data() {
 			return {
 				goodsList: [],
-				quoteResult: null, quotedInput: '', quoteLoading: false, quoteError: '', quoteRequest: 0, selectedCoupons: [], detailsOpen: false,
+				quoteResult: null, quotedInput: '', quoteLoading: false, quoteError: '', quoteRequest: 0, selectedCoupons: [],
 				goods_id: [],
 				payment: null, //使用优惠卷后的总金额
 				payments: null, //未使用优惠卷时的总金额
@@ -212,23 +250,50 @@
 		},
 		onShow() { this.user_id = uniCloud.getCurrentUserInfo().uid; if (this.goodsList.length) this.ressDate(); },
 		onUnload() { this.quoteRequest++; },
-		watch: { quoteInputKey() { this.requestQuote(); } },
+		watch: {
+			quoteInputKey() { this.requestQuote(); },
+			canSubmit(valid) { if (!valid) this.closeFreightDetails(); }
+		},
 		computed: {
-			quoteInputKey() { return JSON.stringify([this.ressList && this.ressList._id, this.goodsList.map(item => [item._id, item.goodssuk.suk.sku_id, item.goodssuk.suk.specs, item.goodssuk.num, item.goodssuk.seckill]), this.selectedCoupons]); },
+			canChooseCoupons() { return this.selectedCoupons.length > 0 || (this.coupomFalse && !this.control); },
+			quoteInputKey() { return JSON.stringify([this.ressList && this.ressList._id, this.goodsList.map(item => [item._id, item.goodssuk.suk.sku_id, item.goodssuk.suk.specs, item.goodssuk.num, item.goodssuk.seckill, item.goodssuk.cart_id]), this.selectedCoupons]); },
 			canSubmit() { return !!this.quoteResult && !this.quoteLoading && !this.quoteError && this.quotedInput === this.quoteInputKey; },
 			hasPromotion() {
 				return Number.isFinite(this.crossed_total) && this.crossed_total > 0;
 			},
 			freightText() {
 				if (this.quoteLoading) return this.$t('shipping.loading');
-				if (!this.quoteResult) return '—';
+				if (!this.canSubmit) return '—';
 				if (this.freight == 0) return this.$t('createOrder.freeShipping');
 				const amount = (this.freight / 100).toFixed(2);
 				return this.getCurrentLang() === 'en' ? `CNY ${amount}` : `￥${amount}`;
-			}
+			},
+			freightGroups() {
+				if (!this.canSubmit || !this.quoteResult.freight_snapshot) return [];
+				const groups = this.quoteResult.freight_snapshot.groups || [];
+				return groups.map(group => {
+					const showThreshold = group.threshold > 0 && (group.fee > 0 || group.rule === 'free');
+					let explanation = this.$t(group.fee === 0 ? 'shipping.checkoutFree' : 'shipping.checkoutFixed', {amount: this.freightMoney(group.fee)});
+					if (showThreshold) explanation = group.remaining > 0
+						? this.$t(groups.length > 1 ? 'shipping.groupRemaining' : 'shipping.checkoutRemaining', {amount: this.freightMoney(group.remaining)})
+						: this.$t('shipping.thresholdMet');
+					return {
+						...group, showThreshold, explanation,
+						goodsNames: (group.goods || []).map(goods => this.displayLangText(this.goodsList.find(item => item._id === goods.id) || goods, 'name')).join('、'),
+						feeText: group.fee === 0 ? this.$t('createOrder.freeShipping') : this.freightMoney(group.fee),
+						thresholdText: showThreshold ? this.freightMoney(group.threshold) : '',
+						amountText: this.freightMoney(group.amount)
+					};
+				});
+			},
+			hasFreightThreshold() { return this.freightGroups.some(group => group.showThreshold); }
 		},
 		methods: {
+			freightMoney(amount) { return `${this.getCurrentLang() === 'en' ? 'CNY ' : '¥'}${(amount / 100).toFixed(2)}`; },
+			openFreightDetails() { if (this.canSubmit) this.$refs.freightDetails.open(); },
+			closeFreightDetails() { if (this.$refs.freightDetails) this.$refs.freightDetails.close(); },
 			async requestQuote() {
+				this.closeFreightDetails();
 				const request = ++this.quoteRequest, key = this.quoteInputKey;
 				this.quoteResult = null; this.quotedInput = ''; this.quoteError = ''; this.quoteLoading = false; this.freight = null; this.payment = null; this.payments = null; this.couponname = [];
 				if (!this.goodsList.length) return;
@@ -242,8 +307,9 @@
 				} catch(e) { if (request === this.quoteRequest) this.quoteError = checkoutError(e, key => this.$t(key)); }
 				finally { if (request === this.quoteRequest) this.quoteLoading = false; }
 			},
-			orderLines() { return this.goodsList.map(item => ({ goods_id: item._id, sku_id: item.goodssuk.suk.sku_id, goods_suk: item.goodssuk.suk.specs, goods_num: item.goodssuk.num, goods_seckill: item.goodssuk.seckill === true })); },
+			orderLines() { return this.goodsList.map(item => ({ goods_id: item._id, sku_id: item.goodssuk.suk.sku_id, goods_suk: item.goodssuk.suk.specs, goods_num: item.goodssuk.num, goods_seckill: item.goodssuk.seckill === true, ...(item.goodssuk.cart_id ? { cart_id: item.goodssuk.cart_id } : {}) })); },
 			async chooseDelivery(selection) {
+				this.closeFreightDetails();
 				this.quoteRequest++; this.quoteResult = null; this.quoteLoading = true; this.quoteError = ''; this.ressList = [];
 				try { const { result } = await db.collection('jlg-goods-address').doc(selection.address_id).get(); if (getDelivery() && getDelivery().address_id !== selection.address_id) return; this.ressList = result.data[0] || []; await this.requestQuote(); }
 				catch(e) { this.quoteLoading = false; this.quoteError = this.$t('shipping.addressInvalid'); }
@@ -344,6 +410,10 @@
 					});
 			},
 			//选择优惠卷
+			clearCoupons() {
+				this.selectedCoupons = [];
+				this.$refs.popup.close();
+			},
 			selectCoupon(id) {
 				this.selectedCoupons = this.selectedCoupons.includes(id) ? this.selectedCoupons.filter(value => value !== id) : [...this.selectedCoupons, id];
 				this.$refs.popup.close();
@@ -542,14 +612,13 @@
 		position: fixed;
 		left: 0;
 		bottom: 0;
-		z-index: 995;
+		z-index: 10; // 固定结算栏位于 uni-popup（99）下方。
 		display: flex;
 		align-items: center;
 		width: 100%;
 		justify-content: space-between;
 		font-size: 30rpx;
 		background-color: #fff;
-		z-index: 998;
 		color: #000;
 		padding-left: 30rpx;
 		box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
@@ -700,5 +769,59 @@
 </style>
 
 <style scoped>
-.shipping-status { margin: 20rpx 24rpx; padding: 24rpx; background: #fff; color: #46524b; font-size: 26rpx; line-height: 1.7; }.shipping-status button { margin-top: 12rpx; }.submit[disabled] { opacity: .5; }
+.checkout-coupon-heading { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; padding: 20rpx 24rpx 0; }
+.checkout-coupon-title { min-width: 0; font-size: 30rpx; font-weight: 600; color: #2a3330; }
+.checkout-coupon-clear { flex-shrink: 0; min-height: 44px; margin: 0; padding: 10rpx 16rpx; border-radius: 8rpx; font-size: 26rpx; line-height: 1.5; display: flex; align-items: center; color: #465e53; background: #fff; }
+.checkout-coupon-clear::after { border: 0; }
+.coupon-van--selected { outline: 2rpx solid #465e53; outline-offset: -2rpx; }
+.checkout-freight-help,
+.checkout-freight-close,
+.checkout-freight-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	color: #333;
+	font-size: 28rpx;
+	line-height: 1.5;
+	border-radius: 4px;
+}
+.checkout-freight-help { gap: 10rpx; }
+.checkout-freight-help[disabled] { background: transparent; color: #333; }
+.checkout-freight-help::after,
+.checkout-freight-close::after,
+.checkout-freight-action::after { border: 0; }
+.checkout-freight-help:focus-visible,
+.checkout-freight-close:focus-visible,
+.checkout-freight-action:focus-visible { outline: 2px solid #526057; outline-offset: 2px; }
+.checkout-freight-status { color: #595f5b; font-size: 26rpx; line-height: 1.6; }
+.checkout-freight-actions { display: flex; flex-wrap: wrap; gap: 24px; }
+.checkout-freight-action { color: #465e53; font-size: 26rpx; text-decoration: underline; }
+.checkout-freight-sheet {
+	background: #fff;
+	color: #2a3330;
+	border-radius: 16px 16px 0 0;
+	padding: 20rpx 30rpx 30rpx;
+	padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+}
+.checkout-freight-heading { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; margin-bottom: 20rpx; }
+.checkout-freight-title { min-width: 0; font-size: 34rpx; font-weight: 600; }
+.checkout-freight-close { flex-shrink: 0; font-size: 26rpx; color: #595f5b; padding-inline: 10rpx; }
+.checkout-freight-body { height: 55vh; }
+.checkout-freight-content { font-size: 26rpx; line-height: 1.7; overflow-wrap: anywhere; }
+.checkout-freight-summary,
+.checkout-freight-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 20rpx; }
+.checkout-freight-summary { font-size: 30rpx; font-weight: 600; }
+.checkout-freight-amount { flex-shrink: 0; white-space: nowrap; }
+.checkout-freight-destination { margin-top: 10rpx; color: #595f5b; font-size: 24rpx; }
+.checkout-freight-group { margin-top: 30rpx; }
+.checkout-freight-group-heading { margin-bottom: 10rpx; font-weight: 500; }
+.checkout-freight-goods { min-width: 0; }
+.checkout-freight-explanation { margin-top: 10rpx; }
+.checkout-freight-note { margin-top: 20rpx; color: #595f5b; font-size: 24rpx; }
+.submit[disabled] { opacity: .5; }
 </style>

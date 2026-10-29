@@ -106,7 +106,7 @@
 								<text class="cart-footer__total-label">{{ $t('cart.total') }}</text>
 								<jlg-minPrice :min-price="total" maxSize="32rpx" minSize="24rpx"></jlg-minPrice>
 							</view>
-							<text class="cart-footer__discount">{{ $t('cart.discountPrefix') }} {{ crossed_total / 100 }} {{ $t('cart.yuan') }}</text>
+							<text v-if="crossed_total > 0" class="cart-footer__discount">{{ $t('cart.discountPrefix') }} {{ (crossed_total / 100).toFixed(2) }} {{ $t('cart.yuan') }}</text>
 						</view>
 					</view>
 					<button v-if="!manage"
@@ -133,18 +133,13 @@
 				allChecked: false, //全选状态  true|false
 				empty: false, //空白页显示  true|false
 				cartList: [], //购物车数据
+				cartRequest: 0,
 				user_id: uniCloud.getCurrentUserInfo().uid,
 				manage: false
 			};
 		},
-		onLoad() {
-			this.loadData();
-		},
 		onPullDownRefresh() {
-			this.cartList = [];
-			this.loadData();
-			this.total = 0;
-			this.crossed_total = 0;
+			return this.loadData();
 		},
 		onShow() {
 			//效验当前token是否已过期
@@ -152,6 +147,11 @@
 			let ttime = uniCloud.getCurrentUserInfo().tokenExpired;
 			let uid = uniCloud.getCurrentUserInfo().uid;
 			if (xtime > ttime || uid == null) {
+				this.cartRequest++;
+				this.cartList = [];
+				this.calcTotal();
+				uni.hideLoading();
+				uni.stopPullDownRefresh();
 				uni.showToast({
 					title: this.$t('cart.loginExpired'),
 					icon: "none",
@@ -162,33 +162,47 @@
 						url: `/uni_modules/uni-id-pages/pages/login/login-withoutpwd`
 					})
 				}, 1000)
+				return;
 			}
-			this.cartList = [];
-			this.loadData();
-			this.total = 0;
-			this.crossed_total = 0;
+			return this.loadData();
 		},
+		onUnload() { this.cartRequest++; },
 		methods: {
 			//请求数据
 			loadData() {
+				const request = ++this.cartRequest;
+				const uid = uniCloud.getCurrentUserInfo().uid;
+				if (this.user_id !== uid) {
+					this.user_id = uid;
+					this.cartList = [];
+					this.calcTotal();
+				}
 				uni.showLoading({
-					title: this.$t('home.loading')
+					title: this.$t('home.loading'),
+					mask: true
 				})
-				this.$func.myFunction('jlg-cart', {
+				return this.$func.myFunction('jlg-cart', {
 						functionName: 'cartdata',
 						data: {
 							user_id: this.user_id
 						}
 					})
 					.then(res => {
-						this.cartList = res.result.cartList;
-						this.empty = res.result.empty;
-						uni.hideLoading()
-						uni.stopPullDownRefresh();
+						if (request !== this.cartRequest || uid !== uniCloud.getCurrentUserInfo().uid) return;
+						// 刷新价格和库存时按购物袋记录 ID 保留选择，不依赖列表顺序。
+						const selected = new Set(this.cartList.filter(item => item.checked).map(item => item._id));
+						this.cartList = res.result.cartList.map(item => ({
+							...item, checked: !!item.efficacy && selected.has(item._id)
+						}));
+						this.calcTotal();
 					})
 					.catch(error => {
-						uni.hideLoading()
 						console.error(error);
+					})
+					.finally(() => {
+						if (request !== this.cartRequest) return;
+						uni.hideLoading();
+						uni.stopPullDownRefresh();
 					});
 			},
 			//选中状态处理
@@ -228,8 +242,6 @@
 						duration: 1600
 					});
 					that.loadData();
-					that.total = 0;
-					that.crossed_total = 0;
 				} else {
 					uni.hideLoading()
 					uni.showToast({
@@ -254,9 +266,6 @@
 									duration: 1600
 								})
 								this.loadData();
-								this.calcTotal();
-								this.total = 0;
-								this.crossed_total = 0;
 							})
 						}
 					}
@@ -265,18 +274,25 @@
 			//计算总价
 			calcTotal() {
 				let list = this.cartList;
+				this.empty = list.length === 0;
 				if (list.length === 0) {
-					this.empty = true;
+					this.total = 0;
+					this.crossed_total = 0;
+					this.allChecked = false;
 					return;
 				}
 				let total = 0;
 				let crossed_total = 0;
-				let checked = true;
+				let checked = list.some(item => item.efficacy);
 				list.forEach(item => {
 					if (item.efficacy) {
 						if (item.checked === true) {
 							total += item.goods_suk.price * item.goods_number;
-							crossed_total += item.crossed_price[0] * item.goods_number;
+							const crossedPrice = Number((item.crossed_price || [])[0]);
+							// 划线价只作参考；无效价差不应抵消其他商品的优惠。
+							if (Number.isFinite(crossedPrice) && crossedPrice > item.goods_suk.price) {
+								crossed_total += (crossedPrice - item.goods_suk.price) * item.goods_number;
+							}
 						} else if (checked === true) {
 							checked = false;
 						}
@@ -284,7 +300,7 @@
 				})
 				this.allChecked = checked;
 				this.total = Number(total.toFixed(2));
-				this.crossed_total = Number((crossed_total - total).toFixed(2));
+				this.crossed_total = Number(crossed_total.toFixed(2));
 			},
 			navigator(id, seckill) {
 				const self = this;
@@ -316,8 +332,9 @@
 					let list = this.cartList;
 					let goodsData = [];
 					list.forEach(item => {
-						if (item.checked) {
+						if (item.checked && item.efficacy) {
 							goodsData.push({
+								cart_id: item._id,
 								id: item.id[0],
 								suk: item.goods_suk,
 								num: item.goods_number,

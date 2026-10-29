@@ -74,6 +74,7 @@ function createEditor(db, transaction) {
       }
       const raw = input._id ? await getDocument(tx, 'opendb-mall-goods', input._id) : null;
       if (input._id && !raw) error('form', '商品不存在');
+      if (raw && raw.deleted) error('form', '商品已删除，不能继续编辑');
       if (raw && (raw.editor_revision || 0) !== input.editor_revision) error('form', '其他管理员已修改此商品，请核对后重试', 'EDITOR_CONFLICT');
       const stock = !raw || STOCK.some(k => Object.prototype.hasOwnProperty.call(input.patch, k)) || input.inventory_verified === true;
       const previous = raw ? M.normalize(raw) : { suks: [], fs_suks: [] };
@@ -82,6 +83,7 @@ function createEditor(db, transaction) {
       if (raw && data.goods_editor_meta && (raw.goods_editor_meta ? raw.goods_editor_meta.spec_mode : 'multi') !== data.goods_editor_meta.spec_mode) error('suks', '保存后的规格类型不能切换');
       await require('./freight').bind(db, tx, raw, data);
       validate(data, stock, !raw);
+      await require('./identity').assertNameChange(db, tx, raw, data.name);
       data.goods_services = [...new Set(data.goods_services.map(v => v.trim()).filter(Boolean))];
       if (data.freight) data.freight_amount = 0;
       if (stock) {
@@ -158,6 +160,37 @@ function createEditor(db, transaction) {
       return { success: true };
     });
   }
-  return { save, takeOff };
+  async function remove(ids, uid) {
+    if (!uid) M.fail('请重新登录', 'AUTH_REQUIRED');
+    if (!Array.isArray(ids) || !ids.length || ids.length > 100 || ids.some(id => typeof id !== 'string' || !id.trim() || id.length > 128)) M.fail('请选择 1–100 件有效商品');
+    return transaction(db, async tx => {
+      let deletedCount = 0;
+      for (const id of new Set(ids)) {
+        const raw = await getDocument(tx, 'opendb-mall-goods', id);
+        if (!raw || raw.deleted) continue;
+        // Retain SKU identities for pending payments, cancellations and refunds.
+        const patch = {
+          deleted: true,
+          is_on_sale: false, is_best: false, is_new: false, is_hot: false, vip_goods: '',
+          editor_revision: (raw.editor_revision || 0) + 1, updated_at: Date.now()
+        };
+        // Deleted products must not keep an invisible freight-template binding.
+        if (raw.freight_mode === 'template') {
+          patch.freight_mode = 'free';
+          await require('./freight').bind(db, tx, raw, patch);
+        }
+        // Public product reads must not include fields with admin-only permissions.
+        // Keep the actor/time in the existing server-only audit collection.
+        await tx.collection('jlg-goods-editor-requests').add({
+          _id: crypto.createHash('sha256').update('delete:' + id).digest('hex').slice(0, 32),
+          user_id: uid, fingerprint: 'delete:' + id, result: { id, deleted: true }, create_date: Date.now()
+        });
+        await tx.collection('opendb-mall-goods').doc(id).update(patch);
+        deletedCount++;
+      }
+      return { success: true, deletedCount };
+    });
+  }
+  return { save, takeOff, remove };
 }
 module.exports = { createEditor, validate };

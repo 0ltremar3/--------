@@ -1,0 +1,15 @@
+Generation mode: built-in image_gen
+
+Use case: ads-marketing
+Asset type: finished horizontal Chinese herbal food shop homepage banner, 16:9 landscape, high resolution.
+Primary request: Create a substantially simpler, elegant vintage banner using the reference images.
+Input images: Image 1 is ONLY a background color and general left-text/right-still-life composition reference. Image 2 is ONLY a subject/material reference for the kraft paper herbal pouch, white gauze sachet, cream plate and dried botanicals. Create a new designed image, not a screenshot.
+Scene/backdrop: uninterrupted muted mint / sage green backdrop close to image 1 (#98c5aa), a very subtle aged matte paper grain, gentle natural light.
+Subject: On the right, a restrained editorial photographic still life: one warm kraft-paper herbal pouch, one small white gauze sachet, and one shallow ivory plate holding just a few dried purple perilla leaves, pale dried root slices and a small pinch of rust-red safflower inspired by image 2. Product still life compact, tactile, authentic, arranged casually but artfully. Keep lower right object edges within canvas.
+Style/medium: vintage Chinese apothecary print advertising meets calm contemporary editorial product photography. Understated and minimal, no ornate decoration.
+Composition/framing: wide horizontal 16:9. Left 50 percent is generous clear negative space for carefully typeset Chinese text. Text block inset from left and vertically centered, title on one line. Right 45 percent still life, open space around it, asymmetrical balance.
+Color palette: soft mint green background, deep forest green typography, warm ochre kraft paper, creamy ceramic, muted herbal accents.
+Text (verbatim): main title "山前食养"; subtitle "药食同源商城"; slogan "做好吃的中药。"
+Typography: main title large confident traditional Songti / Ming Chinese serif with visible thick-thin strokes and tasteful wide spacing, all 4 characters on a single line; subtitle modest-sized Songti directly below; slogan smaller with comfortable separation below. All text crisp, correct, readable at mobile size, deep forest green. On pouch only a subtle small "山前食养" brand imprint if needed.
+Constraints: only the three requested copy lines plus optional small pouch brand imprint; no other invented text. Preserve exact Simplified Chinese characters.
+Avoid: cosmetic products, display podiums, glass bottles, floating leaves, gradients, excessive objects, promotional badges, buttons, borders, watermarks, carousel dots, website chrome, pseudo-Chinese text, busy ornament, giant shadows.

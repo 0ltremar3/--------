@@ -106,14 +106,8 @@ $uni-font-size-paragraph:30rpx;
 
 $fce-color: #61A189;
 
-/* 品牌价格字体栈 —— 数字优先使用 Abel，降级至系统无衬线 */
-$brand-price-font:
-	'Abel',
-	'PingFang SC',
-	'Hiragino Sans GB',
-	'Microsoft YaHei',
-	Arial,
-	sans-serif;
+/* 金额与正文统一使用系统默认黑体，不加载独立数字字体。 */
+$brand-price-font: inherit;
 
  ::-webkit-scrollbar {
   display: none;

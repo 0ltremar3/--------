@@ -24,6 +24,8 @@ No automated test framework or coverage rule is currently configured. For change
 
 Run `node tests/home.test.js` for the homepage seckill cloud function regression checks (empty/expired data, upcoming/active events, and start/end boundaries).
 
+For product identity, sales or review attribution changes, run `node tests/product-identity.test.js` and `node tests/commerce.test.js`. The incident-specific repair procedure is in `docs/测试商品销量评价归属修复-2026-10-29.md`.
+
 For build/startup changes, use the HBuilderX application CLI (not the bare plugin compiler), pass `--appid` explicitly for WeChat publication and keep `--upload false` for local builds. Run `node tests/mp-build-config.test.js` and `node scripts/check-mp-runtime.js`; see `docs/微信开发者工具启动故障-2026-10-27.md`.
 
 For freight templates or checkout changes, run `node tests/freight.test.js`, `node tests/checkout-ui.test.js`, `node tests/commerce.test.js`, and `node scripts/sync-commerce.js`. Deployment and rollback steps are in `docs/地区运费模板开发与部署.md`.

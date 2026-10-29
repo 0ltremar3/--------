@@ -11,6 +11,7 @@ const app = read('app.json'), project = read('project.config.json');
 const configured = fs.readFileSync(path.join(projectRoot, 'manifest.json'), 'utf8').match(/"mp-weixin"\s*:\s*\{\s*"appid"\s*:\s*"(wx[a-zA-Z0-9]+)"/);
 assert(configured, 'manifest.json 的微信 AppID 为空或无效；请填写项目真实 AppID 后重新构建');
 assert.equal(project.appid, configured[1], '产物 AppID 与源码不一致；请重新构建，勿用游客模式替代真实 AppID');
+assert.equal(app.lazyCodeLoading, 'requiredComponents', '产物未开启组件按需注入；请在 manifest.json 的 mp-weixin 中配置 lazyCodeLoading 并重新构建');
 const vendor = fs.readFileSync(path.join(output, 'common/vendor.js'), 'utf8');
 assert(/["']?spaceId["']?\s*:\s*["'][^"']+["']/.test(vendor), '产物缺少 uniCloud 服务空间注入；请通过 HBuilderX 正式运行/发行入口重新构建');
 const roots = (app.subPackages || app.subpackages || []).map(pkg => pkg.root.replace(/\/$/, '') + '/');

@@ -64,6 +64,7 @@ function createCommerce(db) {
       if (!Array.isArray(input.goods_arr) || !input.goods_arr.length || input.goods_arr.length > 20) M.fail('商品列表无效');
       const products = new Map();
       const lines = new Map();
+      const cartIds = new Set();
       for (const line of input.goods_arr) {
         M.integer(line.goods_num, '购买数量', 1);
         if (!products.has(line.goods_id)) {
@@ -88,6 +89,16 @@ function createCommerce(db) {
           goods_name: goods.name, goods_name_en: goods.name_en || goods.name,
           goods_img: row.goods_thumb || goods.goods_thumb
         });
+        if (line.cart_id != null) {
+          if (typeof line.cart_id !== 'string' || !line.cart_id || line.cart_id.length > 128 || cartIds.has(line.cart_id)) M.fail('购物袋条目无效，请重新选择');
+          cartIds.add(line.cart_id);
+          const cart = await get(tx, 'jlg-goods-cart', line.cart_id);
+          if (!cart || cart.user_id !== input.user_id || cart.goods_id !== line.goods_id || (cart.goods_seckill === true) !== seckill) M.fail('购物袋商品已变化，请重新选择');
+          if (!cart.goods_suk || M.resolve(goods, cart.goods_suk, seckill).sku_id !== row.sku_id) M.fail('购物袋规格已变化，请重新选择');
+          const normalized = lines.get(k);
+          if (!normalized.cart_sources) normalized.cart_sources = [];
+          normalized.cart_sources.push({ id: cart._id, quantity: line.goods_num, create_date: cart.create_date == null ? null : cart.create_date, specs: M.copy(cart.goods_suk.specs || []) });
+        }
       }
       const goods_arr = [...lines.values()];
       return { products, goods_arr };
@@ -203,6 +214,17 @@ function createCommerce(db) {
       const quantities = new Map();
       for (const line of order.goods_arr) quantities.set(line.goods_id, (quantities.get(line.goods_id) || 0) + line.goods_num);
       for (const [goodsId, quantity] of quantities) await tx.collection(GOODS).doc(goodsId).update({ total_sell_count: db.command.inc(quantity) });
+      // Only server-validated cart sources are consumed, atomically with payment settlement.
+      // A deleted/re-added row may reuse its ID, so also compare its creation time.
+      for (const line of order.goods_arr) for (const source of line.cart_sources || []) {
+        const cart = await get(tx, 'jlg-goods-cart', source.id);
+        if (!cart || cart.user_id !== order.user_id || cart.goods_id !== line.goods_id || (cart.goods_seckill === true) !== line.goods_seckill || (cart.create_date == null ? null : cart.create_date) !== source.create_date) continue;
+        if (!cart.goods_suk || (cart.goods_suk.sku_id ? cart.goods_suk.sku_id !== line.sku_id : M.key(cart.goods_suk.specs) !== M.key(source.specs))) continue;
+        if (!Number.isSafeInteger(cart.goods_number) || cart.goods_number < 1) continue;
+        const remaining = cart.goods_number - source.quantity;
+        if (remaining > 0) await tx.collection('jlg-goods-cart').doc(cart._id).update({ goods_number: remaining, modify_date: Date.now() });
+        else await tx.collection('jlg-goods-cart').doc(cart._id).remove();
+      }
       const cleanFields = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined));
       const update = { ...cleanFields, stock_state: 'paid', status: 1, user_order_success: true };
       await tx.collection(ORDERS).doc(order._id).update(update);
@@ -249,6 +271,7 @@ function createCommerce(db) {
     return transaction(db, async tx => {
       const raw = input._id ? await get(tx, GOODS, input._id) : null;
       if (input._id && !raw) M.fail('商品不存在');
+      if (raw && raw.deleted) M.fail('商品已删除，不能继续编辑');
       if (raw && raw.stock_version !== 1) {
         if (input.inventory_verified !== true) M.fail('请先核对实际可售库存并确认');
         const pending = await findDocuments(db, tx, ORDERS, { status: 0, 'goods_arr.goods_id': raw._id }, 1);
@@ -262,6 +285,7 @@ function createCommerce(db) {
       for (const field of fields) if (input[field] !== undefined) data[field] = M.copy(input[field]);
       for (const field of ['freight', 'is_on_sale', 'is_best', 'is_new', 'is_hot']) data[field] = data[field] === true;
       if (!data.name || !data.name.trim() || !data.category_id || !data.goods_thumb || !(data.goods_banner_imgs || []).length) M.fail('请填写名称、分类和商品图片');
+      await require('./identity').assertNameChange(db, tx, raw, data.name);
       if (!Array.isArray(data.goods_banner_imgs) || data.goods_banner_imgs.length > 5 || !Array.isArray(data.goods_services)) M.fail('商品图片或服务格式无效');
       if (!Array.isArray(input.suks) || !input.suks.length || !Array.isArray(input.fs_suks)) M.fail('请填写商品规格');
       for (const field of ['suks', 'fs_suks']) {
@@ -299,7 +323,7 @@ function createCommerce(db) {
   }
   async function goodsDetail(id) {
     const goods = await get(db, GOODS, id);
-    if (!goods) M.fail('商品不存在');
+    if (!goods || goods.deleted) M.fail('商品不存在或已删除');
     return M.normalize({ goods_services: [], orig_suks: [], orig_fs_suks: [], videos: [], goods_banner_imgs: [], ...goods });
   }
   async function orderAction(uid, id, action, reason) {

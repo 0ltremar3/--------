@@ -216,6 +216,7 @@
 				carouselList: [], //轮播图数据
 				carousetowList: [],
 				cetagoriesList: [], //分类数据
+				categoryRequest: 0,
 				current: 0,
 				goodsList: [], //商品数据
 				oddgoodsList: [],
@@ -264,7 +265,6 @@
 		onLoad(options = {}) {
 			this.titleBackground = "";
 			this.bannerdata();
-			this.cetagories();
 			this.goodsdata();
 			this.seckilldata();
 			this.announceData();
@@ -319,6 +319,7 @@
 			this.goodsdata();
 		},
 		onShow() {
+			this.cetagories();
 			// #ifdef MP-WEIXIN
 			this.$nextTick(() => {
 				if (this.colorCache.length == 0 && this.$refs.bcakColor) {
@@ -327,6 +328,7 @@
 			});
 			// #endif
 		},
+		onUnload() { this.categoryRequest++; },
 		methods: {
 			async getWeiXinJsCode() {
 				let res = await this.$refs.uniPay.getProviderAppId({
@@ -438,12 +440,16 @@
 				}, 1500); // 延迟1秒后再次执行
 			},
 			cetagories() {
-				this.$func.myFunction('jlg-home', {
+				const request = ++this.categoryRequest;
+				return this.$func.myFunction('jlg-home', {
 						functionName: 'cetagories',
 						data: {}
 					})
 					.then(res => {
-						this.cetagoriesList = res.result
+						if (request !== this.categoryRequest) return;
+						// 兼容云函数尚未更新时的返回结果，只展示明确开启的分类。
+						this.cetagoriesList = (Array.isArray(res.result) ? res.result : [])
+							.filter(item => item && item.is_index_show === true);
 					})
 					.catch(error => {
 						console.error(error);

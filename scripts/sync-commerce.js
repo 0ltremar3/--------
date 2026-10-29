@@ -8,7 +8,7 @@ const files = [
   'uni_modules/uni-pay/components/uni-pay/uni-pay.vue',
   'uniCloud-alipay/database/jlg-freight-templates.schema.json',
   ...['index.obj.js', 'package.json'].map(file => 'uniCloud-alipay/cloudfunctions/jlg-checkout/' + file),
-  ...['index.js', 'model.js', 'refund.js', 'editor.js', 'db.js', 'freight.js', 'freight-admin.js', 'package.json'].map(file => 'uniCloud-alipay/cloudfunctions/common/jlg-commerce/' + file),
+  ...['index.js', 'model.js', 'refund.js', 'editor.js', 'identity.js', 'db.js', 'freight.js', 'freight-admin.js', 'package.json'].map(file => 'uniCloud-alipay/cloudfunctions/common/jlg-commerce/' + file),
   ...['index.obj.js', 'service/pay.js', 'package.json', 'package-lock.json', 'notify/goods.js', 'notify/vip.js'].map(file => 'uni_modules/uni-pay/uniCloud/cloudfunctions/uni-pay-co/' + file)
 ];
 // Timed functions cannot depend on a cloud object as a file: common module.
@@ -30,7 +30,7 @@ for (const file of files) {
   if (process.argv.includes('--write')) { fs.mkdirSync(path.dirname(dest), { recursive: true }); fs.writeFileSync(dest, source); }
   if (!fs.existsSync(dest) || !source.equals(fs.readFileSync(dest))) { console.error('Out of sync:', file); mismatches++; }
 }
-for (const [name, fields] of [['opendb-mall-goods', ['freight_mode', 'freight_template_id']], ['uni-pay-orders', ['address_id', 'address_snapshot', 'freight_snapshot', 'checkout_version', 'quote_key']]]) {
+for (const [name, fields] of [['opendb-mall-goods', ['freight_mode', 'freight_template_id', 'deleted', 'deleted_at', 'deleted_by']], ['uni-pay-orders', ['address_id', 'address_snapshot', 'freight_snapshot', 'checkout_version', 'quote_key']]]) {
   const relative = 'uniCloud-alipay/database/' + name + '.schema.json';
   const source = JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
   const dest = path.join(admin, relative), target = JSON.parse(fs.readFileSync(dest, 'utf8'));

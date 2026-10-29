@@ -28,7 +28,7 @@ exports.main = async (event, context) => {
 
 async function getCetagories() {
 	try {
-		const res = await db.collection("jlg-homepage-cetagories").get();
+		const res = await db.collection("jlg-homepage-cetagories").where({ is_index_show: true }).orderBy("sort", "asc").get();
 		return res.data;
 	} catch (err) {
 		throw err;

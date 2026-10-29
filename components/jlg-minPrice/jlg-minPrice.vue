@@ -41,7 +41,7 @@
 <style lang="scss">
 	.minprices {
 		font-size: 24rpx;
-		font-family: 'Abel', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+		font-family: $brand-price-font;
 
 		&:before {
 			content: '￥';

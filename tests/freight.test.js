@@ -20,6 +20,14 @@ let count = 0;
 async function test(name, fn) { await fn(); count++; console.log('✓',name); }
 function calc(items, province = '320000', templates = [template(),template('t2',{default_fee:1000})]) { return F.calculate(items.map(g => ({ goods_id:g._id,goods_num:1,goods_price:g.suks[0].price })), new Map(items.map(g => [g._id,g])), new Map(templates.map(t => [t._id,t])), province); }
 (async () => {
+  await test('cart provenance survives modern quote and payment without changing shipping or mutating the cart early', async () => {
+    const data=initial();data['jlg-goods-cart']={cart:{_id:'cart',user_id:'u',goods_id:'g',goods_suk:{sku_id:'gs',specs:['单盒']},goods_number:1,goods_seckill:false,create_date:100}};
+    const db=database(data),service=createCommerce(db),input=request({goods_arr:[{...line(),cart_id:'cart'}]}),before=db.snapshot();
+    const quote=await service.quote(input);assert.deepEqual(db.snapshot(),before);assert.equal(quote.freight,0);
+    const saved=await service.prepare({...input,provider:'wxpay',order_no:'cart-order',out_trade_no:'cart-pay',total_fee:quote.total_fee,quote_key:quote.quote_key});
+    assert.deepEqual(saved.goods_arr[0].cart_sources,quote.goods_arr[0].cart_sources);assert.ok(db.snapshot()['jlg-goods-cart'].cart);
+    await service.settle('cart-pay',quote.total_fee,{});assert.equal(db.snapshot()['jlg-goods-cart'].cart,undefined);
+  });
   await test('119.99 boundary and all three provinces at exactly 120', () => {
     for (const province of ['310000','320000','330000']) { assert.equal(calc([goods('g',11999)],province).freight,800); assert.equal(calc([goods()],province).freight,0); }
     assert.equal(calc([goods()],'440000').freight,800); assert.equal(calc([goods()],'650000').freight,1500); assert.equal(calc([goods()],'540000').deliverable,false);

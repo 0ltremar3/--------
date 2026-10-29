@@ -257,6 +257,14 @@
 				"write": false
 			}
 		},
+		"deleted": {
+			"bsonType": "bool",
+			"description": "商品删除标记；保留原记录用于历史订单结算与退款",
+			"permission": {
+				"read": true,
+				"write": false
+			}
+		},
 		"freight_template_id": {
 			"bsonType": "string",
 			"permission": {
